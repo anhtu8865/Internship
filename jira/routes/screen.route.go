@@ -14,7 +14,6 @@ type ScreenRoute struct {
 	GroupName   string
 	RouterGroup *gin.RouterGroup
 }
-
 func (s *ScreenRoute) Init(router *gin.Engine) {
 	s.RouterGroup = router.Group(s.GroupName)
 	{
