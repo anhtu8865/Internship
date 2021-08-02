@@ -34,14 +34,14 @@ func CheckAdmin(c *gin.Context) {
 
 	if tkn != nil {
 		if claims.IsAdmin == 0 {
-			usr := models.User{Username: claims.Username, IsAdmin: claims.IsAdmin}
+			usr := models.User{UserName: claims.Username, IsAdmin: claims.IsAdmin}
 			c.Set("user_info", usr)
 
 			c.Next()
 
 		}
 		if claims.IsAdmin == 1 {
-			usr := models.User{Username: claims.Username, IsAdmin: claims.IsAdmin}
+			usr := models.User{UserName: claims.Username, IsAdmin: claims.IsAdmin}
 			c.Set("user_info", usr)
 			c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
 
