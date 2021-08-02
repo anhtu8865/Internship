@@ -104,35 +104,24 @@ func (ue *UserModel) Check_User_Exist_By_Id(id string) ([]User, error) {
 }
 //Update thông tin User
 func (sm *UserModel) UpdateUser(id int, strFullName string, strPassword string, isAdmin string) (sql.Result, error) {
-	var UserFullNameQuery, PasswordQuery,RoleQuery  string
-	fmt.Println(id)
-	//Update UserName
+	var UserQuery, PasswordQuery, AdminQuery string
 	if strFullName != "" {
-		UserFullNameQuery = fmt.Sprintf("USER_FULL_NAME = '%v',", strFullName)
-		fmt.Println(UserFullNameQuery)
-
+		UserQuery = fmt.Sprintf("USER_FULL_NAME = '%v',", strFullName)
 	} else {
-		UserFullNameQuery = "USER_FULL_NAME=USER_FULL_NAME,"
+		UserQuery = "USER_FULL_NAME=USER_FULL_NAME,"
 	}
-	//Update Password
 	if strPassword != "" {
 		PasswordQuery = fmt.Sprintf("USER_PASSWORD = '%v',", strPassword)
-		fmt.Println(PasswordQuery)
-
 	} else {
 		PasswordQuery = "USER_PASSWORD=USER_PASSWORD,"
 	}
-	//Update Permission Global
-	if isAdmin != "" {
-		RoleQuery = fmt.Sprintf("ISADMIN = '%v'", isAdmin)
-		fmt.Println(RoleQuery)
-
+	if isAdmin == "" {
+		AdminQuery = "USER_GLOBAL_ROLE=USER_GLOBAL_ROLE"
 	} else {
-		RoleQuery = "ISADMIN=ISADMIN"
+		AdminQuery = fmt.Sprintf("USER_GLOBAL_ROLE = %v", isAdmin)
 	}
-	smt := fmt.Sprintf(`UPDATE "JIRA_USER" SET %v %v %v WHERE "USER_ID"=:1`, UserFullNameQuery, PasswordQuery, RoleQuery)
-	fmt.Println(smt)
-	return DbOracle.Db.Exec(smt,id)
+	smt := fmt.Sprintf(`UPDATE "NEW_JIRA_USER" SET  %v %v  %v WHERE "USER_ID"=:1`, UserQuery, PasswordQuery, AdminQuery)
+	return DbOracle.Db.Exec(smt, id)
 }
 
 // func (sm *UserModel) UpdateToken(user User) (sql.Result, error) {
@@ -168,10 +157,10 @@ func (sm *UserModel) UpdateUser(id int, strFullName string, strPassword string, 
 // }
 // func (sm *UserModel) UpdateUser2(id int, Struser string, Strfull_name string, Stremail string, Strpassword string, isAdmin string) (sql.Result, error) {
 // 	var UserQuery, PasswordQuery, AdminQuery string
-// 	if Struser != "" {
-// 		UserQuery = fmt.Sprintf("USERNAME = '%v',", Struser)
+// 	if Strfull_name != "" {
+// 		UserQuery = fmt.Sprintf("USER_FULL_NAME = '%v',", Strfull_name)
 // 	} else {
-// 		UserQuery = "USERNAME=USERNAME,"
+// 		UserQuery = "USER_FULL_NAME=USER_FULL_NAME,"
 // 	}
 // 	if Strpassword != "" {
 // 		PasswordQuery = fmt.Sprintf("USER_PASSWORD = '%v',", Strpassword)
@@ -179,12 +168,13 @@ func (sm *UserModel) UpdateUser(id int, strFullName string, strPassword string, 
 // 		PasswordQuery = "USER_PASSWORD=USER_PASSWORD,"
 // 	}
 // 	if isAdmin == "" {
-// 		AdminQuery = "IS_ADMIN=IS_ADMIN,"
+// 		AdminQuery = "USER_GLOBAL_ROLE=USER_GLOBAL_ROLE"
 // 	} else {
-// 		AdminQuery = fmt.Sprintf("IS_ADMIN = %v,", isAdmin)
+// 		AdminQuery = fmt.Sprintf("USER_GLOBAL_ROLE = %v", isAdmin)
 // 	}
-// 	smt := fmt.Sprintf(`UPDATE "JIRA_USER" SET %v %v %v "USER_FULL_NAME"=:1, "USER_EMAIL"=:2 WHERE "USER_ID"=:3`, UserQuery, PasswordQuery, AdminQuery)
-// 	return DbOracle.Db.Exec(smt, Strfull_name, Strpassword, id)
+// 	smt := fmt.Sprintf(`UPDATE "NEW_JIRA_USER" SET  %v %v  %v WHERE "USER_ID"=:1`, UserQuery, PasswordQuery, AdminQuery)
+// 	fmt.Println(smt)
+// 	return DbOracle.Db.Exec(smt, id)
 // }
 
 // func (sm *UserModel) DeleteUser(id string) (sql.Result, error) {
