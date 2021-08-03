@@ -75,25 +75,23 @@ func (rl *RoleHandler) CreateRole() gin.HandlerFunc {
 //Update role
 func (rl *RoleHandler) UpdateRole() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var rolename, roledescription, rolenamesub string
-		//  id := c.Query("id")
+		var  roledescription, rolenamesub string
+		 id := c.Query("id")
 
 		var myMap map[string]string
 		//req body from client
 		json.NewDecoder(c.Request.Body).Decode(&myMap)
 		//namerole
-		rolename = fmt.Sprintf("%v", myMap["rolename"])
-
 		//descriptionrole
 		roledescription = fmt.Sprintf("%v", myMap["roledescription"])
 		//convert id string -> id int
 		//  role_id,_ := strconv.Atoi(id)
 		//rolename change
 		rolenamesub = fmt.Sprintf("%v", myMap["rolenamesub"])
-		if rolename == " " {
+		if id == " " {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "id are not enough"})
 		} else {
-			exists_role, err := models.RoleModels.Check_Role_Exist(rolename)
+			exists_role, err := models.RoleModels.Check_Role_Exist_By_Id(id)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
@@ -121,12 +119,16 @@ func (rl *RoleHandler) DeleteRole() gin.HandlerFunc {
 		if id == "" {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "The parameters are not enough"})
 		} else {
+			//Check role exist
 			exists_role, err := models.RoleModels.Check_Role_Exist_By_Id(id)
+			//error query
 			if err != nil {
 				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 			} else {
+				//no have role
 				if len(exists_role) == 0 {
 					c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Role Id does not exist"})
+					//have role
 				} else if len(exists_role) > 0 {
 					if _, err := models.RoleModels.DeleteRole(id); err != nil {
 						c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
