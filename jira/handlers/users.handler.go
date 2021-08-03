@@ -124,7 +124,6 @@ func (u *UserHandler) DeleteUser() gin.HandlerFunc {
 		} else {
 			//call model func check user exist by user's id
 			Check_user_exists, err := models.UserModels.Check_User_Exist_By_Id(id)
-			fmt.Println(len(Check_user_exists))
 			if err != nil {
 				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 			} else {
