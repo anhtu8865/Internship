@@ -6,16 +6,22 @@ import userApi from "../api/userApi";
 function Login(props) {
   const { register, handleSubmit } = useForm();
   const onSubmit = (data) => {
-    userApi.login(data).then(response => {
+    userApi.login(data).then(async (response) => {
+      if(response.Msg == "Login Success")
+      {
       localStorage.setItem("accessToken", response.Data.access_token)
-      props.history.push('/user-manager')
+      props.history.push('/Home')
+      }
+      else{
+        alert(response.Msg)
+      }
     }).catch(err => alert(err))
   };
 
   return (
     <div className="w-full h-full pt-32">
       <div className="max-w-xl px-8 py-8 border-0 shadow-lg rounded-xl h-auto bg-white mx-auto">
-        <h1 className="text-2xl font-bold pb-8">Login</h1>
+        <h1 className="text-2xl font-bold pb-8">Login </h1>
         <hr className="mb-5"/>
         <div className="px-6">
           <form onSubmit={handleSubmit(onSubmit)}>

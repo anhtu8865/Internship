@@ -67,7 +67,7 @@ type TokenDetails struct {
 //create token
 func CreateToken(username string, globalrole int64) (*TokenDetails, error) {
 	td := &TokenDetails{}
-	td.AtExpires = time.Now().Add(time.Minute * 7).Unix()
+	td.AtExpires = time.Now().Add(time.Minute * 100).Unix()
 	td.AccessUuid = uuid.NewV4().String()
 
 	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
@@ -134,13 +134,14 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "The parameters are not enough"})
 		} else {
 			Exists_user, err := models.UserModels.Check_User_Exist(username, username)
+			fmt.Println(Exists_user)
 			if err != nil {
 
 				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 			}
 			//No have user
 			if len(Exists_user) == 0 {
-				c.JSON(http.StatusNotAcceptable, helpers.MessageResponse{Msg: "User not exists, please choose another user"})
+				c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "User not exists, please choose another user"})
 			}
 			if len(Exists_user) == 1 {
 				//User admin
@@ -170,7 +171,7 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 					
 					} else {
 
-						c.JSON(http.StatusConflict, helpers.MessageResponse{Msg: "Wrong password, please try again!"})
+						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Wrong password, please try again!"})
 					}
 				}
 				//trusted user
@@ -202,7 +203,7 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 
 					} else {
 
-						c.JSON(http.StatusConflict, helpers.MessageResponse{Msg: "Wrong password, please try again!"})
+						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Wrong password, please try again!"})
 					}
 				}
 
@@ -234,7 +235,7 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 
 					} else {
 
-						c.JSON(http.StatusConflict, helpers.MessageResponse{Msg: "Wrong password, please try again!"})
+						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Wrong password, please try again!"})
 					}
 				}
 

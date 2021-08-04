@@ -18,8 +18,9 @@ function App() {
   return (
     <Router>
       <Switch>
+   
         <Layout>      
-          <Route path="/login" component={Login} />
+        <Route path="/login" component={Login} />
           <Route path="/create-user">
             <CreateUser />
           </Route>
