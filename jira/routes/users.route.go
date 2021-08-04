@@ -1,7 +1,7 @@
 package routes
 
 import (
-	//"jira/common/middleware/auth"
+	"jira/common/middleware/auth"
 	
 	. "jira/handlers"
 
@@ -21,9 +21,10 @@ func (u *UserRoute) Init(router *gin.Engine) {
 		//u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
 		// u.RouterGroup.POST("/", u.Signin())
 		u.RouterGroup.POST("/sign-up", u.Signup())
-		u.RouterGroup.GET("/",  u.Index())
+		u.RouterGroup.GET("/",auth.CheckUserLoged, u.Index())
 		u.RouterGroup.DELETE("/delete-user", u.DeleteUser())
 		u.RouterGroup.PUT("/admin/update-user",u.UpdateUserByAdmin())
+		u.RouterGroup.POST("/",u.Singin())
 		// u.RouterGroup.PUT("/:id", auth.CheckUserLoged, auth.CheckAdmin, u.UpdateUser())
 		// u.RouterGroup.DELETE("/:id", auth.CheckUserLoged, auth.CheckAdmin, u.DeleteUser())
 	}
@@ -46,7 +47,10 @@ func (u *UserRoute) DeleteUser() gin.HandlerFunc{
 func (u *UserRoute) UpdateUserByAdmin() gin.HandlerFunc{
 	return UserHandlers.UpdateUser()
 }
-
+//Login User 
+func (u *UserRoute) Singin() gin.HandlerFunc{
+	return UserHandlers.Singin()
+}
 // func (u *UserRoute) UpdateUser() gin.HandlerFunc {
 // 	//u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
 // 	return UserHandlers.UpdateUser()

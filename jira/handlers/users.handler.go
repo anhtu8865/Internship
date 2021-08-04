@@ -5,13 +5,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"jira/common/helpers"
-	// "jira/loggers"
-	"jira/models"
-	// "log"
-	"strconv"
+	"os"
 
+	// "jira/loggers"
+	"github.com/twinj/uuid"
+	"jira/models"
+	"log"
 	"net/http"
+	"strconv"
 	"time"
+
+	"github.com/go-redis/redis/v7"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/godror/godror"
@@ -33,6 +37,211 @@ var UserHandlers = UserHandler{}
 
 type UserHandler struct{}
 
+//redis
+var client *redis.Client
+
+func init() {
+	//Initializing redis
+	dsn := os.Getenv("REDIS_DSN")
+	if len(dsn) == 0 {
+		dsn = "localhost:6379"
+	}
+	client = redis.NewClient(&redis.Options{
+		Addr: dsn, //redis port
+	})
+	_, err := client.Ping().Result()
+	if err != nil {
+		panic(err)
+	}
+}
+
+type TokenDetails struct {
+	AccessToken  string
+	RefreshToken string
+	AccessUuid   string
+	RefreshUuid  string
+	AtExpires    int64
+	RtExpires    int64
+}
+
+//create token
+func CreateToken(username string, globalrole int64) (*TokenDetails, error) {
+	td := &TokenDetails{}
+	td.AtExpires = time.Now().Add(time.Minute * 7).Unix()
+	td.AccessUuid = uuid.NewV4().String()
+
+	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
+	td.RefreshUuid = td.AccessUuid + "++" + username
+
+	var err error
+	//Creating Access Token
+	os.Setenv("ACCESS_SECRET", "jdnfksdmfksd") //this should be in an env file
+	atClaims := jwt.MapClaims{}
+	atClaims["authorized"] = true
+	atClaims["access_uuid"] = td.AccessUuid
+	atClaims["username"] = username
+	atClaims["role"] = globalrole
+	atClaims["exp"] = td.AtExpires
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
+	if err != nil {
+		return nil, err
+	}
+	//Creating Refresh Token
+	os.Setenv("REFRESH_SECRET", "mcmvmkmsdnfsdmfdsjf") //this should be in an env file
+	rtClaims := jwt.MapClaims{}
+	rtClaims["refresh_uuid"] = td.RefreshUuid
+	rtClaims["user_id"] = username
+	atClaims["role"] = globalrole
+	rtClaims["exp"] = td.RtExpires
+	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
+	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))
+	if err != nil {
+		return nil, err
+	}
+	return td, nil
+}
+func CreateAuth(username string, td *TokenDetails) error {
+	at := time.Unix(td.AtExpires, 0) //converting Unix to UTC(to Time object)
+	rt := time.Unix(td.RtExpires, 0)
+	now := time.Now()
+
+	errAccess := client.Set(td.AccessUuid, username, at.Sub(now)).Err()
+	if errAccess != nil {
+		return errAccess
+	}
+	errRefresh := client.Set(td.RefreshUuid, username, rt.Sub(now)).Err()
+	if errRefresh != nil {
+		return errRefresh
+	}
+	return nil
+}
+
+///login
+func (u *UserHandler) Singin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var username, password string
+
+		// 		//var user string
+		var myMap map[string]string
+		json.NewDecoder(c.Request.Body).Decode(&myMap)
+
+		username = fmt.Sprintf("%v", myMap["username"])
+		password = fmt.Sprintf("%v", myMap["password"])
+
+		//check null
+		if username == "" || password == "" {
+			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "The parameters are not enough"})
+		} else {
+			Exists_user, err := models.UserModels.Check_User_Exist(username, username)
+			if err != nil {
+
+				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
+			}
+			//No have user
+			if len(Exists_user) == 0 {
+				c.JSON(http.StatusNotAcceptable, helpers.MessageResponse{Msg: "User not exists, please choose another user"})
+			}
+			if len(Exists_user) == 1 {
+				//User admin
+				if Exists_user[0].IsAdmin == 0 {
+					originalStringBytes, err := base64.StdEncoding.DecodeString(Exists_user[0].UserPassword)
+
+					if err != nil {
+						c.JSON(http.StatusNotAcceptable, helpers.MessageResponse{Msg: "Password invalid, can't decode"})
+						log.Fatalf("Some error occured during base64 decode. Error %s", err.Error())
+					}
+					//compare password
+					if password == string(originalStringBytes) {
+						ts, err := CreateToken(Exists_user[0].UserName,int64(Exists_user[0].IsAdmin))
+						if err != nil {
+							c.JSON(http.StatusUnprocessableEntity, err.Error())
+							return
+						}
+						saveErr := CreateAuth(Exists_user[0].UserName, ts)
+						if saveErr != nil {
+							c.JSON(http.StatusUnprocessableEntity, saveErr.Error())
+						}
+						tokens := map[string]string{
+							"access_token":  ts.AccessToken,
+							
+						}
+						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: tokens})
+					
+					} else {
+
+						c.JSON(http.StatusConflict, helpers.MessageResponse{Msg: "Wrong password, please try again!"})
+					}
+				}
+				//trusted user
+				if Exists_user[0].IsAdmin == 1 {
+
+					originalStringBytes, err := base64.StdEncoding.DecodeString(Exists_user[0].UserPassword)
+
+					if err != nil {
+						c.JSON(http.StatusNotAcceptable, helpers.MessageResponse{Msg: "Password invalid, can't decode"})
+						log.Fatalf("Some error occured during base64 decode. Error %s", err.Error())
+					}
+
+					if password == string(originalStringBytes) {
+						ts, err := CreateToken(Exists_user[0].UserName,int64(Exists_user[0].IsAdmin))
+						if err != nil {
+							c.JSON(http.StatusUnprocessableEntity, err.Error())
+							return
+						}
+						saveErr := CreateAuth(Exists_user[0].UserName, ts)
+						if saveErr != nil {
+							c.JSON(http.StatusUnprocessableEntity, saveErr.Error())
+						}
+					
+						tokens := map[string]string{
+							"access_token":  ts.AccessToken,
+							
+						}
+						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: tokens})
+
+					} else {
+
+						c.JSON(http.StatusConflict, helpers.MessageResponse{Msg: "Wrong password, please try again!"})
+					}
+				}
+
+				//member
+				if Exists_user[0].IsAdmin == 2 {
+
+					originalStringBytes, err := base64.StdEncoding.DecodeString(Exists_user[0].UserPassword)
+
+					if err != nil {
+						c.JSON(http.StatusNotAcceptable, helpers.MessageResponse{Msg: "Password invalid, can't decode"})
+						log.Fatalf("Some error occured during base64 decode. Error %s", err.Error())
+					}
+
+					if password == string(originalStringBytes) {
+						ts, err := CreateToken(Exists_user[0].UserName,int64(Exists_user[0].IsAdmin))
+						if err != nil {
+							c.JSON(http.StatusUnprocessableEntity, err.Error())
+							return
+						}
+						saveErr := CreateAuth(Exists_user[0].UserName, ts)
+						if saveErr != nil {
+							c.JSON(http.StatusUnprocessableEntity, saveErr.Error())
+						}
+						tokens := map[string]string{
+							"access_token":  ts.AccessToken,
+							
+						}
+						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: tokens})
+
+					} else {
+
+						c.JSON(http.StatusConflict, helpers.MessageResponse{Msg: "Wrong password, please try again!"})
+					}
+				}
+
+			}
+		}
+	}
+}
 //func get All user
 func (u *UserHandler) Index() gin.HandlerFunc {
 	//Do everything here, call model etc...
@@ -130,7 +339,7 @@ func (u *UserHandler) DeleteUser() gin.HandlerFunc {
 				//no have user in db
 				if len(Check_user_exists) == 0 {
 					c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "User Id does not exist"})
-				//have user in db
+					//have user in db
 				} else if len(Check_user_exists) > 0 {
 					//delete user
 					if _, err := models.UserModels.DeleteUser(id); err != nil {
@@ -143,24 +352,25 @@ func (u *UserHandler) DeleteUser() gin.HandlerFunc {
 		}
 	}
 }
-//func update info user by admin 
-func (u *UserHandler) UpdateUser() gin.HandlerFunc{
-		return func(c *gin.Context) {
-		var  fullname, password, isAdmin string
+
+//func update info user by admin
+func (u *UserHandler) UpdateUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var fullname, password, isAdmin string
 		id := c.Query("id")
-	
+
 		var myMap map[string]string
 		//req body from client
 		json.NewDecoder(c.Request.Body).Decode(&myMap)
 		//username
 		fullname = fmt.Sprintf("%v", myMap["fullname"])
-		
+
 		//password
 		password = fmt.Sprintf("%v", myMap["password"])
-	
+
 		//permission role
 		isAdmin = fmt.Sprintf("%v", myMap["globalrole"])
-	
+
 		//convert id string -> id int
 		user_id, _ := strconv.Atoi(id)
 		//hash password
@@ -173,6 +383,9 @@ func (u *UserHandler) UpdateUser() gin.HandlerFunc{
 		}
 	}
 }
+
+
+
 // func (u *UserHandler) Signin() gin.HandlerFunc {
 // 	return func(c *gin.Context) {
 // 		var user, password string

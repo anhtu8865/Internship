@@ -7,7 +7,7 @@ function Login(props) {
   const { register, handleSubmit } = useForm();
   const onSubmit = (data) => {
     userApi.login(data).then(response => {
-      localStorage.setItem("accessToken", response.Data.Token)
+      localStorage.setItem("accessToken", response.Data.access_token)
       props.history.push('/user-manager')
     }).catch(err => alert(err))
   };
@@ -19,7 +19,7 @@ function Login(props) {
         <hr className="mb-5"/>
         <div className="px-6">
           <form onSubmit={handleSubmit(onSubmit)}>
-          <FormInput r={register} name="user" label='Username' required />
+          <FormInput r={register} name="username" label='Username' required />
           <FormInput r={register} name="password" label='Password' type="password" required />
           <div className="w-full mt-10 mb-5 px-10">
             <input type="submit" value="Login" className="bg-green-600 rounded-md py-2 cursor-pointer

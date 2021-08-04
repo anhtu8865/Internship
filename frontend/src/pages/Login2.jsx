@@ -20,12 +20,8 @@ class Login extends Component {
   }
 
   login = () => {
-    console.log("Click login")
     userApi.logIn({ "username": this.state.username, "password": this.state.password }).then(response => {
-      console.log(response)
       localStorage.setItem("accessToken", response.token)
-      console.log(response.token)
-      alert("Thanh cong")
       // window.location.reload();
     }).catch(err => console.log(err))
     // console.log(response.text())
