@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { fetchUsers, usersSelector, createUser } from '../slices/users'
+import { fetchUsers, usersSelector } from '../slices/users'
 import { Link } from 'react-router-dom'
 import UserItem from '../components/User/UserItem';
 import { useAppDispatch } from '../store'
@@ -16,19 +16,6 @@ const Users = () => {
     return users.map((user) => (
         <UserItem key={user.User_Id} user={user} />
     ))
-  }
-
-  const addPost = (e) => {
-    e.preventDefault()
-    const User = {
-      id: 1,
-      name: 'Nacef',
-      username: 'magiko',
-      email: 'nacef.otay@esprit.tn',
-      phone: '+21629903274',
-      website: 'nacefotay.me',
-    }
-    dispatch(createUser(User))
   }
   if (loading) {
     return (
@@ -153,9 +140,9 @@ const Users = () => {
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Email
                   </th>
-                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Group name
-                  </th>
+                  </th> */}
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Action
                   </th>

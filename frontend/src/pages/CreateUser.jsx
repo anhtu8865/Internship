@@ -2,12 +2,15 @@ import FormInput from "../components/Form/FormInput";
 import React from "react";
 import { useForm } from "react-hook-form";
 import userApi from "../api/userApi";
+import { useHistory } from 'react-router-dom'
 
 function CreateUser() {
   const { register, handleSubmit } = useForm();
-  const onSubmit = data => {
+  const history = useHistory()
+ const onSubmit = data => {
     userApi.create(data).then(() => {
       alert('Create User Success')
+      history.push('/user-manager')
     }).catch(err => alert(err))
   };
 
@@ -19,9 +22,10 @@ function CreateUser() {
         <div className="px-6">
           <form onSubmit={handleSubmit(onSubmit)}>
           <FormInput r={register} name="fullname" label='Full name' required />
-          <FormInput r={register} name="user" label='Username' required />
+          <FormInput r={register} name="username" label='Username' required />
           <FormInput r={register} name="email" label='Email' required />
           <FormInput r={register} name="password" label='Password' required />
+          <FormInput r={register} name="globalrole" label='Role' required />
           <div className="w-full mt-10 mb-5 px-10">
             <input type="submit" value="Create User" className="bg-green-600 rounded-md py-2 
             text-white text-xl w-full" />

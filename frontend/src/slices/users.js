@@ -16,7 +16,7 @@ const usersSlice = createSlice({
       state.users.unshift(action.payload)
     },
     removeUser: (state,  action) => {
-      console.log('remove', action)
+      // console.log('remove', action)
       let filteredUser = state.users.filter((user) => user.User_Id !== action.payload)
       state.users = filteredUser
     },
@@ -25,7 +25,8 @@ const usersSlice = createSlice({
     },
     getUsersSuccess: (state, action) => {
       state.users = action.payload
-      console.log(state.users.length);
+      console.log("load")
+     console.log(state.users);
       state.loading = false
       state.hasErrors = false
     },
@@ -35,13 +36,14 @@ const usersSlice = createSlice({
       state.hasErrors = true
     },
     setUserUpdate: (state, action) => {
+      console.log(state.userUpdate)
       state.userUpdate = action.payload
     },
     updateUser: (state, action) => {
       const { id, data } = action.payload
-      console.log(data);
+      // console.log(data);
       let newUsers = state.users.map(user => (user.User_Id === id ? {User_Id: id, ...data} : user))
-      console.log(newUsers);
+      // console.log(newUsers);
       state.users = newUsers
     }
   },
@@ -65,12 +67,14 @@ export const fetchUsers = () => async (dispatch) => {
   userApi
     .getAll()
     .then((res) => {
-      console.log(res)
+      // console.log("oke")
+      // console.log(res)
       if (res.Data) dispatch(getUsersSuccess(res.Data))
     })
     .catch((err) => {
-      console.log(err)
+      // console.log(err)
       dispatch(getUsersFailure())
+      return err
     })
 }
 
@@ -97,6 +101,7 @@ export const deleteUser = (id) => async (dispatch) => {
 
 export const setUserUpdate = (User) => async (dispatch) => {
   try {
+    console.log(User)
     dispatch(actions.setUserUpdate(User))
   } catch (error) {
     dispatch(getUsersFailure())
@@ -107,11 +112,12 @@ export const updateUser = (data) => async (dispatch) => {
   userApi
   .update(data)
   .then((res) => {
-    console.log(res)
     dispatch(actions.updateUser(data))
+    return res
   })
   .catch((err) => {
-    console.log(err)
+    
     dispatch(getUsersFailure())
+    return err
   })
 }

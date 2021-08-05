@@ -14,7 +14,6 @@ function UpdateUserModal({ modalDialog }) {
   const { userUpdate } = useSelector(usersSelector)
   const { handleClose } = modalDialog
   const onSubmit = (data) => {
-    console.log(data);
     dispatch(updateUser({id: userUpdate.User_Id, data}))
     handleClose()
   }
@@ -29,19 +28,19 @@ function UpdateUserModal({ modalDialog }) {
         <DialogContent dividers className="mx-12">
             <FormInput
               r={register}
-              name="User_Full_Name"
+              name="fullname"
               label={'Name'}
               value={userUpdate.User_Full_Name}
               required
             />
-            <FormInput r={register} name="Username" label={'Username'} value={userUpdate.Username} required />
-            <FormInput r={register} name="User_Email" label={'Email'} value={userUpdate.User_Email} required />
+            <div r={register} name="Username" label={'Username'} value={userUpdate.Username} required />
+            <div r={register} name="User_Email" label={'Email'} value={userUpdate.User_Email} required />
             <FormInput
               r={register}
-              name="User_Password"
+              name="password"
               label={'Password (Để trống nếu không thay đổi)'}
             />
-            <FormInput r={register} name="Is_Admin" label={'Is Admin'} value={userUpdate.Is_Admin} required />
+            <FormInput r={register} name="globalrole" label={'Is Admin'} value={userUpdate.Is_Admin} required />
         </DialogContent>
         <DialogActions>
           <div className="my-3 mx-5">
