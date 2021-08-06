@@ -21,11 +21,11 @@ func init() {
 		&UserRouter,
 		&IssueRouter,
 		&ScreenRouter,
+		&RoleRouter,
 		&FieldRouter,
 		&ScrFieldRouter,
 		&ProScreenRouter,
 		&ProjectsRouter,
-		&RoleRouter,
 	)
 }
 

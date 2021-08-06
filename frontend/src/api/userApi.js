@@ -8,7 +8,7 @@ const userApi = {
   login: (body) => axiosClient.post(url, body),
   create: (data) => axiosClient.post(urlCreateuser, data),
   update: ({id, data}) => axiosClient.put("/users/admin/update-user?id=" + id, data),
-  delete: (id) => axiosClient.delete("users/delete-user?id=" + id),
+  delete: (id) => axiosClient.delete("/users/delete-user?id=" + id),
 
   // getMe = async (payload) => {
   //   const url = '/me';

@@ -8,6 +8,7 @@ import Home from "./pages/Home"
 import Layout from "./components/Layout"
 import Projects from './pages/Projects'
 import Users from './pages/UsersManager';
+import Roles from './pages/RolesManager';
 function App() {
   // const [isLogged, setIsLogged] = useState(false)
   // useEffect(() => {
@@ -27,6 +28,9 @@ function App() {
           </Route>
           <Route path="/user-manager">
             <Users></Users>
+          </Route>
+          <Route path="/roles-manager">
+            <Roles></Roles>
           </Route>
           <Route exact path="/">
             <Home />

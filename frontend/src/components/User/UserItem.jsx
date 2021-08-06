@@ -47,7 +47,7 @@ const UserItem = ({ user }) => {
             </div>
             <div className="ml-3">
               <p className="text-gray-900 whitespace-no-wrap">
-                {user.User_Full_Name}
+                {user.User_Full_Name || user.fullname}
               </p>
             </div>
           </div>

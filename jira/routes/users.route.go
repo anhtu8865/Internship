@@ -30,7 +30,6 @@ func (u *UserRoute) Init(router *gin.Engine) {
 	}
 }
 
-
 //Register User by admin
 func (u *UserRoute) Signup() gin.HandlerFunc {
 	return UserHandlers.CreateUser()

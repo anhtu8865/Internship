@@ -1,9 +1,9 @@
 package routes
 
 import (
-	//"jira/common/middleware/auth"
+	// "jira/common/middleware/auth"
 
-	"jira/handlers"
+	. "jira/handlers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,19 +26,19 @@ func (rt *RoleRoute) Init(router *gin.Engine){
 }
 //get all role 
 func (rt *RoleRoute) GetAllRole() gin.HandlerFunc{
-	return handlers.RoleHandlers.Get()
+	return RoleHandlers.Get()
 }
 //adll role
 func (rt *RoleRoute) CreateRole() gin.HandlerFunc{
-	return handlers.RoleHandlers.CreateRole()
+	return RoleHandlers.CreateRole()
 }
 
 //update role
 func (rt *RoleRoute) UpdateRole() gin.HandlerFunc{
-	return handlers.RoleHandlers.UpdateRole()
+	return RoleHandlers.UpdateRole()
 }
 
 //delete role
 func (rt *RoleRoute) DeleteRole() gin.HandlerFunc{
-	return handlers.RoleHandlers.DeleteRole()
+	return RoleHandlers.DeleteRole()
 }
