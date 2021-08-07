@@ -40,7 +40,7 @@ func (u *ScreensRoute) Create() gin.HandlerFunc {
 }
 
 func (u *ScreensRoute) Update() gin.HandlerFunc {
-	return ScreensHandlers.Update()
+	return ScreensHandlers.Update2()
 }
 
 func (u *ScreensRoute) Delete() gin.HandlerFunc {

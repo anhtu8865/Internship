@@ -8,6 +8,10 @@ import Home from "./pages/Home"
 import Layout from "./components/Layout"
 import Projects from './pages/Projects'
 import Users from './pages/Users';
+import {Screens} from './pages/Screens';
+import { UpdateScreenForm} from './components/Screen/UpdateScreenForm'
+
+import { AddScreenForm} from './components/Screen/AddScreenForm'
 
 function App() {
   // const [isLogged, setIsLogged] = useState(false)
@@ -26,6 +30,13 @@ function App() {
           <Route path="/projects">
             <Projects />
           </Route>
+          <Route path="/screens">
+            <Screens />
+          </Route>
+          <Route path="/addScreen">
+            <AddScreenForm />
+          </Route>
+          <Route exact path="/editScreen/:screenId" component={UpdateScreenForm} />
           <Route path="/user-manager">
             <Users></Users>
           </Route>

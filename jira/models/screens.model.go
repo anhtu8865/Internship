@@ -56,10 +56,14 @@ func (pm *ScreensModel) GetById(id string) ([]Screen, error) {
 func (pm *ScreensModel) Create(r io.ReadCloser) ([]Screen, error) {
 	var screen Screen
 	json.NewDecoder(r).Decode(&screen)
-	query := fmt.Sprintf("INSERT INTO NEW_JIRA_SCREEN (ID,NAME,DESCRIPTION) VALUES (SEQ_NEW_JIRA_SCREEN.nextval, '%v', '%v')", screen.Name, screen.Description)
+	query := fmt.Sprintf(
+		`INSERT INTO NEW_JIRA_SCREEN (ID,NAME,DESCRIPTION) 
+		VALUES (SEQ_NEW_JIRA_SCREEN.nextval, '%v', '%v')`,
+		screen.Name, screen.Description)
 	_, err := DbOracle.Db.Exec(query)
 	if err == nil {
-		rowsLastRecord, errLastRecord := DbOracle.Db.Query("SELECT * FROM (SELECT * FROM NEW_JIRA_SCREEN ORDER BY ID DESC) WHERE ROWNUM = 1")
+		rowsLastRecord, errLastRecord :=
+			DbOracle.Db.Query("SELECT * FROM (SELECT * FROM NEW_JIRA_SCREEN ORDER BY ID DESC) WHERE ROWNUM = 1")
 		if errLastRecord == nil {
 			var ListScreens []Screen
 			for rowsLastRecord.Next() {
@@ -71,6 +75,38 @@ func (pm *ScreensModel) Create(r io.ReadCloser) ([]Screen, error) {
 		} else {
 			return nil, err
 		}
+	} else {
+		return nil, err
+	}
+}
+
+func (pm *ScreensModel) Update2(r io.ReadCloser, id string) ([]Screen, error) {
+	var myMap map[string]interface{}
+	json.NewDecoder(r).Decode(&myMap)
+	query := UpdateQueryScreen(myMap, id)
+	_, err := DbOracle.Db.Exec(query)
+	if err == nil {
+		query := fmt.Sprintf("select * from NEW_JIRA_SCREEN where ID = '%v'", id)
+		rowsUpdatedtRecord, errUpdatedtRecord :=
+			DbOracle.Db.Query(query)
+		// fmt.Println("********")
+		// fmt.Println(query)
+		// fmt.Println("********")
+		if errUpdatedtRecord == nil {
+			var ListScreens []Screen
+			for rowsUpdatedtRecord.Next() {
+				screen := Screen{}
+				rowsUpdatedtRecord.Scan(&screen.Id, &screen.Name, &screen.Description)
+				ListScreens = append(ListScreens, screen)
+				// fmt.Println("********")
+				// fmt.Println(ListScreens)
+				// fmt.Println("********")
+			}
+			return ListScreens, nil
+		} else {
+			return nil, err
+		}
+
 	} else {
 		return nil, err
 	}
@@ -121,7 +157,9 @@ func UpdateQueryScreen(screen map[string]interface{}, id string) string {
 	} else {
 		Description = ""
 	}
-	query := fmt.Sprintf("UPDATE NEW_JIRA_SCREEN SET NAME = %v, DESCRIPTION = %v WHERE ID = %v", Name, Description, id)
+	query := fmt.Sprintf(
+		"UPDATE NEW_JIRA_SCREEN SET NAME = %v, DESCRIPTION = %v WHERE ID = %v",
+		Name, Description, id)
 	//fmt.Println(query)
 	return query
 }

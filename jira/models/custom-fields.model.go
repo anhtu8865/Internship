@@ -69,16 +69,18 @@ func (pm *CustomFieldsModel) Create(r io.ReadCloser) ([]CustomField, error) {
 	var customField CustomField
 	json.NewDecoder(r).Decode(&customField)
 	// fmt.Println(customField)
-	query := fmt.Sprintf("INSERT INTO NEW_JIRA_CUSTOM_FIELD (ID,NAME,FIELD_TYPE,DESCRIPTION) VALUES (SEQ_NEW_JIRA_CUSTOM_FIELD.nextval, '%v', '%v', '%v')", customField.Name, customField.Field_Type, customField.Description)
-	// query := "INSERT INTO NEW_JIRA_CUSTOM_FIELD (CUSTOM_FIELD_NAME, CUSTOM_FIELD_LEAD, CUSTOM_FIELD_URL, DEFAULT_ASSIGNEE, CUSTOM_FIELD_DESCRIPTION, CUSTOM_FIELD_AVATAR, CUSTOM_FIELD_KEY) VALUES('customField_name92', 41, 'link92', 1, 'description92', 'link92', 'abc') RETURNING CUSTOM_FIELD_ID into v_id"
+	query := fmt.Sprintf(
+		`INSERT INTO NEW_JIRA_CUSTOM_FIELD (ID,NAME,FIELD_TYPE,DESCRIPTION) 
+		VALUES (SEQ_NEW_JIRA_CUSTOM_FIELD.nextval, '%v', '%v', '%v')`,
+		customField.Name, customField.Field_Type, customField.Description)
 	_, err := DbOracle.Db.Exec(query)
 	// fmt.Println(result)
 	// fmt.Println(query)
 	// fmt.Println(result)
 	if err == nil {
-		// var customFields []CustomField
-		// rows.Scan(&customField.CustomField_Id, &customField.CustomField_Name, &customField.CustomField_Lead, &customField.CustomField_Url, &customField.Default_Assignee, &customField.CustomField_Description, &customField.CustomField_Avatar)
-		rowsLastRecord, errLastRecord := DbOracle.Db.Query("SELECT * FROM (SELECT * FROM NEW_JIRA_CUSTOM_FIELD ORDER BY ID DESC) WHERE ROWNUM = 1")
+
+		rowsLastRecord, errLastRecord :=
+			DbOracle.Db.Query("SELECT * FROM (SELECT * FROM NEW_JIRA_CUSTOM_FIELD ORDER BY ID DESC) WHERE ROWNUM = 1")
 		if errLastRecord == nil {
 			var ListCustomFields []CustomField
 			// fmt.Println(rows.Next())
@@ -93,9 +95,6 @@ func (pm *CustomFieldsModel) Create(r io.ReadCloser) ([]CustomField, error) {
 		} else {
 			return nil, err
 		}
-		// customFields = append(customFields, customField)
-
-		// return customFields, nil
 	} else {
 		return nil, err
 	}
@@ -104,9 +103,7 @@ func (pm *CustomFieldsModel) Create(r io.ReadCloser) ([]CustomField, error) {
 func (pm *CustomFieldsModel) Update(r io.ReadCloser, id string) (string, error) {
 	var myMap map[string]interface{}
 	json.NewDecoder(r).Decode(&myMap)
-	//fmt.Println(myMap)
 	query := UpdateQueryCustomField(myMap, id)
-	// query := fmt.Sprintf("UPDATE NEW_JIRA_CUSTOM_FIELD SET CUSTOM_FIELD_NAME = '%v', CUSTOM_FIELD_LEAD = %v, CUSTOM_FIELD_URL = '%v', DEFAULT_ASSIGNEE = %v, CUSTOM_FIELD_DESCRIPTION = '%v', CUSTOM_FIELD_AVATAR = '%v' WHERE CUSTOM_FIELD_ID = '%v'", customField.CustomField_Name, customField.CustomField_Lead, customField.CustomField_Url, customField.Default_Assignee, customField.CustomField_Description, customField.CustomField_Avatar, id)
 
 	row, err := DbOracle.Db.Exec(query)
 
@@ -119,11 +116,9 @@ func (pm *CustomFieldsModel) Update(r io.ReadCloser, id string) (string, error) 
 		}
 		return "Update successfully", nil
 	} else {
-		// fmt.Println(row.RowsAffected())
 		return "", err
 	}
 
-	// return "abc", nil
 }
 
 func (pm *CustomFieldsModel) Delete(id string) ([]CustomField, error) {
@@ -144,11 +139,8 @@ func (pm *CustomFieldsModel) Delete(id string) ([]CustomField, error) {
 }
 
 func UpdateQueryCustomField(customField map[string]interface{}, id string) string {
-	// "UPDATE NEW_JIRA_CUSTOM_FIELD SET CUSTOM_FIELD_NAME = '%v', CUSTOM_FIELD_LEAD = %v, CUSTOM_FIELD_URL = '%v', DEFAULT_ASSIGNEE = %v, CUSTOM_FIELD_DESCRIPTION = '%v', CUSTOM_FIELD_AVATAR = '%v' WHERE CUSTOM_FIELD_ID = '%v'", customField.CustomField_Name, customField.CustomField_Lead, customField.CustomField_Url, customField.Default_Assignee, customField.CustomField_Description, customField.CustomField_Avatar, id)""
-	// "customField.CustomField_Name, customField.CustomField_Lead, customField.CustomField_Url, customField.Default_Assignee, customField.CustomField_Description, customField.CustomField_Avatar"
+
 	var Name, Field_Type, Description string
-	// a := customField["CustomField_Name"]
-	// fmt.Println(a)
 	if customField["Name"] != nil {
 		Name = fmt.Sprintf("'%v'", customField["Name"])
 	} else {
@@ -164,7 +156,8 @@ func UpdateQueryCustomField(customField map[string]interface{}, id string) strin
 	} else {
 		Description = ""
 	}
-	query := fmt.Sprintf("UPDATE NEW_JIRA_CUSTOM_FIELD SET NAME = %v, FIELD_TYPE = %v, DESCRIPTION = %v WHERE ID = %v", Name, Field_Type, Description, id)
+	query := fmt.Sprintf("UPDATE NEW_JIRA_CUSTOM_FIELD SET NAME = %v, FIELD_TYPE = %v, DESCRIPTION = %v WHERE ID = %v",
+		Name, Field_Type, Description, id)
 	//fmt.Println(query)
 	return query
 }
