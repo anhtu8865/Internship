@@ -4,8 +4,8 @@ module.exports = {
     "node": true
   },
   extends: [
-    // 'prettier',
-    // "eslint:recommended",
+    'prettier',
+    //"eslint:recommended",
     'plugin:react/recommended'
   ],
   rules: {
