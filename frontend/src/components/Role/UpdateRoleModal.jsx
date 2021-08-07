@@ -14,8 +14,7 @@ function UpdateRoleModal({ modalDialog }) {
   const dispatch = useAppDispatch()
   const { register, handleSubmit } = useForm()
   const { roleUpdate } = useSelector(rolesSelector)
-  console.log("+++")
-  console.log(roleUpdate)
+
   const { handleClose } = modalDialog
   const onSubmit = (data) => {
     
@@ -33,14 +32,14 @@ function UpdateRoleModal({ modalDialog }) {
           <DialogContent dividers className="mx-12">
             <FormInput
               r={register}
-              name="Role_Name"
+              name="rolenamesub"
              label={'Role Name'}
               value={roleUpdate.Role_Name}
               required
             />
             <FormInput 
               r={register}
-              name="Role_Description"
+              name="roledescription"
               label={'Description'}
               value={roleUpdate.Role_Description}
               required

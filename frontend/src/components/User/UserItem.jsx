@@ -30,8 +30,19 @@ const UserItem = ({ user }) => {
     handleOpen: handleOpenUpdate,
     handleClose: handleCloseUpdate,
   }
-
-
+  let globalrole
+  if(user.Is_Admin == "0" || user.globalrole == "0")
+  {
+    globalrole = "Admin"
+  }
+  if(user.Is_Admin == "1" || user.globalrole == "1")
+  {
+    globalrole = "Trusted"
+  }
+  if(user.Is_Admin == "2" || user.globalrole == "2")
+  {
+    globalrole = "Member"
+  }
   return (
     <>
       <UpdateUserModal modalDialog={modalUpdate} />
@@ -57,6 +68,9 @@ const UserItem = ({ user }) => {
         </td>
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">{user.User_Email}</p>
+        </td>
+        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+          <p className="text-gray-900 whitespace-no-wrap">{globalrole}</p>
         </td>
         {/* <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <Link to="#">

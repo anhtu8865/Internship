@@ -25,8 +25,19 @@ function CreateUser() {
           <FormInput r={register} name="username" label='Username' required />
           <FormInput r={register} name="email" label='Email' required />
           <FormInput r={register} name="password" label='Password' required />
-          <FormInput r={register} name="globalrole" label='Role' required />
-          <div className="w-full mt-10 mb-5 px-10">
+          <div className="grid grid-cols-1 my-4">
+              <label className="uppercase md:text-sm text-xs text-gray-500 text-light">
+                Global Role
+              </label>
+              <select  className="py-2 px-3 rounded-md border border-green-500 mt-2 focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-transparent"
+              {...register("globalrole")}
+              >
+                <option value="0">Admin</option>
+                <option value="1">Trusted</option>
+                <option value="2">Member</option>
+
+              </select>
+            </div>          <div className="w-full mt-10 mb-5 px-10">
             <input type="submit" value="Create User" className="bg-green-600 rounded-md py-2 
             text-white text-xl w-full" />
           </div>

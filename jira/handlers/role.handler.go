@@ -77,7 +77,7 @@ func (rl *RoleHandler) UpdateRole() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var  roledescription, rolenamesub string
 		 id := c.Query("id")
-
+        fmt.Println(id)
 		var myMap map[string]string
 		//req body from client
 		json.NewDecoder(c.Request.Body).Decode(&myMap)

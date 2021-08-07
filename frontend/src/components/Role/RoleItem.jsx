@@ -44,7 +44,7 @@ const RoleItem = ({ role }) => {
                   <p className="text-gray-900 whitespace-no-wrap">
                     <Link to="#">
                       <a className="text-blue-400 whitespace-no-wrap">
-                        {role.Role_Name}
+                        {role.Role_Name|| role.rolenamesub}
                       </a>
                     </Link>
                   </p>
@@ -54,7 +54,7 @@ const RoleItem = ({ role }) => {
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
               <Link to="#">
                 <a className="text-blue-400 whitespace-no-wrap">
-                  {role.Role_Description}
+                  {role.Role_Description || role.roledescription}
                 </a>
               </Link>
             </td>
