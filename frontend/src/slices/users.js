@@ -16,7 +16,7 @@ const usersSlice = createSlice({
       state.users.unshift(action.payload)
     },
     removeUser: (state, action) => {
-      // console.log('remove', action)
+      console.log('remove', action)
       let filteredUser = state.users.filter(
         (user) => user.User_Id !== action.payload
       )

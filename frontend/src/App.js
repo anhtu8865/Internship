@@ -9,6 +9,7 @@ import Layout from "./components/Layout"
 import Projects from './pages/Projects'
 import Users from './pages/UsersManager';
 import Roles from './pages/RolesManager';
+import CreateRole from "./pages/CreateRole"
 function App() {
   // const [isLogged, setIsLogged] = useState(false)
   // useEffect(() => {
@@ -22,6 +23,9 @@ function App() {
         <Route path="/login" component={Login} />
           <Route path="/create-user">
             <CreateUser />
+          </Route>
+          <Route path="/create-roles">
+            <CreateRole />
           </Route>
           <Route path="/projects">
             <Projects />

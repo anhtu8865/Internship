@@ -1,11 +1,7 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import {
-  fetchRoles,
-  rolesSelector,
-} from '../slices/roles'
-// import { fetchRoles, rolesSelector } from '../slices/role'
-// import { Link } from 'react-router-dom'
+import { fetchRoles, rolesSelector } from '../slices/roles'
+import { Link } from 'react-router-dom'
 import RoleItem from '../components/Role/RoleItem'
 import { useAppDispatch } from '../store'
 
@@ -17,7 +13,8 @@ const Roles = () => {
   }, [dispatch])
   const renderRole = () => {
     console.log(roles)
-    return roles.map((role) => <RoleItem key={role.Role_Id} role={role} />)
+    return roles.map((role) => 
+    <RoleItem  key={role.Role_Id} role={role} />)
   }
   if (loading) {
     return (
@@ -32,6 +29,20 @@ const Roles = () => {
       <div className="py-8">
         <div>
           <h2 className="text-2xl font-semibold leading-tight">Project Role</h2>
+        </div>
+        <div className="my-2 flex justify-between sm:flex-row flex-col">
+          <div className="flex">
+            <Link to="/create-roles">
+              <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700">
+                Create role
+              </button>
+            </Link>
+            {/* <Link to="/invite-user">
+              <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700 ml-1">
+                Invite Users
+              </button>
+            </Link> */}
+          </div>
         </div>
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
           <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">

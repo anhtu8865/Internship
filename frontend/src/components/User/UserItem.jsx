@@ -35,7 +35,7 @@ const UserItem = ({ user }) => {
   return (
     <>
       <UpdateUserModal modalDialog={modalUpdate} />
-      <tr>
+      <tr key={user.User_Id}>
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
             <div className="flex-shrink-0 w-10 h-10">

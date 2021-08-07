@@ -2,7 +2,9 @@ import axiosClient from './axiosClient'
 
 const roleApi = {
   getAllRole: () => axiosClient.get("/roles/"),
-  delete: (id) => axiosClient.delete("roles?id=" + id),
+  delete: (id) => axiosClient.delete("/roles?id=" + id),
+  createRole: (data) => axiosClient.post("/roles",data),
+  updateRole:({id,data}) => axiosClient.put("/roles?id="+id,data)
     // login: (body) => axiosClient.post(url, body),
     // create: (data) => axiosClient.post(urlCreateuser, data),
     // update: ({id, data}) => axiosClient.put("/users/admin/update-user?id=" + id, data),

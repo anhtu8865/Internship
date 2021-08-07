@@ -1,7 +1,6 @@
 package routes
 
 import (
-	// "jira/common/middleware/auth"
 
 	. "jira/handlers"
 
@@ -19,9 +18,9 @@ func (rt *RoleRoute) Init(router *gin.Engine){
 	rt.RouterGroup = router.Group(rt.GroupName)
 	{
             rt.RouterGroup.GET("/",rt.GetAllRole())
-			rt.RouterGroup.POST("/",rt.CreateRole())
-			rt.RouterGroup.PUT("/",rt.UpdateRole())
-			rt.RouterGroup.DELETE("/",rt.DeleteRole())
+			rt.RouterGroup.POST("",rt.CreateRole())
+			rt.RouterGroup.PUT("",rt.UpdateRole())
+			rt.RouterGroup.DELETE("",rt.DeleteRole())
 	}
 }
 //get all role 

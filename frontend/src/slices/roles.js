@@ -14,14 +14,14 @@ const rolesSlice = createSlice({
   name: 'roles',
   initialState,
   reducers: {
-    // addRole: (state, action) => {
-    //   state.roles.unshift(action.payload)
-    // },
+    addRole: (state, action) => {
+      state.roles.unshift(action.payload)
+    },
     removeRole: (state, action) => {
       let filteredRole = state.roles.filter(
         (role) => role.Role_Id !== action.payload
       )
-      state.role = filteredRole
+      state.roles = filteredRole
     },
     startLoading: (state) => {        
         state.loading = true
@@ -36,28 +36,29 @@ const rolesSlice = createSlice({
         state.hasErrors = true
     },
     setRoleUpdate:(state,action) =>{
-        state.rolesUpdate = action.payload
+      console.log(state)
+      state.roleUpdate = action.payload
     },
-    // updateRole:(state,action) =>{
-    //     const {id,data} = action.payload
-    //     let newRoles = this.state.roles.map(
-    //         (
-    //             role => (role.Role_Id === id ? {Role_Id: id, ...data} : role)
-    //         ))
-    //     state.roles = newRoles
+    updateRole:(state,action) =>{
+        const {id,data} = action.payload
+        let newRoles = state.roles.map(
+            (
+                role => (role.Role_Id === id ? {Role_Id: id, ...data} : role)
+            ))
+        state.roles = newRoles
 
-    // }
+    }
   },
 })
 
-const { getRoleSuccess,startLoading,getRoleFailure,removeRole} =
+const {addRole, getRoleSuccess,startLoading,getRoleFailure,removeRole} =
 rolesSlice.actions
 
-// const {actions} = rolesSlice
+const {actions} = rolesSlice
 
 //export role
 export const rolesSelector = (state) => state.roles
-// export const rolesUpdateSelector = (state) => state.roleUpdate
+export const rolesUpdateSelector = (state) => state.roleUpdate
 
 // export The reducer
 const roleReducer = rolesSlice.reducer
@@ -80,16 +81,53 @@ export const fetchRoles = () => async(dispatch) =>{
     })
 
 }
-
+//create role 
+export const createRole = (Role) => async(dispatch) =>{
+    console.log(Role)
+    roleApi
+    .createRole(Role)
+    .then((res)=>{
+      dispatch(addRole(Role))
+      return res
+    }).catch((err)=>{
+      alert(err.response.data.Msg)
+      dispatch(getRoleFailure())
+    })
+  
+}
 export const deleteRole = (id) => async(dispatch) =>{
   roleApi
   .delete(id)
   .then((res)=>{
     dispatch(removeRole(id))
-    return(res)
+    console.log(res)
   })
   .catch((err)=>{
     dispatch(getRoleFailure())
     return(err)
+  })
+}
+
+export const setRoleUpdate = (role) => async(dispatch) =>{
+  try {
+    console.log("=====")
+    console.log(role)
+    dispatch(actions.setRoleUpdate(role))
+  } catch (error) {
+    dispatch(getRoleFailure())
+
+  }
+}
+
+export const updateRole = (role) => async(dispatch) =>{
+  roleApi
+  .updateRole(role)
+  .then((res)=>{
+    dispatch(actions.updateRole(role))
+    return res
+  })
+  .catch((err)=>{
+    dispatch(getRoleFailure())
+    return err
   })
 }
