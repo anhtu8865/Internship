@@ -20,13 +20,12 @@ func init() {
 	routes = append(routes,
 		// ************add new route
 		&UserRouter,
-
 		//&IssueRouter,
 		//&ScreenRouter,
 		//&FieldRouter,
 		//&ScrFieldRouter,
 		//&ProScreenRouter,
-
+		&RoleRouter,
 		&ProjectsRouter,
 		&CustomFieldsRouter,
 		&ScreensRouter,

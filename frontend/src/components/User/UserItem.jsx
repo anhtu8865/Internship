@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
 import { deleteUser, setUserUpdate } from '../../slices/users'
 import UpdateUserModal from './UpdateUserModal';
@@ -30,16 +30,27 @@ const UserItem = ({ user }) => {
     handleOpen: handleOpenUpdate,
     handleClose: handleCloseUpdate,
   }
-
-
+  let globalrole
+  if(user.Is_Admin == "0" || user.globalrole == "0")
+  {
+    globalrole = "Admin"
+  }
+  if(user.Is_Admin == "1" || user.globalrole == "1")
+  {
+    globalrole = "Trusted"
+  }
+  if(user.Is_Admin == "2" || user.globalrole == "2")
+  {
+    globalrole = "Member"
+  }
   return (
     <>
       <UpdateUserModal modalDialog={modalUpdate} />
-      <tr>
+      <tr key={user.User_Id}>
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
             <div className="flex-shrink-0 w-10 h-10">
-              <img
+           <img
                 className="w-full h-full rounded-full"
                 src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
                 alt=""
@@ -47,7 +58,7 @@ const UserItem = ({ user }) => {
             </div>
             <div className="ml-3">
               <p className="text-gray-900 whitespace-no-wrap">
-                {user.User_Full_Name}
+                {user.User_Full_Name || user.fullname}
               </p>
             </div>
           </div>
@@ -59,10 +70,13 @@ const UserItem = ({ user }) => {
           <p className="text-gray-900 whitespace-no-wrap">{user.User_Email}</p>
         </td>
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+          <p className="text-gray-900 whitespace-no-wrap">{globalrole}</p>
+        </td>
+        {/* <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <Link to="#">
             <a className="text-blue-400 whitespace-no-wrap">DEV ASAM</a>
           </Link>
-        </td>
+        </td> */}
         <td className="px-5 py-5 border-b text-center border-gray-200 bg-white text-sm">
           <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
             <span

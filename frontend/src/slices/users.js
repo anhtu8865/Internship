@@ -5,7 +5,7 @@ export const initialState = {
   loading: false,
   hasErrors: false,
   users: [],
-  userUpdate: {}
+  userUpdate: {},
 }
 // A slice
 const usersSlice = createSlice({
@@ -15,9 +15,11 @@ const usersSlice = createSlice({
     addUser: (state, action) => {
       state.users.unshift(action.payload)
     },
-    removeUser: (state,  action) => {
+    removeUser: (state, action) => {
       console.log('remove', action)
-      let filteredUser = state.users.filter((user) => user.User_Id !== action.payload)
+      let filteredUser = state.users.filter(
+        (user) => user.User_Id !== action.payload
+      )
       state.users = filteredUser
     },
     startLoading: (state) => {
@@ -25,7 +27,6 @@ const usersSlice = createSlice({
     },
     getUsersSuccess: (state, action) => {
       state.users = action.payload
-      console.log(state.users.length);
       state.loading = false
       state.hasErrors = false
     },
@@ -39,11 +40,11 @@ const usersSlice = createSlice({
     },
     updateUser: (state, action) => {
       const { id, data } = action.payload
-      console.log(data);
-      let newUsers = state.users.map(user => (user.User_Id === id ? {User_Id: id, ...data} : user))
-      console.log(newUsers);
+      let newUsers = state.users.map((user) =>
+        user.User_Id === id ? { User_Id: id, ...data } : user
+      )
       state.users = newUsers
-    }
+    },
   },
 })
 
@@ -65,12 +66,14 @@ export const fetchUsers = () => async (dispatch) => {
   userApi
     .getAll()
     .then((res) => {
-      console.log(res)
+      // console.log("oke")
+      // console.log(res)
       if (res.Data) dispatch(getUsersSuccess(res.Data))
     })
     .catch((err) => {
-      console.log(err)
+      // console.log(err)
       dispatch(getUsersFailure())
+      return err
     })
 }
 
@@ -84,19 +87,20 @@ export const createUser = (User) => async (dispatch) => {
 
 export const deleteUser = (id) => async (dispatch) => {
   userApi
-  .delete(id)
-  .then((res) => {
-    console.log(res)
-    dispatch(removeUser(id))
-  })
-  .catch((err) => {
-    console.log(err)
-    dispatch(getUsersFailure())
-  })
+    .delete(id)
+    .then((res) => {
+      console.log(res)
+      dispatch(removeUser(id))
+    })
+    .catch((err) => {
+      console.log(err)
+      dispatch(getUsersFailure())
+    })
 }
 
 export const setUserUpdate = (User) => async (dispatch) => {
   try {
+    console.log(User)
     dispatch(actions.setUserUpdate(User))
   } catch (error) {
     dispatch(getUsersFailure())
@@ -105,13 +109,13 @@ export const setUserUpdate = (User) => async (dispatch) => {
 
 export const updateUser = (data) => async (dispatch) => {
   userApi
-  .update(data)
-  .then((res) => {
-    console.log(res)
-    dispatch(actions.updateUser(data))
-  })
-  .catch((err) => {
-    console.log(err)
-    dispatch(getUsersFailure())
-  })
+    .update(data)
+    .then((res) => {
+      dispatch(actions.updateUser(data))
+      return res
+    })
+    .catch((err) => {
+      dispatch(getUsersFailure())
+      return err
+    })
 }
