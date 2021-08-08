@@ -19,7 +19,7 @@ const Projects = () => {
   }, [dispatch])
   const renderProjects = () => {
     return projects.map((project) => (
-      <ProjectItem key={project.Project_Id} project={project} />
+      <ProjectItem key={project.ProjectKey} project={project} />
     ))
   }
 
@@ -155,7 +155,7 @@ const Projects = () => {
               <thead>
                 <tr>
                   <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Name
+                    Name Project
                   </th>
                   <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Key
@@ -167,7 +167,7 @@ const Projects = () => {
                     Project Lead
                   </th>
                   <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Default Assignee
+                    Workflow
                   </th>
                   <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Action

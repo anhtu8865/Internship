@@ -8,14 +8,14 @@ import { projectsSelector, updateProject } from '../../slices/projects'
 import { DialogActions, DialogContent } from '../DialogModal';
 import Button from '@material-ui/core/Button'
 
-function UpdateProjectModal({ modalDialog }) {
+function ViewProject({ modalDialog }) {
   const dispatch = useAppDispatch()
   const { register, handleSubmit } = useForm()
   const { projectUpdate } = useSelector(projectsSelector)
   const { handleClose } = modalDialog
   const onSubmit = (formData) => {
     const data = Object.assign({}, projectUpdate, formData)
-    
+    console.log(data);
     alert(projectUpdate)
     dispatch(updateProject({key: projectUpdate.ProjectKey, data}))
     handleClose()
@@ -77,4 +77,4 @@ function UpdateProjectModal({ modalDialog }) {
   )
 }
 
-export default UpdateProjectModal
+export default ViewProject

@@ -71,7 +71,7 @@ func (is *IssueModel) Get() ([]Issue, error) {
 
 func (is *IssueModel) GetById(id string) ([]Issue, error) {
 	var temp_issue_ []Issue
-	rows, err := DbOracle.Db.Query("select * from JIRA_USER WHWRE ISSUE_ID='%v'", id)
+	rows, err := DbOracle.Db.Query("select * from JIRA_USER WHERE ISSUE_ID='%v'", id)
 
 	if err != nil {
 		return nil, err

@@ -17,7 +17,7 @@ const projectsSlice = createSlice({
     },
     removeProject: (state,  action) => {
       console.log('remove', action)
-      let filteredProject = state.projects.filter((project) => project.ProjectId !== action.payload)
+      let filteredProject = state.projects.filter((project) => project.ProjectKey !== action.payload)
       state.projects = filteredProject
     },
     startLoading: (state) => {
@@ -38,9 +38,12 @@ const projectsSlice = createSlice({
       state.projectUpdate = action.payload
     },
     updateProject: (state, action) => {
-      const { id, data } = action.payload
-      let newProjects = state.projects.map(project => (project.ProjectId === id ? {ProjectId: id, ...data} : project))
+      const { key, data } = action.payload
+      console.log(data);
+      let newProjects = state.projects.map(project => (project.ProjectKey === key ? {ProjectKey: key, ...data} : project))
+      console.log(newProjects);
       state.projects = newProjects
+
     }
   },
 })
@@ -73,28 +76,31 @@ export const fetchProjects = () => async (dispatch) => {
 }
 
 export const createProject = (project) => async (dispatch) => {
-  delete project.DefaultAssignee
-  project.ProjectLead = Number(project.ProjectLead)
+  
   projectApi
   .create(project)
   .then((res) => {
     console.log(res)
     dispatch(actions.addProject(project))
+    
   })
   .catch((err) => {
     alert(err.response.data.Msg)
+         //NEW
   })
 }
 
-export const deleteProject = (id) => async (dispatch) => {
+export const deleteProject = (key) => async (dispatch) => {
   projectApi
-  .delete(id)
+  .delete(key)
   .then((res) => {
     console.log(res)
-    dispatch(removeProject(id))
+    dispatch(removeProject(key))
   })
   .catch((err) => {
+    console.log(err)
     alert(err.response.data.Msg)
+            //NEW
   })
 }
 
@@ -114,6 +120,9 @@ export const updateProject = (data) => async (dispatch) => {
     dispatch(actions.updateProject(data))
   })
   .catch((err) => {
+    console.log(err)
     alert(err.response.data.Msg)
+      
+  
   })
 }

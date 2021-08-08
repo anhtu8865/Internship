@@ -20,7 +20,7 @@ func init() {
 	routes = append(routes,
 		&UserRouter,
 		&IssueRouter,
-		&ScreenRouter,
+		//&ScreenRouter,
 		&FieldRouter,
 		&ScrFieldRouter,
 		&ProScreenRouter,
