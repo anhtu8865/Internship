@@ -8,6 +8,12 @@ import Home from "./pages/Home"
 import Layout from "./components/Layout"
 import Projects from './pages/Projects'
 import Users from './pages/Users';
+import {Screens} from './pages/Screens';
+import { UpdateScreenForm} from './components/Screen/UpdateScreenForm'
+import { AddScreenForm} from './components/Screen/AddScreenForm'
+import {CustomFields} from './pages/CustomFields';
+import { UpdateCustomFieldForm} from './components/CustomField/UpdateCustomFieldForm'
+import { AddCustomFieldForm} from './components/CustomField/AddCustomFieldForm'
 
 function App() {
   // const [isLogged, setIsLogged] = useState(false)
@@ -26,6 +32,24 @@ function App() {
           <Route path="/projects">
             <Projects />
           </Route>
+          <Route path="/screens">
+            <Screens />
+          </Route>
+          <Route path="/addScreen">
+            <AddScreenForm />
+          </Route>
+          <Route exact path="/editScreen/:screenId" component={UpdateScreenForm} />
+
+
+          <Route path="/customFields">
+            <CustomFields />
+          </Route>
+          <Route path="/addCustomField">
+            <AddCustomFieldForm />
+          </Route>
+          <Route exact path="/editCustomField/:customFieldId" component={UpdateCustomFieldForm} />
+
+
           <Route path="/user-manager">
             <Users></Users>
           </Route>
