@@ -80,38 +80,6 @@ func (pm *ScreensModel) Create(r io.ReadCloser) ([]Screen, error) {
 	}
 }
 
-func (pm *ScreensModel) Update2(r io.ReadCloser, id string) ([]Screen, error) {
-	var myMap map[string]interface{}
-	json.NewDecoder(r).Decode(&myMap)
-	query := UpdateQueryScreen(myMap, id)
-	_, err := DbOracle.Db.Exec(query)
-	if err == nil {
-		query := fmt.Sprintf("select * from NEW_JIRA_SCREEN where ID = '%v'", id)
-		rowsUpdatedtRecord, errUpdatedtRecord :=
-			DbOracle.Db.Query(query)
-		// fmt.Println("********")
-		// fmt.Println(query)
-		// fmt.Println("********")
-		if errUpdatedtRecord == nil {
-			var ListScreens []Screen
-			for rowsUpdatedtRecord.Next() {
-				screen := Screen{}
-				rowsUpdatedtRecord.Scan(&screen.Id, &screen.Name, &screen.Description)
-				ListScreens = append(ListScreens, screen)
-				// fmt.Println("********")
-				// fmt.Println(ListScreens)
-				// fmt.Println("********")
-			}
-			return ListScreens, nil
-		} else {
-			return nil, err
-		}
-
-	} else {
-		return nil, err
-	}
-}
-
 func (pm *ScreensModel) Update(r io.ReadCloser, id string) (string, error) {
 	var myMap map[string]interface{}
 	json.NewDecoder(r).Decode(&myMap)
@@ -125,23 +93,6 @@ func (pm *ScreensModel) Update(r io.ReadCloser, id string) (string, error) {
 		return "Update successfully", nil
 	} else {
 		return "", err
-	}
-}
-
-func (pm *ScreensModel) Delete(id string) ([]Screen, error) {
-	var screen Screen
-	query := fmt.Sprintf("DELETE FROM NEW_JIRA_SCREEN WHERE ID = %v", id)
-	row, err := DbOracle.Db.Exec(query)
-	if err == nil {
-		var screens []Screen
-		screens = append(screens, screen)
-		rowsAffect, _ := row.RowsAffected()
-		if rowsAffect == 0 {
-			return nil, errors.New("no row affect")
-		}
-		return screens, nil
-	} else {
-		return nil, err
 	}
 }
 
@@ -162,4 +113,53 @@ func UpdateQueryScreen(screen map[string]interface{}, id string) string {
 		Name, Description, id)
 	//fmt.Println(query)
 	return query
+}
+
+func (pm *ScreensModel) Update2(r io.ReadCloser, id string) ([]Screen, error) {
+	var myMap map[string]interface{}
+	json.NewDecoder(r).Decode(&myMap)
+	query := UpdateQueryScreen(myMap, id)
+	row, err := DbOracle.Db.Exec(query)
+	fmt.Println(query)
+	if err == nil {
+		rowsAffect, _ := row.RowsAffected()
+		if rowsAffect == 0 {
+			return nil, errors.New("no row affect")
+		}
+		query := fmt.Sprintf("select * from NEW_JIRA_SCREEN where ID = '%v'", id)
+		rowsUpdatedtRecord, errUpdatedtRecord :=
+			DbOracle.Db.Query(query)
+		if errUpdatedtRecord == nil {
+			var ListScreens []Screen
+			for rowsUpdatedtRecord.Next() {
+				screen := Screen{}
+				rowsUpdatedtRecord.Scan(&screen.Id, &screen.Name, &screen.Description)
+				ListScreens = append(ListScreens, screen)
+			}
+			return ListScreens, nil
+		} else {
+			return nil, err
+		}
+
+	} else {
+		return nil, err
+	}
+}
+
+func (pm *ScreensModel) Delete(id string) ([]Screen, error) {
+	screens, err := ScreensModels.GetById(id)
+	if err != nil {
+		return nil, err
+	}
+	query := fmt.Sprintf("DELETE FROM NEW_JIRA_SCREEN WHERE ID = %v", id)
+	row, err := DbOracle.Db.Exec(query)
+	if err == nil {
+		rowsAffect, _ := row.RowsAffected()
+		if rowsAffect == 0 {
+			return nil, errors.New("no row affect")
+		}
+		return screens, nil
+	} else {
+		return nil, err
+	}
 }

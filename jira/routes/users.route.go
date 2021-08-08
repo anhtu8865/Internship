@@ -2,7 +2,7 @@ package routes
 
 import (
 	"jira/common/middleware/auth"
-	
+
 	. "jira/handlers"
 
 	"github.com/gin-gonic/gin"
@@ -21,10 +21,10 @@ func (u *UserRoute) Init(router *gin.Engine) {
 		//u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
 		// u.RouterGroup.POST("/", u.Signin())
 		u.RouterGroup.POST("/sign-up", u.Signup())
-		u.RouterGroup.GET("/",auth.CheckUserLoged, u.Index())
+		u.RouterGroup.GET("/", auth.CheckUserLoged, u.Index())
 		u.RouterGroup.DELETE("/delete-user", u.DeleteUser())
-		u.RouterGroup.PUT("/admin/update-user",u.UpdateUserByAdmin())
-		u.RouterGroup.POST("/",u.Singin())
+		u.RouterGroup.PUT("/admin/update-user", u.UpdateUserByAdmin())
+		u.RouterGroup.POST("/", u.Singin())
 		// u.RouterGroup.PUT("/:id", auth.CheckUserLoged, auth.CheckAdmin, u.UpdateUser())
 		// u.RouterGroup.DELETE("/:id", auth.CheckUserLoged, auth.CheckAdmin, u.DeleteUser())
 	}
@@ -34,22 +34,27 @@ func (u *UserRoute) Init(router *gin.Engine) {
 func (u *UserRoute) Signup() gin.HandlerFunc {
 	return UserHandlers.CreateUser()
 }
-//View All User 
+
+//View All User
 func (u *UserRoute) Index() gin.HandlerFunc {
 	return UserHandlers.Index()
 }
+
 //Delete User
-func (u *UserRoute) DeleteUser() gin.HandlerFunc{
-   return UserHandlers.DeleteUser()
+func (u *UserRoute) DeleteUser() gin.HandlerFunc {
+	return UserHandlers.DeleteUser()
 }
+
 //Update User by Admin
-func (u *UserRoute) UpdateUserByAdmin() gin.HandlerFunc{
+func (u *UserRoute) UpdateUserByAdmin() gin.HandlerFunc {
 	return UserHandlers.UpdateUser()
 }
-//Login User 
-func (u *UserRoute) Singin() gin.HandlerFunc{
+
+//Login User
+func (u *UserRoute) Singin() gin.HandlerFunc {
 	return UserHandlers.Singin()
 }
+
 // func (u *UserRoute) UpdateUser() gin.HandlerFunc {
 // 	//u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
 // 	return UserHandlers.UpdateUser()

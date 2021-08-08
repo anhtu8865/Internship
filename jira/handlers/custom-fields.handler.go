@@ -24,7 +24,7 @@ func (u *CustomFieldsHandler) Get() gin.HandlerFunc {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
 				Msg:  err.Error(),
-				Data: customFields,
+				Data: nil,
 			}
 			c.JSON(http.StatusNotFound,
 				response,
@@ -78,7 +78,7 @@ func (u *CustomFieldsHandler) Create() gin.HandlerFunc {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
 				Msg:  err.Error(),
-				Data: customFields,
+				Data: nil,
 			}
 			c.JSON(http.StatusNotFound,
 				response,
@@ -86,13 +86,12 @@ func (u *CustomFieldsHandler) Create() gin.HandlerFunc {
 		} else {
 			response := MessageResponse{
 				Msg:  "Successful",
-				Data: customFields,
+				Data: customFields[0],
 			}
 			c.JSON(http.StatusCreated,
 				response,
 			)
 		}
-
 		// json.NewDecoder(c.Request.Body).Decode(&book)
 		// fmt.Println(c.Request.Body)
 	}
@@ -102,7 +101,8 @@ func (u *CustomFieldsHandler) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
 		body := c.Request.Body
-		message, err := models.CustomFieldsModels.Update(body, id)
+		customFields, err := models.CustomFieldsModels.Update(body, id)
+
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
@@ -114,23 +114,20 @@ func (u *CustomFieldsHandler) Update() gin.HandlerFunc {
 			)
 		} else {
 			response := MessageResponse{
-				Msg:  message,
-				Data: nil,
+				Msg:  "Successful",
+				Data: customFields[0],
 			}
-			c.JSON(http.StatusOK,
+			c.JSON(http.StatusCreated,
 				response,
 			)
 		}
-
-		// json.NewDecoder(c.Request.Body).Decode(&book)
-
 	}
 }
 
 func (u *CustomFieldsHandler) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
-		_, err := models.CustomFieldsModels.Delete(id)
+		customFields, err := models.CustomFieldsModels.Delete(id)
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
@@ -143,7 +140,7 @@ func (u *CustomFieldsHandler) Delete() gin.HandlerFunc {
 		} else {
 			response := MessageResponse{
 				Msg:  "Delete Successfully!",
-				Data: nil,
+				Data: customFields[0],
 			}
 			c.JSON(http.StatusOK,
 				response,

@@ -19,7 +19,7 @@ func (u *CustomFieldsRoute) Init(router *gin.Engine) {
 	{
 		u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
 		u.RouterGroup.GET("/", u.Get())
-		u.RouterGroup.GET("/:id", u.GetById())
+		//u.RouterGroup.GET("/:id", u.GetById())
 		u.RouterGroup.POST("/", u.Create())
 		u.RouterGroup.PUT("/:id", u.Update())
 		u.RouterGroup.DELETE("/:id", u.Delete())
