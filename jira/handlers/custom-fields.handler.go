@@ -9,22 +9,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var ScreensHandlers = ScreensHandler{}
+var CustomFieldsHandlers = CustomFieldsHandler{}
 
-type ScreensHandler struct {
+type CustomFieldsHandler struct {
 }
 
-func (u *ScreensHandler) Get() gin.HandlerFunc {
+func (u *CustomFieldsHandler) Get() gin.HandlerFunc {
 	//Do everything here, call model etc...
 
 	return func(c *gin.Context) {
 		// loggers.Logger.Println("get a get request")
-		screens, err := models.ScreensModels.Get()
+		customFields, err := models.CustomFieldsModels.Get()
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
 				Msg:  err.Error(),
-				Data: screens,
+				Data: customFields,
 			}
 			c.JSON(http.StatusNotFound,
 				response,
@@ -32,7 +32,7 @@ func (u *ScreensHandler) Get() gin.HandlerFunc {
 		} else {
 			response := MessageResponse{
 				Msg:  "Successful",
-				Data: screens,
+				Data: customFields,
 			}
 			c.JSON(http.StatusOK,
 				response,
@@ -42,16 +42,16 @@ func (u *ScreensHandler) Get() gin.HandlerFunc {
 	}
 }
 
-func (u *ScreensHandler) GetById() gin.HandlerFunc {
+func (u *CustomFieldsHandler) GetById() gin.HandlerFunc {
 	//Do everything here, call model etc...
 	return func(c *gin.Context) {
 		id := c.Param("id")
-		screens, err := models.ScreensModels.GetById(id)
+		customFields, err := models.CustomFieldsModels.GetById(id)
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
 				Msg:  err.Error(),
-				Data: screens,
+				Data: customFields,
 			}
 			c.JSON(http.StatusNotFound,
 				response,
@@ -59,7 +59,7 @@ func (u *ScreensHandler) GetById() gin.HandlerFunc {
 		} else {
 			response := MessageResponse{
 				Msg:  "Successful",
-				Data: screens,
+				Data: customFields,
 			}
 			c.JSON(http.StatusOK,
 				response,
@@ -69,16 +69,16 @@ func (u *ScreensHandler) GetById() gin.HandlerFunc {
 	}
 }
 
-func (u *ScreensHandler) Create() gin.HandlerFunc {
+func (u *CustomFieldsHandler) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		body := c.Request.Body
-		screens, err := models.ScreensModels.Create(body)
+		customFields, err := models.CustomFieldsModels.Create(body)
 
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
 				Msg:  err.Error(),
-				Data: screens,
+				Data: customFields,
 			}
 			c.JSON(http.StatusNotFound,
 				response,
@@ -86,7 +86,7 @@ func (u *ScreensHandler) Create() gin.HandlerFunc {
 		} else {
 			response := MessageResponse{
 				Msg:  "Successful",
-				Data: screens,
+				Data: customFields,
 			}
 			c.JSON(http.StatusCreated,
 				response,
@@ -98,40 +98,11 @@ func (u *ScreensHandler) Create() gin.HandlerFunc {
 	}
 }
 
-func (u *ScreensHandler) Update2() gin.HandlerFunc {
+func (u *CustomFieldsHandler) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
 		body := c.Request.Body
-		screens, err := models.ScreensModels.Update2(body, id)
-
-		if err != nil {
-			loggers.Logger.Errorln(err.Error())
-			response := MessageResponse{
-				Msg:  err.Error(),
-				Data: screens,
-			}
-			c.JSON(http.StatusNotFound,
-				response,
-			)
-		} else {
-			response := MessageResponse{
-				Msg:  "Successful",
-				Data: screens,
-			}
-			c.JSON(http.StatusCreated,
-				response,
-			)
-		}
-
-		// json.NewDecoder(c.Request.Body).Decode(&book)
-
-	}
-}
-func (u *ScreensHandler) Update() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id := c.Param("id")
-		body := c.Request.Body
-		message, err := models.ScreensModels.Update(body, id)
+		message, err := models.CustomFieldsModels.Update(body, id)
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
@@ -156,10 +127,10 @@ func (u *ScreensHandler) Update() gin.HandlerFunc {
 	}
 }
 
-func (u *ScreensHandler) Delete() gin.HandlerFunc {
+func (u *CustomFieldsHandler) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
-		_, err := models.ScreensModels.Delete(id)
+		_, err := models.CustomFieldsModels.Delete(id)
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{

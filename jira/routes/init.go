@@ -18,13 +18,16 @@ var routes []Route
 
 func init() {
 	routes = append(routes,
+		// ************add new route
 		&UserRouter,
-		&IssueRouter,
-		&ScreenRouter,
-		&FieldRouter,
-		&ScrFieldRouter,
-		&ProScreenRouter,
+		//&IssueRouter,
+		//&ScreenRouter,
+		//&FieldRouter,
+		//&ScrFieldRouter,
+		//&ProScreenRouter,
 		&ProjectsRouter,
+		&CustomFieldsRouter,
+		&ScreensRouter,
 	)
 }
 

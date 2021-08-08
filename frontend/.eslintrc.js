@@ -5,8 +5,8 @@ module.exports = {
   },
   extends: [
     'prettier',
-    "eslint:recommended",
-    "plugin:react/recommended"
+    //"eslint:recommended",
+    'plugin:react/recommended'
   ],
   rules: {
     'no-console': 'off',
