@@ -42,7 +42,7 @@ function UpdateRoleModal({ modalDialog }) {
               name="roledescription"
               label={'Description'}
               value={roleUpdate.Role_Description}
-              required
+              
             />
           </DialogContent>
           <DialogActions>
