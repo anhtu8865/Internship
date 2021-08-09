@@ -17,7 +17,7 @@ import { AddCustomFieldForm} from './components/CustomField/AddCustomFieldForm'
 import Users from './pages/UsersManager';
 import Roles from './pages/RolesManager';
 import CreateRole from "./pages/CreateRole"
-
+import PermissionManager from './pages/PermissionManager';
 function App() {
  
 
@@ -58,6 +58,9 @@ function App() {
           </Route>
           <Route path="/roles-manager">
             <Roles></Roles>
+          </Route>
+          <Route path="/permission-manager">
+              <PermissionManager></PermissionManager>
           </Route>
           <Route exact path="/">
             <Home />
