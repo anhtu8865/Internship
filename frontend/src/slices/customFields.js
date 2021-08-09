@@ -37,7 +37,6 @@ export const addNewCustomField = createAsyncThunk(
       .catch(function (error) {
         console.log(error)
       })
-    //console.log(response.customField)
     return response
   }
 )
@@ -55,7 +54,6 @@ export const updateCustomField = createAsyncThunk(
       .catch(function (error) {
         console.log(error)
       })
-    //console.log(response.customField)
     return response
   }
 )
@@ -64,7 +62,6 @@ export const deleteCustomField = createAsyncThunk(
   'customFields/deleteCustomField',
   async (initialCustomField) => {
     const { Id } = initialCustomField
-    //console.log(Id)
     const response = await customFieldApi
       .delete(Id)
       .then(function (response) {
@@ -74,7 +71,6 @@ export const deleteCustomField = createAsyncThunk(
       .catch(function (error) {
         console.log(error)
       })
-    //console.log(response.customField)
     return response
   }
 )
@@ -89,25 +85,31 @@ const customFieldsSlice = createSlice({
     },
     [fetchCustomFields.fulfilled]: (state, action) => {
       state.status = 'succeeded'
-      // Add any fetched customFields to the array
       state.customFields = state.customFields.concat(action.payload.Data)
-      //   console.log("mới nè")
-      //   console.log(state.customFields)
     },
     [fetchCustomFields.rejected]: (state, action) => {
       state.status = 'failed'
       state.error = action.payload.Msg
     },
     [addNewCustomField.fulfilled]: (state, action) => {
-      state.customFields.push(...action.payload.Data)
+      state.customFields.push(action.payload.Data)
     },
     [updateCustomField.fulfilled]: (state, action) => {
-      state.customFields = []
-      state.status = 'idle'
+      const newCustomField = action.payload.Data
+      const existingCustomField = state.customFields.find(
+        (customField) => customField.Id == newCustomField.Id
+      )
+      if (existingCustomField) {
+        existingCustomField.Name = newCustomField.Name
+        existingCustomField.Field_Type = newCustomField.Field_Type
+        existingCustomField.Description = newCustomField.Description
+      }
     },
     [deleteCustomField.fulfilled]: (state, action) => {
-      state.customFields = []
-      state.status = 'idle'
+      const returnedCustomField = action.payload.Data
+      state.customFields = state.customFields.filter(
+        (customField) => customField.Id != returnedCustomField.Id
+      )
     },
   },
 })

@@ -16,14 +16,15 @@ export const UpdateScreenForm = ({ match }) => {
   const onNameChanged = (e) => setName(e.target.value)
   const onDescriptionChanged = (e) => setDescription(e.target.value)
 
-  const canSave =
-    [name].every(Boolean) && updateRequestStatus === 'idle'
+  const canSave = [name].every(Boolean) && updateRequestStatus === 'idle'
 
   const onSaveScreenClicked = async () => {
     if (canSave) {
       try {
         setUpdateRequestStatus('pending')
-        const resultAction = await dispatch(updateScreen({Id: screenId, Name:name, Description:description }))
+        const resultAction = await dispatch(
+          updateScreen({ Id: screenId, Name: name, Description: description })
+        )
         unwrapResult(resultAction)
         setName('')
         setDescription('')

@@ -103,7 +103,7 @@ const screensSlice = createSlice({
     },
     [updateScreen.fulfilled]: (state, action) => {
       const newScreen = action.payload.Data
-      console.log(newScreen)
+      //console.log(newScreen)
       const existingScreen = state.screens.find(
         (screen) => screen.Id == newScreen.Id
       )
@@ -113,8 +113,10 @@ const screensSlice = createSlice({
       }
     },
     [deleteScreen.fulfilled]: (state, action) => {
-      state.screens = [],
-      state.status = 'idle'
+      const returnedScreen = action.payload.Data
+      state.screens = state.screens.filter(
+        (screen) => screen.Id != returnedScreen.Id
+      )
     },
   },
 })
