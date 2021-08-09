@@ -20,9 +20,8 @@ export const AddScreenForm = () => {
   const onSaveScreenClicked = async () => {
     if (canSave) {
       try {
-        console.log({ name, description })
         setAddRequestStatus('pending')
-        const resultAction = await dispatch(addNewScreen({ name, description }))
+        const resultAction = await dispatch(addNewScreen({Name: name, Description: description}))
         unwrapResult(resultAction)
         setName('')
         setDescription('')

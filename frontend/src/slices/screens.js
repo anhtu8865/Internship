@@ -99,11 +99,11 @@ const screensSlice = createSlice({
       state.error = action.payload.Msg
     },
     [addNewScreen.fulfilled]: (state, action) => {
-      state.screens.push(...action.payload.Data)
+      state.screens.push(action.payload.Data)
     },
     [updateScreen.fulfilled]: (state, action) => {
-      const newScreen = { ...action.payload.Data[0] }
-      //console.log(newScreen)
+      const newScreen = action.payload.Data
+      console.log(newScreen)
       const existingScreen = state.screens.find(
         (screen) => screen.Id == newScreen.Id
       )
