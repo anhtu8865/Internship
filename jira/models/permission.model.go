@@ -42,3 +42,31 @@ func (pr *PermissionModel) GetAllPermission() ([]Permission,error){
 	}
 }
 
+//getPermission and role
+
+// func (pr *PermissionModel) GetAllPermissionRole() ([]Permission,error){
+// 	var temp_permission []Permission
+// 	//sql
+// 	smt := `SELECT * FROM NEW_JIRA_PERMISSION WHERE `
+// 	rows, err := DbOracle.Db.Query(smt)
+// 	if err == nil{
+//             for rows.Next(){
+// 				permission := Permission{}
+// 				rows.Scan(
+// 					&permission.PermissionId,
+// 					&permission.PermissionName,
+// 					&permission.PermissionType,
+// 					&permission.PermissionDescription,
+// 				)
+// 				temp_permission = append(temp_permission, permission)
+
+// 			}
+// 			return temp_permission,nil
+// 	} else{
+// 		return nil,err
+// 	}
+// }
+
+
+
+

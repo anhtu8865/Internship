@@ -100,7 +100,6 @@ export const deleteUser = (id) => async (dispatch) => {
 
 export const setUserUpdate = (User) => async (dispatch) => {
   try {
-    console.log(User)
     dispatch(actions.setUserUpdate(User))
   } catch (error) {
     dispatch(getUsersFailure())

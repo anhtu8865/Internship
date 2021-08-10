@@ -16,7 +16,7 @@ func (pr *PermissionRoute) Init(router *gin.Engine){
 	pr.RouterGroup = router.Group(pr.GroupName)
 	{
 
-	pr.RouterGroup.GET("",pr.GetAllRouter())
+	pr.RouterGroup.GET("/",pr.GetAllRouter())
 	
 	}
 }

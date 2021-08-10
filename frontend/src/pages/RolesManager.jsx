@@ -12,7 +12,6 @@ const Roles = () => {
     dispatch(fetchRoles())
   }, [dispatch])
   const renderRole = () => {
-    console.log(roles)
     return roles.map((role) => 
     <RoleItem  key={role.Role_Id} role={role} />)
   }

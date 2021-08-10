@@ -30,6 +30,7 @@ func init() {
 		&CustomFieldsRouter,
 		&ScreensRouter,
 		&PermissionRouter,
+		&PermissionRoleRouter,
 	)
 }
 

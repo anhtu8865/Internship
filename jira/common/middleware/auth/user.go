@@ -1,9 +1,8 @@
 package auth
 
 import (
-	
-	"jira/common/helpers"
 	"jira/models"
+	"jira/common/helpers"
 	"net/http"
 	"strings"
 	"github.com/dgrijalva/jwt-go"

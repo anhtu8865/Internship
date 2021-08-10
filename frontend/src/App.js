@@ -18,6 +18,7 @@ import Users from './pages/UsersManager';
 import Roles from './pages/RolesManager';
 import CreateRole from "./pages/CreateRole"
 import PermissionManager from './pages/PermissionManager';
+import DetailPermission from './pages/DetailPermission';
 function App() {
  
 
@@ -42,8 +43,6 @@ function App() {
             <AddScreenForm />
           </Route>
           <Route exact path="/editScreen/:screenId" component={UpdateScreenForm} />
-
-
           <Route path="/customFields">
             <CustomFields />
           </Route>
@@ -51,8 +50,6 @@ function App() {
             <AddCustomFieldForm />
           </Route>
           <Route exact path="/editCustomField/:customFieldId" component={UpdateCustomFieldForm} />
-
-
           <Route path="/user-manager">
             <Users></Users>
           </Route>
@@ -61,6 +58,9 @@ function App() {
           </Route>
           <Route path="/permission-manager">
               <PermissionManager></PermissionManager>
+          </Route>
+          <Route path="/detail-permission">
+              <DetailPermission></DetailPermission>
           </Route>
           <Route exact path="/">
             <Home />
