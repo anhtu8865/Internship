@@ -11,7 +11,6 @@ import PermissionItem from '../components/Permission/PermissionItem'
    
    useEffect(() => {
         dispatch(fetchPermissions()) 
-        
     }, [dispatch])
 
     const renderPermission = () =>{
