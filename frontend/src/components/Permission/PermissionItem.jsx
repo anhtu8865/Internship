@@ -4,8 +4,12 @@ import { useAppDispatch } from '../../store'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
 import { fetchPermissionRoles,permissionRolesSelector } from '../../slices/per-role'
+import { useHistory } from 'react-router-dom'
+import { setPermissionUpdate} from '../../slices/permission'
 
 const PermissionItem = ({ permission }) => {
+  const dispatch = useAppDispatch()
+  const history = useHistory()
   const [permissionroles_temp, setResult] = useState([])
   useEffect(() => {
     const getData = async () => {
@@ -28,9 +32,11 @@ const PermissionItem = ({ permission }) => {
   //   }
   // }
   // const [openUpdate, setOpenUpdate] = React.useState(false)
-
-  const handleOpenUpdate = () => {
-
+  //get permission to detail
+  const handleOpenUpdate = (e,permission) => {
+    e.preventDefault()
+    dispatch(setPermissionUpdate(permission))
+    history.push('/detail-permission')
   }
   // const handleCloseUpdate = () => {
   //   setOpenUpdate(false)
@@ -46,8 +52,12 @@ const PermissionItem = ({ permission }) => {
   //   fetchPermissionRoles(permission.Permission_Id)
   // }, [dispatch])
   // console.log(permissionroles)
-
-
+  // const { permissionroles, loading, hasErrors } = useSelector(permissionRolesSelector)
+  // useEffect(() => {
+  //   dispatch(fetchPermissionRoles(permission.Permission_Id))
+  // }, [dispatch])
+  // console.log("6")
+  // console.log(permissionroles)
 
   const renderPermissionRole = () => {
     if (permissionroles_temp != null) {
@@ -55,7 +65,7 @@ const PermissionItem = ({ permission }) => {
         <li key={temp.RoleId}>{temp.RoleName}</li>
       ))
     } else {
-      return <li>null</li>
+      return <li></li>
     }
   }
   return (
@@ -96,12 +106,12 @@ const PermissionItem = ({ permission }) => {
               aria-hidden
               className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
             />
-             <Link to ="/detail-permission"
-              // onClick={(e) => handleOpenUpdate(e)}
+             <a 
+              onClick={(e) => handleOpenUpdate(e,permission)}
               className="relative cursor-pointer"
             >
               Edit
-            </Link>
+            </a>
           </span>
           {/* <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
                 <span

@@ -36,7 +36,6 @@ const rolesSlice = createSlice({
         state.hasErrors = true
     },
     setRoleUpdate:(state,action) =>{
-      console.log(state)
       state.roleUpdate = action.payload
     },
     updateRole:(state,action) =>{
@@ -110,9 +109,7 @@ export const deleteRole = (id) => async(dispatch) =>{
 
 export const setRoleUpdate = (role) => async(dispatch) =>{
   try {
-    console.log("=====")
-    console.log(role)
-    dispatch(actions.setRoleUpdate(role))
+        dispatch(actions.setRoleUpdate(role))
   } catch (error) {
     dispatch(getRoleFailure())
 

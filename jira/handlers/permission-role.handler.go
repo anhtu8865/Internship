@@ -15,6 +15,8 @@ var PermissionRoleHandlers = PermissionRoleHandler{}
 type PermissionRoleHandler struct{
 
 }
+
+//get all permission's role
 func (pr *PermissionRoleHandler) GetAllPermissionRole() gin.HandlerFunc{
 	return func(c *gin.Context) {
 		id := c.Query("id")

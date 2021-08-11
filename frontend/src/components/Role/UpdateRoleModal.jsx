@@ -17,7 +17,6 @@ function UpdateRoleModal({ modalDialog }) {
 
   const { handleClose } = modalDialog
   const onSubmit = (data) => {
-    
     dispatch(updateRole({ id: roleUpdate.Role_Id, data }))
     handleClose()
   }

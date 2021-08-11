@@ -17,6 +17,9 @@ func (pr *PermissionRoute) Init(router *gin.Engine){
 	{
 
 	pr.RouterGroup.GET("/",pr.GetAllRouter())
+	pr.RouterGroup.POST("update",pr.UpdatePermission())
+	pr.RouterGroup.DELETE("delete-role",pr.DeleteRoleInPermission())
+	pr.RouterGroup.POST("",pr.AddRoleToPermission())
 	
 	}
 }
@@ -25,4 +28,14 @@ func (pr *PermissionRoute) Init(router *gin.Engine){
 func (pr *PermissionRoute) GetAllRouter() gin.HandlerFunc{
   
    return PermissionHandlers.GetAllPermission()
+}
+func (pr *PermissionRoute) UpdatePermission() gin.HandlerFunc{
+	 return PermissionHandlers.UpdatePermission()
+}
+func (pr *PermissionRoute) DeleteRoleInPermission() gin.HandlerFunc{
+	return PermissionHandlers.DeletePermissionRole()
+}
+
+func (pr *PermissionRoute) AddRoleToPermission() gin.HandlerFunc{
+	return PermissionHandlers.AddRoleToPermission()
 }

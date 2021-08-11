@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { fetchPermissions,permissionsSelector } from '../slices/permission'
+import { fetchPermissionRoles,permissionRolesSelector } from '../slices/per-role'
 import { useAppDispatch } from '../store'
 import { useSelector } from 'react-redux'
 import PermissionItem from '../components/Permission/PermissionItem'
@@ -10,6 +11,7 @@ import PermissionItem from '../components/Permission/PermissionItem'
    
    useEffect(() => {
         dispatch(fetchPermissions()) 
+        
     }, [dispatch])
 
     const renderPermission = () =>{
