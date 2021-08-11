@@ -17,6 +17,7 @@ import { AddCustomFieldForm} from './components/CustomField/AddCustomFieldForm'
 import Users from './pages/UsersManager';
 import Roles from './pages/RolesManager';
 import CreateRole from "./pages/CreateRole"
+import { ScreenCustomFields } from './pages/ScreenCustomFields';
 
 function App() {
  
@@ -42,8 +43,7 @@ function App() {
             <AddScreenForm />
           </Route>
           <Route exact path="/editScreen/:screenId" component={UpdateScreenForm} />
-
-
+          <Route exact path="/screenCustomFields/:screenId" component={ScreenCustomFields} />
           <Route path="/customFields">
             <CustomFields />
           </Route>
@@ -51,6 +51,7 @@ function App() {
             <AddCustomFieldForm />
           </Route>
           <Route exact path="/editCustomField/:customFieldId" component={UpdateCustomFieldForm} />
+          
 
 
           <Route path="/user-manager">

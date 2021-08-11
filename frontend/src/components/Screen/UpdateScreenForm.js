@@ -25,10 +25,10 @@ export const UpdateScreenForm = ({ match }) => {
         const resultAction = await dispatch(
           updateScreen({ Id: screenId, Name: name, Description: description })
         )
+        history.push(`/screens`)
         unwrapResult(resultAction)
         setName('')
         setDescription('')
-        history.push(`/screens`)
       } catch (err) {
         console.error('Failed to save the screen: ', err)
       } finally {

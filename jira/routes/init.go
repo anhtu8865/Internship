@@ -29,6 +29,7 @@ func init() {
 		&ProjectsRouter,
 		&CustomFieldsRouter,
 		&ScreensRouter,
+		&ScreenCustomFieldsRouter,
 	)
 }
 

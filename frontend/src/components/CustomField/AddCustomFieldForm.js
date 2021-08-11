@@ -21,18 +21,13 @@ export const AddCustomFieldForm = () => {
   const onNameChanged = (e) => setName(e.target.value)
   const onDescriptionChanged = (e) => setDescription(e.target.value)
   const onFieldTypeChanged = (e) => setFieldType(e.target.value)
-
+  console.log(fieldType, "kkkkkkkkkkkkkkkkkkkkkkkkkkk")
   const canSave =
     [name, fieldType].every(Boolean) && addRequestStatus === 'idle'
 
   const onSaveCustomFieldClicked = async () => {
     if (canSave) {
       try {
-        console.log({
-          Name: name,
-          Field_Type: fieldType,
-          Description: description,
-        })
         setAddRequestStatus('pending')
         setName('')
         setFieldType('')

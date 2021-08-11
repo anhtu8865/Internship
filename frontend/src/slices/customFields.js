@@ -25,7 +25,7 @@ export const fetchCustomFields = createAsyncThunk(
 
 export const addNewCustomField = createAsyncThunk(
   'customFields/addNewCustomField',
-  async (initialCustomField) => {
+  async (initialCustomField, { rejectWithValue }) => {
     console.log('add new CustomField')
     console.log(initialCustomField)
     const response = await customFieldApi
@@ -35,7 +35,7 @@ export const addNewCustomField = createAsyncThunk(
         return response
       })
       .catch(function (error) {
-        console.log(error)
+        throw rejectWithValue(error.response.data)
       })
     return response
   }
@@ -43,16 +43,16 @@ export const addNewCustomField = createAsyncThunk(
 
 export const updateCustomField = createAsyncThunk(
   'customFields/updateCustomField',
-  async (initialCustomField) => {
-    const { Id, Name, Field_Type, Description } = initialCustomField
+  async (initialCustomField, { rejectWithValue }) => {
+    const { Id, ...fields } = initialCustomField
     const response = await customFieldApi
-      .update(Id, { Name, Field_Type, Description })
+      .update(Id, fields)
       .then(function (response) {
         console.log(response)
         return response
       })
       .catch(function (error) {
-        console.log(error)
+        throw rejectWithValue(error.response.data)
       })
     return response
   }
@@ -60,7 +60,7 @@ export const updateCustomField = createAsyncThunk(
 
 export const deleteCustomField = createAsyncThunk(
   'customFields/deleteCustomField',
-  async (initialCustomField) => {
+  async (initialCustomField, { rejectWithValue }) => {
     const { Id } = initialCustomField
     const response = await customFieldApi
       .delete(Id)
@@ -69,7 +69,7 @@ export const deleteCustomField = createAsyncThunk(
         return response
       })
       .catch(function (error) {
-        console.log(error)
+        throw rejectWithValue(error.response.data)
       })
     return response
   }
@@ -91,24 +91,28 @@ const customFieldsSlice = createSlice({
       state.status = 'failed'
       state.error = action.payload.Msg
     },
+    [addNewCustomField.rejected]: (state, action) => {
+      console.log(action.payload.Msg)
+    },
     [addNewCustomField.fulfilled]: (state, action) => {
       state.customFields.push(action.payload.Data)
     },
+    [updateCustomField.rejected]: (state, action) => {
+      console.log(action.payload.Msg)
+    },
     [updateCustomField.fulfilled]: (state, action) => {
       const newCustomField = action.payload.Data
-      const existingCustomField = state.customFields.find(
-        (customField) => customField.Id == newCustomField.Id
+      state.customFields = state.customFields.map((customField) =>
+        customField.Id === newCustomField.Id ? newCustomField : customField
       )
-      if (existingCustomField) {
-        existingCustomField.Name = newCustomField.Name
-        existingCustomField.Field_Type = newCustomField.Field_Type
-        existingCustomField.Description = newCustomField.Description
-      }
+    },
+    [deleteCustomField.rejected]: (state, action) => {
+      console.log(action.payload.Msg)
     },
     [deleteCustomField.fulfilled]: (state, action) => {
       const returnedCustomField = action.payload.Data
       state.customFields = state.customFields.filter(
-        (customField) => customField.Id != returnedCustomField.Id
+        (customField) => customField.Id !== returnedCustomField.Id
       )
     },
   },
