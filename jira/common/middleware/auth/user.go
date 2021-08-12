@@ -7,43 +7,91 @@ import (
 	"net/http"
 	"strings"
     "os"
+	"github.com/go-redis/redis/v7"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
-type Claims struct {
-	    username string `json:"user_name"`
-		role  int    `json:"is_admin"`
-		jwt.StandardClaims
+// type Claims struct {
+// 	    username string `json:"user_name"`
+// 		role  int    `json:"is_admin"`
+// 		jwt.StandardClaims
+// }
+
+// type AccessDetails struct {
+//     AccessUuid string
+//     UserName   string
+// }
+// var client *redis.Client
+// func FetchAuth(authD *AccessDetails) (string, error) {
+// 		username, err := client.Get(authD.UserName).Result()
+// 		fmt.Println(username)
+// 		if err != nil {
+// 		   return "nil", err
+// 		}
+// 		return username, nil
+// }
+var client *redis.Client
+type AccessDetails struct {
+    AccessUuid string
+    UserName   string
+}
+func init() {
+	//Initializing redis
+	dsn := os.Getenv("REDIS_DSN")
+	if len(dsn) == 0 {
+		dsn = "localhost:6379"
 	}
+	client = redis.NewClient(&redis.Options{
+		Addr: dsn, //redis port
+	})
+	_, err := client.Ping().Result()
+	if err != nil {
+		panic(err)
+	}
+}
 
 
   func CheckUserLoged(c *gin.Context) {
 	var tknStr string
 	var tknStr1 string
-	var jwtKey = []byte("jdnfksdmfksd")
+	// var jwtKey = []byte("jdnfksdmfksd")
 	var rule bool
 	auth := c.Request.Header["Authorization"]
 	if len(auth) > 0 {
 		tknStr = strings.Trim(auth[0], "Bearer")
 		tknStr1 = strings.Trim(tknStr, " ")
-
-		claims := &Claims{}
-
-		tkn, err := jwt.ParseWithClaims(tknStr1, claims, func(token *jwt.Token) (interface{}, error) {
-			return jwtKey, nil
-		})
+		// claims := &Claims{}
+		// tkn, err := jwt.ParseWithClaims(tknStr1, claims, func(token *jwt.Token) (interface{}, error) {
+		// 	return jwtKey, nil
+		// })
+		tkn, err := jwt.Parse(tknStr1, func(token *jwt.Token) (interface{}, error) {
+			//Make sure that the token method conform to "SigningMethodHMAC"
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			   return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+			return []byte(os.Getenv("ACCESS_SECRET")), nil
+		 })
+		    // claims, _ := tkn.Claims.(jwt.MapClaims)
+			// accessUuid, _ := claims["access_uuid"].(string)
+			// // userId, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["user_id"]), 10, 64)
+			// username, _ := claims["username"].(string)
+			// fmt.Println(accessUuid)
+			// fmt.Println(username)
+			// userid, _ := client.Get(accessUuid).Result()
+			// fmt.Println("1")
+            // fmt.Println(userid)
+		 
 		if err != nil {
 			if err == jwt.ErrSignatureInvalid {
 				c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "Invalid signature"})
 				c.Abort()
 			}
-
 			rule = false
 		} else {
 			rule = true
 		}
-
+		
 		if rule && tkn != nil {	
 			c.Next()
 		}
@@ -51,14 +99,10 @@ type Claims struct {
 			c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "Token expired, please login again"})
 			c.Abort()
 		}
-
 		if tkn == nil {
-
 			c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "Token invalid"})
 			c.Abort()
 		}
-
-
 	} else {
 		c.Abort()
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "Token not found"})
@@ -89,7 +133,6 @@ func CheckAdmin(c *gin.Context)  {
         c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
 		c.Abort()
      }
-     fmt.Println(role)
 	 if role == 0 {
 		c.Next()
 	 }
@@ -103,6 +146,46 @@ func CheckAdmin(c *gin.Context)  {
 	 }
 	 c.Abort()
 }
+
+func Logout(c *gin.Context) {
+	var tknStr string
+	var tknStr1 string
+	auth := c.Request.Header["Authorization"]
+	tknStr = strings.Trim(auth[0], "Bearer")
+	tknStr1 = strings.Trim(tknStr, " ")
+	// claims := &Claims{}
+	// tkn, err := jwt.ParseWithClaims(tknStr1, claims, func(token *jwt.Token) (interface{}, error) {
+	// 	return jwtKey, nil
+	// })
+	tkn, _ := jwt.Parse(tknStr1, func(token *jwt.Token) (interface{}, error) {
+		//Make sure that the token method conform to "SigningMethodHMAC"
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		   return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(os.Getenv("ACCESS_SECRET")), nil
+	 })
+	claims, _ := tkn.Claims.(jwt.MapClaims)
+	accessUuid, _ := claims["access_uuid"].(string)
+	deleted, delErr := DeleteAuth(accessUuid)
+	if delErr != nil || deleted == 0 { //if any goes wrong
+	   c.JSON(http.StatusUnauthorized, "unauthorized")
+	   c.Abort()
+	} else{
+		c.JSON(http.StatusOK, "Successfully logged out")
+		c.Next()
+	}
+  }
+func DeleteAuth(givenUuid string) (int64,error) {
+	deleted, err := client.Del(givenUuid).Result()
+	if err != nil {
+	   return 0, err
+	}
+	return deleted, nil
+}
+
+
+//refresh token
+
 // func VerifyToken(r *http.Request) (*jwt.Token, error){
 
 // }

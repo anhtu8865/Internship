@@ -1,9 +1,8 @@
 package routes
 
 import (
-
+	"jira/common/middleware/auth"
 	. "jira/handlers"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,6 +16,7 @@ type RoleRoute struct{
 func (rt *RoleRoute) Init(router *gin.Engine){
 	rt.RouterGroup = router.Group(rt.GroupName)
 	{
+		   rt.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
             rt.RouterGroup.GET("/",rt.GetAllRole())
 			rt.RouterGroup.POST("",rt.CreateRole())
 			rt.RouterGroup.PUT("",rt.UpdateRole())

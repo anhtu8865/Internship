@@ -25,6 +25,7 @@ func (u *UserRoute) Init(router *gin.Engine) {
 		u.RouterGroup.DELETE("/delete-user",auth.CheckUserLoged, auth.CheckAdmin, u.DeleteUser())
 		u.RouterGroup.PUT("/admin/update-user",auth.CheckUserLoged, auth.CheckAdmin,u.UpdateUserByAdmin())
 		u.RouterGroup.POST("/",u.Singin())
+		u.RouterGroup.POST("/logout",auth.CheckUserLoged,auth.Logout)
 		// u.RouterGroup.PUT("/:id", auth.CheckUserLoged, auth.CheckAdmin, u.UpdateUser())
 		// u.RouterGroup.DELETE("/:id", auth.CheckUserLoged, auth.CheckAdmin, u.DeleteUser())
 	}

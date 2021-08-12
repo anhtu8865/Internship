@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"jira/common/middleware/auth"
 	. "jira/handlers"
 	"github.com/gin-gonic/gin"
 )
@@ -12,8 +13,8 @@ type PermissionRoleRoute struct{
 func (pr *PermissionRoleRoute) Init(router *gin.Engine){
 	pr.RouterGroup = router.Group(pr.GroupName)
 	{
-
-    pr.RouterGroup.GET("/permission-role",pr.GetRolePermissionRouter())
+	pr.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
+    pr.RouterGroup.GET("/permission-role",auth.CheckUserLoged, auth.CheckAdmin,pr.GetRolePermissionRouter())
 	
 	}
 }

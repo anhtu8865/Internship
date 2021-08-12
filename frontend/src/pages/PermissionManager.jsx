@@ -7,7 +7,7 @@ import PermissionItem from '../components/Permission/PermissionItem'
 
  const PermissionManager= () => {
     const dispatch = useAppDispatch()
-    const { permissions } = useSelector(permissionsSelector)
+    const { permissions,loading, hasErrors } = useSelector(permissionsSelector)
    
    useEffect(() => {
         dispatch(fetchPermissions()) 
@@ -18,6 +18,14 @@ import PermissionItem from '../components/Permission/PermissionItem'
             <PermissionItem key={permission.Permission_Id} permission={permission} />
         )
     }
+    if (loading) {
+      return (
+        <tr>
+          <div className="loader">Loading...</div>
+        </tr>
+      )
+    }
+    if (hasErrors) return <p>Unable to get Permission.</p>
     return (
         <div className="container mx-auto px-4 mb-16 sm:px-8">
         <div className="py-8">
