@@ -5,15 +5,7 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
 import store from './store'
-// import { fetchScreens } from './slices/screens'
-// import { fetchCustomFields } from './slices/customFields'
-// import { fetchScreenCustomFields } from './slices/screenCustomFields'
-// import { fetchProjects } from './slices/projects'
 
-// store.dispatch(fetchScreens())
-// store.dispatch(fetchCustomFields())
-// store.dispatch(fetchProjects())
-// store.dispatch(fetchScreenCustomFields())
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>

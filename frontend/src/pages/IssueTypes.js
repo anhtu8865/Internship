@@ -6,8 +6,14 @@ import {
   fetchIssueTypes,
   deleteIssueType,
 } from '../slices/issueTypes'
+import {
+  selectAllProjectIssueTypeScreens,
+  fetchProjectIssueTypeScreens,
+} from '../slices/projectIssueTypeScreens'
+import { selectAllScreens, fetchScreens } from '../slices/screens'
+import { fetchProjects, selectAllProjects } from '../slices/projects'
 
-const IssueTypeExcerpt = ({ issueType }) => {
+const IssueTypeExcerpt = ({ issueType, projectIssueTypeScreensHaveName }) => {
   const dispatch = useDispatch()
   function deleteConfirm(e, Id) {
     e.preventDefault()
@@ -29,9 +35,7 @@ const IssueTypeExcerpt = ({ issueType }) => {
         </div>
       </td>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <p className="text-gray-900 whitespace-no-wrap">
-          {issueType.Icon}
-        </p>
+        <p className="text-gray-900 whitespace-no-wrap">{issueType.Icon}</p>
       </td>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
         <p className="text-gray-900 whitespace-no-wrap">
@@ -63,6 +67,21 @@ const IssueTypeExcerpt = ({ issueType }) => {
             Delete
           </a>
         </span>
+        <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
+          <span
+            aria-hidden
+            className="absolute inset-0 bg-blue-400 opacity-50 rounded-full"
+          />
+          <Link
+            to={{
+              pathname: `/projectIssueTypeScreens/${issueType.Id}`,
+              state: { issueType, projectIssueTypeScreensHaveName },
+            }}
+            className="relative cursor-pointer text-blue-900"
+          >
+            Configure
+          </Link>
+        </span>
       </td>
     </tr>
   )
@@ -71,29 +90,86 @@ const IssueTypeExcerpt = ({ issueType }) => {
 export const IssueTypes = () => {
   const dispatch = useDispatch()
   const issueTypes = useSelector(selectAllIssueTypes)
+  const projectIssueTypeScreens = useSelector(selectAllProjectIssueTypeScreens)
+  const screens = useSelector(selectAllScreens)
+  const projects = useSelector(selectAllProjects)
 
   const issueTypeStatus = useSelector((state) => state.issueTypes.status)
+  const projectIssueTypeScreenStatus = useSelector(
+    (state) => state.projectIssueTypeScreens.status
+  )
+  const screenStatus = useSelector((state) => state.screens.status)
+  const projectStatus = useSelector((state) => state.projects.loading)
+
   const error = useSelector((state) => state.issueTypes.error)
+  const errorProjectIssueTypeScreen = useSelector(
+    (state) => state.projectIssueTypeScreens.error
+  )
+  const errorScreens = useSelector((state) => state.screens.error)
+
   useEffect(() => {
     if (issueTypeStatus === 'idle') {
       dispatch(fetchIssueTypes())
     }
-  }, [issueTypeStatus, dispatch])
+    if (projectIssueTypeScreenStatus === 'idle') {
+      dispatch(fetchProjectIssueTypeScreens())
+    }
+    if (screenStatus === 'idle') {
+      dispatch(fetchScreens())
+    }
+    if (projects.length === 0 && projectStatus === false) {
+      dispatch(fetchProjects())
+    }
+  }, [issueTypeStatus, projectIssueTypeScreenStatus, screenStatus, dispatch])
   let content
 
-  if (issueTypeStatus === 'loading') {
+  if (
+    issueTypeStatus === 'loading' ||
+    projectIssueTypeScreenStatus === 'loading' ||
+    screenStatus === 'loading' ||
+    projectStatus === true
+  ) {
     content = <div className="loader">Loading...</div>
-  } else if (issueTypeStatus === 'succeeded') {
-    let tbody = issueTypes.map((issueType) => (
-      <IssueTypeExcerpt key={issueType.Id} issueType={issueType} />
-    ))
+  } else if (
+    issueTypeStatus === 'succeeded' &&
+    projectIssueTypeScreenStatus === 'succeeded' &&
+    screenStatus === 'succeeded' &&
+    projectStatus === false
+  ) {
+    // gan ten cua screen va project vao danh sach
+    const projectIssueTypeScreensHaveName = []
+    projectIssueTypeScreens.forEach((element) => {
+      screens.forEach((ele) => {
+        if (element.Screen === ele.Id) {
+          projectIssueTypeScreensHaveName.push({ ...element, ScreenName: ele.Name })
+        }
+      })
+    })
+    projectIssueTypeScreensHaveName.forEach((element) => {
+      projects.forEach((ele) => {
+        if (element.Project === ele.ProjectKey) {
+          element.ProjectName = ele.ProjectName
+        }
+      })
+    })
+    
+    let tbody = issueTypes.map((issueType) => {
+      const temp = projectIssueTypeScreensHaveName.filter((item1) =>
+         item1.Issue_Type === issueType.Id
+      )
+      return (
+        <IssueTypeExcerpt
+          key={issueType.Id}
+          issueType={issueType}
+          projectIssueTypeScreensHaveName={temp}
+        />
+      )
+    })
     content = (
       <div className="container mx-auto px-4 mb-16 sm:px-8">
         <div className="py-8">
           <div>
-            <h2 className="text-2xl font-semibold leading-tight">
-              IssueTypes
-            </h2>
+            <h2 className="text-2xl font-semibold leading-tight">IssueTypes</h2>
           </div>
           <div className="my-2 flex justify-between sm:flex-row flex-col">
             <div className="flex flex-row mb-1 sm:mb-0">
@@ -170,7 +246,7 @@ export const IssueTypes = () => {
                       Name
                     </th>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Field Type
+                      Icon
                     </th>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Description

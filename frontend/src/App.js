@@ -21,6 +21,7 @@ import Users from './pages/UsersManager';
 import Roles from './pages/RolesManager';
 import CreateRole from "./pages/CreateRole"
 import { ScreenCustomFields } from './pages/ScreenCustomFields';
+import { ProjectIssueTypeScreens } from './pages/ProjectIssueTypeScreens';
 
 function App() {
  
@@ -47,6 +48,7 @@ function App() {
           </Route>
           <Route exact path="/editScreen/:screenId" component={UpdateScreenForm} />
           <Route exact path="/screenCustomFields/:screenId" component={ScreenCustomFields} />
+          <Route exact path="/projectIssueTypeScreens/:issueTypeId" component={ProjectIssueTypeScreens} />
           <Route path="/customFields">
             <CustomFields />
           </Route>

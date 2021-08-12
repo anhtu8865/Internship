@@ -94,17 +94,17 @@ export const Screens = () => {
   const screenCustomFields = useSelector(selectAllScreenCustomFields)
   const customFields = useSelector(selectAllCustomFields)
 
-  const customFieldStatus = useSelector((state) => state.customFields.status)
   const screenStatus = useSelector((state) => state.screens.status)
+  const customFieldStatus = useSelector((state) => state.customFields.status)
   const screenCustomFieldStatus = useSelector(
     (state) => state.screenCustomFields.status
   )
 
   const error = useSelector((state) => state.screens.error)
-  const errorscreenCustomFieldStatus = useSelector(
+  const errorScreenCustomField = useSelector(
     (state) => state.screenCustomFields.error
   )
-  const errorcustomFields = useSelector((state) => state.customFields.error)
+  const errorCustomFields = useSelector((state) => state.customFields.error)
 
   useEffect(() => {
     if (screenStatus === 'idle') {
@@ -270,7 +270,7 @@ export const Screens = () => {
     customFieldStatus === 'error'
   ) {
     content = (
-      <div>{(error, errorscreenCustomFieldStatus, errorcustomFields)}</div>
+      <div>{(error, errorScreenCustomField, errorCustomFields)}</div>
     )
   }
 
