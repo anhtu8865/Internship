@@ -24,7 +24,8 @@ export default function DetailPermission() {
   useEffect(() => {
     dispatch(fetchPermissionRoles(temp.Permission_Id))
   }, [dispatch])
-
+ 
+  
   const renderPermissionRole = () => {
     return permissionroles.map((temp_role) => (
       <PermissionRoleItem
@@ -47,7 +48,8 @@ export default function DetailPermission() {
     open: openUpdate,
     handleOpen: handleOpenUpdate,
     handleClose: handleCloseUpdate,
-    data: temp
+    data_permission: temp,
+    fulldata:permissionroles
   }
   return (
     <>

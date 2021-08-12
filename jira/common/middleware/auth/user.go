@@ -1,16 +1,19 @@
 package auth
 
 import (
-	"jira/models"
+	"fmt"
 	"jira/common/helpers"
+	// "jira/models"
 	"net/http"
 	"strings"
+    "os"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 type Claims struct {
-		Username string `json:"user_name"`
-		IsAdmin  int    `json:"is_admin"`
+	    username string `json:"user_name"`
+		role  int    `json:"is_admin"`
 		jwt.StandardClaims
 	}
 
@@ -63,40 +66,86 @@ type Claims struct {
 	c.Abort()
 }
 
-func CheckAdmin(c *gin.Context) {
+func CheckAdmin(c *gin.Context)  {
 	var tknStr string
 	var tknStr1 string
-	var jwtKey = []byte("jdnfksdmfksd")
-	//var rule bool
 	auth := c.Request.Header["Authorization"]
-
 	tknStr = strings.Trim(auth[0], "Bearer")
 	tknStr1 = strings.Trim(tknStr, " ")
-
-	claims := &Claims{}
-
-	tkn, _ := jwt.ParseWithClaims(tknStr1, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
-	})
-
-	if tkn != nil {
-		if claims.IsAdmin == 0 {
-			usr := models.User{UserName: claims.Username, IsAdmin: claims.IsAdmin}
-			c.Set("user_info", usr)
-
-			c.Next()
-
+	token, err := jwt.Parse(tknStr1, func(token *jwt.Token) (interface{}, error) {
+		//Make sure that the token method conform to "SigningMethodHMAC"
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		   return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		if claims.IsAdmin == 1 {
-			usr := models.User{UserName: claims.Username, IsAdmin: claims.IsAdmin}
-			c.Set("user_info", usr)
-			c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
-
-			c.Abort()
-
-		}
-	}
-
-	c.Abort()
+		return []byte(os.Getenv("ACCESS_SECRET")), nil
+	 })
+	 if err != nil {
+		fmt.Println(err)
+	 }
+	 claims := token.Claims.(jwt.MapClaims)
+	//  accessUuid, ok := claims["username"].(string)
+	 role, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["role"]), 10, 64)
+	 if err != nil {
+        c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
+		c.Abort()
+     }
+     fmt.Println(role)
+	 if role == 0 {
+		c.Next()
+	 }
+	 if role == 1{
+		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
+		c.Abort()
+	 }
+	 if role ==2 {
+		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
+		c.Abort()
+	 }
+	 c.Abort()
 }
+// func VerifyToken(r *http.Request) (*jwt.Token, error){
+
+// }
+// func CheckAdmin(c *gin.Context) {
+// 	var tknStr string
+// 	var tknStr1 string
+// 	var jwtKey = []byte("jdnfksdmfksd")
+// 	//var rule bool
+// 	auth := c.Request.Header["Authorization"]
+
+// 	tknStr = strings.Trim(auth[0], "Bearer")
+// 	tknStr1 = strings.Trim(tknStr, " ")
+
+// 	claims := &Claims{}
+// 	tkn, _ := jwt.ParseWithClaims(tknStr1, claims, func(token *jwt.Token) (interface{}, error) {
+// 		return jwtKey, nil
+// 	})
+  
+   
+// 	if tkn != nil {
+// 		if claims.role == 0 {
+// 			usr := models.User{UserName: claims.username, IsAdmin: claims.role}
+		
+// 			c.Set("user_info", usr)
+// 			c.Next()
+
+// 		}
+// 		if claims.role == 1 {
+// 			usr := models.User{UserName: claims.username, IsAdmin: claims.role}
+		
+// 			c.Set("user_info", usr)
+// 			c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
+// 			c.Abort()
+// 		}
+// 		if claims.role == 2 {
+// 			usr := models.User{UserName: claims.username, IsAdmin: claims.role}
+			
+// 			c.Set("user_info", usr)
+// 			c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
+// 			c.Abort()
+// 		}
+// 	}
+
+// 	c.Abort()
+// }
 

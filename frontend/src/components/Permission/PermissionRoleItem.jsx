@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
 import { deleteRoleInPermission } from '../../slices/per-role'
 export default function PermissionRoleItem({ permission_role }) {
-  console.log(permission_role)
+
   const dispatch = useAppDispatch()
 
   function deleteConfirm(e, PermissionId, RoleId) {
@@ -13,6 +13,8 @@ export default function PermissionRoleItem({ permission_role }) {
     }
   }
 
+
+  
   return (
     <>
       {/* <RoleModal modalDialog={modalUpdate} /> */}

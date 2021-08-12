@@ -17,14 +17,11 @@ axiosClient.interceptors.request.use(async (config) => {
   // const customHeaders = {};
   const accessToken = localStorage.getItem("accessToken");
   if (accessToken) {
-
-  
     config.headers.Authorization = "Bearer " + accessToken
   }
   else{
     console.log("not have accesstoken")
   }
-  
   return config;
 })
 axiosClient.interceptors.response.use((response) => {

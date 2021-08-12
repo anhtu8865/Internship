@@ -6,58 +6,27 @@ import axios from 'axios'
 import { fetchPermissionRoles,permissionRolesSelector } from '../../slices/per-role'
 import { useHistory } from 'react-router-dom'
 import { setPermissionUpdate} from '../../slices/permission'
-
+import permissionApi from '../../api/permissionApi'
 const PermissionItem = ({ permission }) => {
   const dispatch = useAppDispatch()
   const history = useHistory()
+
   const [permissionroles_temp, setResult] = useState([])
   useEffect(() => {
-    const getData = async () => {
-      let temp = await axios({
-        method: 'get',
-        url:
-          'http://localhost:5001/api/permission/permission-role?id=' +
-          permission.Permission_Id,
-      })
-      setResult(temp.data.Data)
-      // dispatch({ type: 'UPDATE', data: temp.data })
-    }
-    getData()
+    permissionApi.getPrmissionRole(permission.Permission_Id)
+    .then((data)=>{
+         setResult(data.Data)
+    })
   }, [])
 
-  // function deleteConfirm(e, roleId) {
-  //   e.preventDefault()
-  //   if (confirm('Delete?')) {
-  //     dispatch(deleteRole(roleId))
-  //   }
-  // }
-  // const [openUpdate, setOpenUpdate] = React.useState(false)
+ 
   //get permission to detail
   const handleOpenUpdate = (e,permission) => {
     e.preventDefault()
     dispatch(setPermissionUpdate(permission))
     history.push('/detail-permission')
   }
-  // const handleCloseUpdate = () => {
-  //   setOpenUpdate(false)
-  // }
-  // const modalUpdate = {
-  //   open: openUpdate,
-  //   handleOpen: handleOpenUpdate,
-  //   handleClose: handleCloseUpdate,
-  // }
-  // const { permissionroles } = useSelector(permissionRolesSelector)
-  // const dispatch = useAppDispatch()
-  // useEffect(() => {
-  //   fetchPermissionRoles(permission.Permission_Id)
-  // }, [dispatch])
-  // console.log(permissionroles)
-  // const { permissionroles, loading, hasErrors } = useSelector(permissionRolesSelector)
-  // useEffect(() => {
-  //   dispatch(fetchPermissionRoles(permission.Permission_Id))
-  // }, [dispatch])
-  // console.log("6")
-  // console.log(permissionroles)
+
 
   const renderPermissionRole = () => {
     if (permissionroles_temp != null) {

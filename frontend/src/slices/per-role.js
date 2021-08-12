@@ -55,6 +55,7 @@ export const fetchPermissionRoles = (id) => async (dispatch) => {
   permissionApi
     .getPrmissionRole(id)
     .then((res) => {
+      if(!res.Data) dispatch(getPermissionsRolesSuccess([]))
       if (res.Data) dispatch(getPermissionsRolesSuccess(res.Data))
     })
     .catch((err) => {
@@ -64,8 +65,6 @@ export const fetchPermissionRoles = (id) => async (dispatch) => {
 }
 //add role
 export const AddRoleToPermission = (data) => async(dispatch)=>{
-  console.log("!")
-  console.log(data)
   permissionApi
   .addRoleToPermission(data)
   .then((res)=>{

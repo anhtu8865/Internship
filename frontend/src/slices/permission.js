@@ -12,19 +12,16 @@ const permissionsSlice = createSlice({
   name: 'permissions',
   initialState,
   reducers: {
-   
-
     startLoading: (state) => {
       state.loading = true
     },
-
 
     getPermissionsSuccess: (state, action) => {
       state.permissions = action.payload
       state.loading = false
       state.hasErrors = false
     },
- 
+
     getPermissionsFailure: (state) => {
       state.loading = false
       //handling Errors
@@ -36,7 +33,9 @@ const permissionsSlice = createSlice({
     updatePermission: (state, action) => {
       const { id, data } = action.payload
       let newPermissions = state.permissions.map((permission) =>
-      permission.PermissionId === id ? { PermissionId: id, ...data } : permission
+        permission.PermissionId === id
+          ? { PermissionId: id, ...data }
+          : permission
       )
       state.permissions = newPermissions
     },
@@ -45,7 +44,7 @@ const permissionsSlice = createSlice({
 
 const { startLoading, getPermissionsSuccess, getPermissionsFailure } =
   permissionsSlice.actions
-const {actions} = permissionsSlice
+const { actions } = permissionsSlice
 
 export const permissionsSelector = (state) => state.permissions
 export const permissionsUpdateSelector = (state) => state.permissionUpdate
@@ -89,5 +88,3 @@ export const updateUser = (data) => async (dispatch) => {
       return err
     })
 }
-
-

@@ -2,7 +2,7 @@ package routes
 
 import (
 	"jira/common/middleware/auth"
-	
+
 	. "jira/handlers"
 
 	"github.com/gin-gonic/gin"
@@ -20,10 +20,10 @@ func (u *UserRoute) Init(router *gin.Engine) {
 	{
 		//u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
 		// u.RouterGroup.POST("/", u.Signin())
-		u.RouterGroup.POST("/sign-up", u.Signup())
-		u.RouterGroup.GET("/",auth.CheckUserLoged, u.Index())
-		u.RouterGroup.DELETE("/delete-user", u.DeleteUser())
-		u.RouterGroup.PUT("/admin/update-user",u.UpdateUserByAdmin())
+		u.RouterGroup.POST("/sign-up",auth.CheckUserLoged, auth.CheckAdmin, u.Signup())
+		u.RouterGroup.GET("/",auth.CheckUserLoged, auth.CheckAdmin, u.Index())
+		u.RouterGroup.DELETE("/delete-user",auth.CheckUserLoged, auth.CheckAdmin, u.DeleteUser())
+		u.RouterGroup.PUT("/admin/update-user",auth.CheckUserLoged, auth.CheckAdmin,u.UpdateUserByAdmin())
 		u.RouterGroup.POST("/",u.Singin())
 		// u.RouterGroup.PUT("/:id", auth.CheckUserLoged, auth.CheckAdmin, u.UpdateUser())
 		// u.RouterGroup.DELETE("/:id", auth.CheckUserLoged, auth.CheckAdmin, u.DeleteUser())

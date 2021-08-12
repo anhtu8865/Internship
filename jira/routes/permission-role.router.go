@@ -1,7 +1,6 @@
 package routes
 
 import (
-
 	. "jira/handlers"
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +13,7 @@ func (pr *PermissionRoleRoute) Init(router *gin.Engine){
 	pr.RouterGroup = router.Group(pr.GroupName)
 	{
 
-	pr.RouterGroup.GET("/permission-role",pr.GetRolePermissionRouter())
+    pr.RouterGroup.GET("/permission-role",pr.GetRolePermissionRouter())
 	
 	}
 }
