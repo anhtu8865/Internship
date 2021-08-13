@@ -73,15 +73,12 @@ export const ProjectIssueTypeScreens = () => {
   // code below add new project issue type screen
   const dispatch = useDispatch()
   const screens = useSelector(selectAllScreens)
-  const filteredScreens = screens.filter(
-    (item1) => !rows.some((item2) => item1.Id === item2.Screen)
-  )
   const projects = useSelector(selectAllProjects)
   const filteredProjects = projects.filter(
     (item1) => !rows.some((item2) => item1.ProjectKey === item2.Project)
   )
 
-  const filteredScreensOptions = filteredScreens.map((screen) => (
+  const filteredScreensOptions = screens.map((screen) => (
     <option key={screen.Id} value={screen.Id}>
       {screen.Name}
     </option>
