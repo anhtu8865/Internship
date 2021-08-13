@@ -7,6 +7,7 @@ import customFieldReducer from './customFields'
 import screenCustomFieldReducer from './screenCustomFields'
 import projectIssueTypeScreenReducer from './projectIssueTypeScreens'
 import issueTypeReducer from './issueTypes'
+import issueReducer from './issues'
 import roleReducer from './roles'
 
 const rootReducer = combineReducers({
@@ -17,7 +18,9 @@ const rootReducer = combineReducers({
   screenCustomFields: screenCustomFieldReducer,
   projectIssueTypeScreens: projectIssueTypeScreenReducer,
   issueTypes: issueTypeReducer,
+  issues: issueReducer,
   roles: roleReducer,
+
 })
 export default rootReducer
 

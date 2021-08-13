@@ -32,6 +32,7 @@ func init() {
 		&ScreenCustomFieldsRouter,
 		&IssueTypesRouter,
 		&ProjectIssueTypeScreensRouter,
+		&IssuesRouter,
 	)
 }
 
