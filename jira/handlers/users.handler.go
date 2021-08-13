@@ -67,7 +67,7 @@ type TokenDetails struct {
 //create token
 func CreateToken(username string, globalrole int64) (*TokenDetails, error) {
 	td := &TokenDetails{}
-	td.AtExpires = time.Now().Add(time.Minute * 60).Unix()
+	td.AtExpires = time.Now().Add(time.Minute * 1).Unix()
 	td.AccessUuid = uuid.NewV4().String()
 
 	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
@@ -167,7 +167,7 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 							"access_token":  ts.AccessToken,
 							"refresh_token": ts.RefreshToken,						
 						}
-						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: tokens})
+						c.JSON(http.StatusOK ,helpers.MessageResponse{Msg: "Login Success", Data: tokens})
 					
 					} else {
 
@@ -197,7 +197,7 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 					
 						tokens := map[string]string{
 							"access_token":  ts.AccessToken,
-							
+							"refresh_token": ts.RefreshToken,	
 						}
 						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: tokens})
 
@@ -229,7 +229,7 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 						}
 						tokens := map[string]string{
 							"access_token":  ts.AccessToken,
-							
+							"refresh_token": ts.RefreshToken,	
 						}
 						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: tokens})
 

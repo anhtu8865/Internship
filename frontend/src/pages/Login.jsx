@@ -2,7 +2,8 @@ import FormInput from "../components/Form/FormInput";
 import React from "react";
 import { useForm } from "react-hook-form";
 import userApi from "../api/userApi";
-
+import Cookies from "universal-cookie";
+const cookies = new Cookies()
 function Login(props) {
   const { register, handleSubmit } = useForm();
   const onSubmit = (data) => {
@@ -10,6 +11,8 @@ function Login(props) {
       if(response.Msg == "Login Success")
       {
       localStorage.setItem("accessToken", response.Data.access_token)
+      localStorage.setItem('refreshToken', response.Data.refresh_token)
+      // cookies.set('access-token', response.Data.access_token)
       props.history.push('/Home')
       }
       else{

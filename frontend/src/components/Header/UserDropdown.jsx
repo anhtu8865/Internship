@@ -12,9 +12,9 @@ function SettingDropdown({ isLogged }) {
       .logout()
       .then(() => {
         localStorage.removeItem('accessToken')
-        history.push('/login')
+        localStorage.removeItem('refreshToken')  
       })
-      .catch((err) => alter(err))
+      history.push('/login')
   }
 
   return (

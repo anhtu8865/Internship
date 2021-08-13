@@ -25,8 +25,8 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Layout>      
-        <Route path="/login" component={Login} />
+        <Layout>
+          <Route path="/login" component={Login} />
           <Route path="/create-user">
             <CreateUser />
           </Route>
@@ -42,14 +42,22 @@ function App() {
           <Route path="/addScreen">
             <AddScreenForm />
           </Route>
-          <Route exact path="/editScreen/:screenId" component={UpdateScreenForm} />
+          <Route
+            exact
+            path="/editScreen/:screenId"
+            component={UpdateScreenForm}
+          />
           <Route path="/customFields">
             <CustomFields />
           </Route>
           <Route path="/addCustomField">
             <AddCustomFieldForm />
           </Route>
-          <Route exact path="/editCustomField/:customFieldId" component={UpdateCustomFieldForm} />
+          <Route
+            exact
+            path="/editCustomField/:customFieldId"
+            component={UpdateCustomFieldForm}
+          />
           <Route path="/user-manager">
             <Users></Users>
           </Route>
@@ -57,10 +65,10 @@ function App() {
             <Roles></Roles>
           </Route>
           <Route path="/permission-manager">
-              <PermissionManager></PermissionManager>
+            <PermissionManager></PermissionManager>
           </Route>
           <Route path="/detail-permission">
-              <DetailPermission></DetailPermission>
+            <DetailPermission></DetailPermission>
           </Route>
           <Route exact path="/">
             <Home />
@@ -68,7 +76,7 @@ function App() {
         </Layout>
       </Switch>
     </Router>
-  );
+  )
 }
 
 export default App;
