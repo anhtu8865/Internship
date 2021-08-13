@@ -92,7 +92,7 @@ func CreateToken(username string, globalrole int64) (*TokenDetails, error) {
 	rtClaims := jwt.MapClaims{}
 	rtClaims["refresh_uuid"] = td.RefreshUuid
 	rtClaims["username"] = username
-	atClaims["role"] = globalrole
+	rtClaims["role"] = globalrole
 	rtClaims["exp"] = td.RtExpires
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
 	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))

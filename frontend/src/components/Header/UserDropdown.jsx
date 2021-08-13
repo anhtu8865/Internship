@@ -1,14 +1,20 @@
+import { AlternateEmail } from '@material-ui/icons'
 import React, { useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
-
+import userApi from '../../api/userApi'
 function SettingDropdown({ isLogged }) {
   const [setting, setProfile] = useState(false)
   console.log(setting)
   const history = useHistory()
 
   function SigOut() {
-    localStorage.removeItem('accessToken')
-    history.push('/login')
+    userApi
+      .logout()
+      .then(() => {
+        localStorage.removeItem('accessToken')
+        history.push('/login')
+      })
+      .catch((err) => alter(err))
   }
 
   return (
