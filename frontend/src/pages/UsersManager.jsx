@@ -17,14 +17,14 @@ const Users = () => {
         <UserItem key={user.User_Id} user={user} />
     ))
   }
-  if (loading) {
-    return (
-      <tr>
-        <div className="loader">Loading...</div>
-      </tr>
-    )
-  }
-  if (hasErrors) return <p>Unable to get Users.</p>
+  // if (loading) {
+  //   return (
+  //     <tr>
+  //       <div className="loader">Loading...</div>
+  //     </tr>
+  //   )
+  // }
+  // if (hasErrors) return <p>Unable to get Users.</p>
   return (
     // <main className="mx-auto max-w-2xl">
     //     <h1>Users List</h1>

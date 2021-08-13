@@ -22,7 +22,7 @@ const Roles = () => {
       </tr>
     )
   }
-  if (hasErrors) return <p>Unable to get Projects.</p>
+  if (hasErrors) return <p>Unable to get Roles.</p>
   return (
     <div className="container mx-auto px-4 mb-16 sm:px-8">
       <div className="py-8">
