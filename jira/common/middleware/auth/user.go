@@ -3,21 +3,96 @@ package auth
 import (
 	"fmt"
 	"jira/common/helpers"
-
-	// "jira/models"
-	. "jira/handlers"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
-
+    "time"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
+	"github.com/twinj/uuid"
+
 )
 
 var client *redis.Client
 
+func init() {
+	//Initializing redis
+	dsn := os.Getenv("REDIS_DSN")
+	if len(dsn) == 0 {
+		dsn = "localhost:6379"
+	}
+	client = redis.NewClient(&redis.Options{
+		Addr: dsn, //redis port
+	})
+	_, err := client.Ping().Result()
+	if err != nil {
+		panic(err)
+	}
+}
+
+type TokenDetails struct {
+	AccessToken  string
+	RefreshToken string
+	AccessUuid   string
+	RefreshUuid  string
+	AtExpires    int64
+	RtExpires    int64
+}
+
+//create token
+func CreateToken(username string, globalrole int64) (*TokenDetails, error) {
+	td := &TokenDetails{}
+	td.AtExpires = time.Now().Add(time.Hour * 1).Unix()
+	td.AccessUuid = uuid.NewV4().String()
+
+	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
+	td.RefreshUuid = td.AccessUuid + "++" + username
+
+	var err error
+	//Creating Access Token
+	os.Setenv("ACCESS_SECRET", "jdnfksdmfksd") //this should be in an env file
+	atClaims := jwt.MapClaims{}
+	atClaims["authorized"] = true
+	atClaims["access_uuid"] = td.AccessUuid
+	atClaims["username"] = username
+	atClaims["role"] = globalrole
+	atClaims["exp"] = td.AtExpires
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
+	if err != nil {
+		return nil, err
+	}
+	//Creating Refresh Token
+	os.Setenv("REFRESH_SECRET", "mcmvmkmsdnfsdmfdsjf") //this should be in an env file
+	rtClaims := jwt.MapClaims{}
+	rtClaims["refresh_uuid"] = td.RefreshUuid
+	rtClaims["username"] = username
+	rtClaims["role"] = globalrole
+	rtClaims["exp"] = td.RtExpires
+	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
+	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))
+	if err != nil {
+		return nil, err
+	}
+	return td, nil
+}
+func CreateAuth(username string, td *TokenDetails) error {
+	at := time.Unix(td.AtExpires, 0) //converting Unix to UTC(to Time object)
+	rt := time.Unix(td.RtExpires, 0)
+	now := time.Now()
+
+	errAccess := client.Set(td.AccessUuid, username, at.Sub(now)).Err()
+	if errAccess != nil {
+		return errAccess
+	}
+	errRefresh := client.Set(td.RefreshUuid, username, rt.Sub(now)).Err()
+	if errRefresh != nil {
+		return errRefresh
+	}
+	return nil
+}
 type AccessDetails struct {
 	AccessUuid string
 	UserName   string
@@ -47,7 +122,7 @@ func CheckUserLoged(c *gin.Context) {
 	if len(auth) > 0 {
 		tknStr = strings.Trim(auth[0], "Bearer")
 		tknStr1 = strings.Trim(tknStr, " ")
-	
+
 		tkn, err := jwt.Parse(tknStr1, func(token *jwt.Token) (interface{}, error) {
 			//Make sure that the token method conform to "SigningMethodHMAC"
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -55,37 +130,37 @@ func CheckUserLoged(c *gin.Context) {
 			}
 			return []byte(os.Getenv("ACCESS_SECRET")), nil
 		})
-		claims, _ := tkn.Claims.(jwt.MapClaims)
-		accessUuid, _ := claims["access_uuid"].(string)
-		
-		_, ok := client.Get(accessUuid).Result()
-		if ok != nil {
-			c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "Token expired, please login again"})
-			c.Abort()
-
-		} else {
-			if err != nil {
-				if err == jwt.ErrSignatureInvalid {
-					c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "Invalid signature"})
-					c.Abort()
-				}
-				rule = false
-			} else {
-				rule = true
+		if err != nil {
+			if err == jwt.ErrSignatureInvalid {
+				c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "Invalid signature"})
+				c.Abort()
 			}
+			rule = false
+		} else {
+			rule = true
+		}
 
-			if rule && tkn != nil {
+		if rule && tkn != nil {
+			claims, _ := tkn.Claims.(jwt.MapClaims)
+			accessUuid, _ := claims["access_uuid"].(string)
+			_, ok := client.Get(accessUuid).Result()
+			if ok != nil {
+				c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "Token failed"})
+				c.Abort()
+			} else {
 				c.Next()
 			}
-			if !rule && tkn != nil {
-				c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "Token expired, please login again"})
-				c.Abort()
-			}
-			if tkn == nil {
-				c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "Token invalid"})
-				c.Abort()
-			}
+
 		}
+		if !rule && tkn != nil {
+			c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "Token expired, please login again"})
+			c.Abort()
+		}
+		if tkn == nil {
+			c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "Token invalid"})
+			c.Abort()
+		}
+
 	} else {
 		c.Abort()
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "Token not found"})
@@ -207,7 +282,7 @@ func RefreshToken(c *gin.Context) {
 		}
 		role, _ := claims["role"].(int64)
 
-		//Delete the previous Refresh Token 
+		//Delete the previous Refresh Token
 		deleted, delErr := DeleteAuth(refreshUuid)
 		if delErr != nil || deleted == 0 { //if any goes wrong
 			c.JSON(http.StatusUnauthorized, "unauthorized")
@@ -234,4 +309,3 @@ func RefreshToken(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, "refresh expired")
 	}
 }
-

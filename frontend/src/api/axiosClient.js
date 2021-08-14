@@ -29,43 +29,39 @@ axiosClient.interceptors.request.use(async (config) => {
 })
 axiosClient.interceptors.response.use((response) => {
   if (response && response.data) {
-    console.log(response.data)
     return response.data;
   }
   return response;
 }, (error) => { 
-  if (error.response.data.Msg == "Token expired, please login again")
-  {
-    const refresh_token = localStorage.getItem('refreshToken')
-    const data = {
-      refresh_token: refresh_token,
-    }
-    if (refresh_token) {
-      userApi
-        .refresh(data)
-        .then((response) => {
+    if (error.response.data.Msg == 'Token expired, please login again' && error.config.url != '/users/logout') {
+      const refresh_token = localStorage.getItem('refreshToken')
+      const data = {
+        refresh_token: refresh_token,
+      }
+      if (refresh_token) {
+        userApi.refresh(data).then((response) => {
           const accessToken = response.access_token
-           localStorage.setItem('accessToken', response.access_token)
-           localStorage.setItem('refreshToken', response.refresh_token)
+          localStorage.setItem('accessToken', response.access_token)
+          localStorage.setItem('refreshToken', response.refresh_token)
           const config = error.config
           config.headers['Authorization'] = `Bearer ${accessToken}`
-          new Promise(() => {
-             axios
-               .request(config)
-               .then((res) => {
-                 console.log("lấy data hết hạn ")
-                 console.log(res.data.Data)
-                 return res.data.Data 
-               })
-               .catch((err) => {
-                 console.log(err)
-                 return err
-               })
-           })
-        })      
-    } 
-  }
+          console.log("oke1")
+          return new Promise((resolve, reject) => {
+            axios
+              .request(config)
+              .then((res) => {
+                console.log('lấy data hết hạn ')
+                console.log(res.data.Data)
+                resolve(res.data.Data)
+              })
+              .catch((err) => {
+                console.log(err)
+                reject(err)
+              })
+          })
+        })
+      }
+    }
   // Handle errors
-  throw error;
 });
 export default axiosClient;

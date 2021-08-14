@@ -5,117 +5,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"jira/common/helpers"
-	"os"
-
-	// "jira/loggers"
-	"github.com/twinj/uuid"
 	"jira/models"
 	"log"
 	"net/http"
 	"strconv"
-	"time"
-
-	"github.com/go-redis/redis/v7"
-
 	"github.com/gin-gonic/gin"
 	_ "github.com/godror/godror"
+	. "jira/common/middleware/auth"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	
 )
 
-var jwtKey = []byte("my_secret_key")
 
-var TokenValidTime time.Duration = 1000
 
-type Claims struct {
-	Username string `json:"user_name"`
-	IsAdmin  int    `json:"is_admin"`
-	jwt.StandardClaims
-}
 
 var UserHandlers = UserHandler{}
 
 type UserHandler struct{}
 
 //redis
-var client *redis.Client
 
-func init() {
-	//Initializing redis
-	dsn := os.Getenv("REDIS_DSN")
-	if len(dsn) == 0 {
-		dsn = "localhost:6379"
-	}
-	client = redis.NewClient(&redis.Options{
-		Addr: dsn, //redis port
-	})
-	_, err := client.Ping().Result()
-	if err != nil {
-		panic(err)
-	}
-}
-
-type TokenDetails struct {
-	AccessToken  string
-	RefreshToken string
-	AccessUuid   string
-	RefreshUuid  string
-	AtExpires    int64
-	RtExpires    int64
-}
-
-//create token
-func CreateToken(username string, globalrole int64) (*TokenDetails, error) {
-	td := &TokenDetails{}
-	td.AtExpires = time.Now().Add(time.Minute * 60).Unix()
-	td.AccessUuid = uuid.NewV4().String()
-
-	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
-	td.RefreshUuid = td.AccessUuid + "++" + username
-
-	var err error
-	//Creating Access Token
-	os.Setenv("ACCESS_SECRET", "jdnfksdmfksd") //this should be in an env file
-	atClaims := jwt.MapClaims{}
-	atClaims["authorized"] = true
-	atClaims["access_uuid"] = td.AccessUuid
-	atClaims["username"] = username
-	atClaims["role"] = globalrole
-	atClaims["exp"] = td.AtExpires
-	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
-	if err != nil {
-		return nil, err
-	}
-	//Creating Refresh Token
-	os.Setenv("REFRESH_SECRET", "mcmvmkmsdnfsdmfdsjf") //this should be in an env file
-	rtClaims := jwt.MapClaims{}
-	rtClaims["refresh_uuid"] = td.RefreshUuid
-	rtClaims["username"] = username
-	rtClaims["role"] = globalrole
-	rtClaims["exp"] = td.RtExpires
-	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
-	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))
-	if err != nil {
-		return nil, err
-	}
-	return td, nil
-}
-func CreateAuth(username string, td *TokenDetails) error {
-	at := time.Unix(td.AtExpires, 0) //converting Unix to UTC(to Time object)
-	rt := time.Unix(td.RtExpires, 0)
-	now := time.Now()
-
-	errAccess := client.Set(td.AccessUuid, username, at.Sub(now)).Err()
-	if errAccess != nil {
-		return errAccess
-	}
-	errRefresh := client.Set(td.RefreshUuid, username, rt.Sub(now)).Err()
-	if errRefresh != nil {
-		return errRefresh
-	}
-	return nil
-}
 
 ///login
 func (u *UserHandler) Singin() gin.HandlerFunc {

@@ -3,9 +3,12 @@ import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
-import { fetchPermissionRoles,permissionRolesSelector } from '../../slices/per-role'
+import {
+  fetchPermissionRoles,
+  permissionRolesSelector,
+} from '../../slices/per-role'
 import { useHistory } from 'react-router-dom'
-import { setPermissionUpdate} from '../../slices/permission'
+import { setPermissionUpdate } from '../../slices/permission'
 import permissionApi from '../../api/permissionApi'
 const PermissionItem = ({ permission }) => {
   const dispatch = useAppDispatch()
@@ -13,20 +16,19 @@ const PermissionItem = ({ permission }) => {
 
   const [permissionroles_temp, setResult] = useState([])
   useEffect(() => {
-    permissionApi.getPrmissionRole(permission.Permission_Id)
-    .then((data)=>{
-         setResult(data.Data)
-    })
+    if (permission) {
+      permissionApi.getPrmissionRole(permission.Permission_Id).then((data) => {
+        setResult(data.Data)
+      })
+    }
   }, [])
 
- 
   //get permission to detail
-  const handleOpenUpdate = (e,permission) => {
+  const handleOpenUpdate = (e, permission) => {
     e.preventDefault()
     dispatch(setPermissionUpdate(permission))
     history.push('/detail-permission')
   }
-
 
   const renderPermissionRole = () => {
     if (permissionroles_temp != null) {
@@ -75,8 +77,8 @@ const PermissionItem = ({ permission }) => {
               aria-hidden
               className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
             />
-             <a 
-              onClick={(e) => handleOpenUpdate(e,permission)}
+            <a
+              onClick={(e) => handleOpenUpdate(e, permission)}
               className="relative cursor-pointer"
             >
               Edit
