@@ -9,17 +9,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var CustomFieldsHandlers = CustomFieldsHandler{}
+var IssuesHandlers = IssuesHandler{}
 
-type CustomFieldsHandler struct {
+type IssuesHandler struct {
 }
 
-func (u *CustomFieldsHandler) Get() gin.HandlerFunc {
+func (u *IssuesHandler) Get() gin.HandlerFunc {
 	//Do everything here, call model etc...
 
 	return func(c *gin.Context) {
 		// loggers.Logger.Println("get a get request")
-		customFields, err := models.CustomFieldsModels.Get()
+		issues, err := models.IssuesModels.Get()
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
@@ -32,7 +32,7 @@ func (u *CustomFieldsHandler) Get() gin.HandlerFunc {
 		} else {
 			response := MessageResponse{
 				Msg:  "Successful",
-				Data: customFields,
+				Data: issues,
 			}
 			c.JSON(http.StatusOK,
 				response,
@@ -42,16 +42,44 @@ func (u *CustomFieldsHandler) Get() gin.HandlerFunc {
 	}
 }
 
-func (u *CustomFieldsHandler) GetById() gin.HandlerFunc {
+func (u *IssuesHandler) CreateInit() gin.HandlerFunc {
+	//Do everything here, call model etc...
+
+	return func(c *gin.Context) {
+		// loggers.Logger.Println("get a get request")
+		projectIssueTypeScreens, err := models.IssuesModels.CreateInit()
+		if err != nil {
+			loggers.Logger.Errorln(err.Error())
+			response := MessageResponse{
+				Msg:  err.Error(),
+				Data: nil,
+			}
+			c.JSON(http.StatusNotFound,
+				response,
+			)
+		} else {
+			response := MessageResponse{
+				Msg:  "Successful",
+				Data: projectIssueTypeScreens,
+			}
+			c.JSON(http.StatusOK,
+				response,
+			)
+		}
+
+	}
+}
+
+func (u *IssuesHandler) GetById() gin.HandlerFunc {
 	//Do everything here, call model etc...
 	return func(c *gin.Context) {
 		id := c.Param("id")
-		customFields, err := models.CustomFieldsModels.GetById(id)
+		issues, err := models.IssuesModels.GetById(id)
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
 				Msg:  err.Error(),
-				Data: customFields,
+				Data: issues,
 			}
 			c.JSON(http.StatusNotFound,
 				response,
@@ -59,7 +87,7 @@ func (u *CustomFieldsHandler) GetById() gin.HandlerFunc {
 		} else {
 			response := MessageResponse{
 				Msg:  "Successful",
-				Data: customFields,
+				Data: issues,
 			}
 			c.JSON(http.StatusOK,
 				response,
@@ -69,10 +97,10 @@ func (u *CustomFieldsHandler) GetById() gin.HandlerFunc {
 	}
 }
 
-func (u *CustomFieldsHandler) Create() gin.HandlerFunc {
+func (u *IssuesHandler) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		body := c.Request.Body
-		customFields, err := models.CustomFieldsModels.Create(body)
+		issues, err := models.IssuesModels.Create(body)
 
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
@@ -86,7 +114,7 @@ func (u *CustomFieldsHandler) Create() gin.HandlerFunc {
 		} else {
 			response := MessageResponse{
 				Msg:  "Successful",
-				Data: customFields[0],
+				Data: issues[0],
 			}
 			c.JSON(http.StatusCreated,
 				response,
@@ -97,11 +125,11 @@ func (u *CustomFieldsHandler) Create() gin.HandlerFunc {
 	}
 }
 
-func (u *CustomFieldsHandler) Update() gin.HandlerFunc {
+func (u *IssuesHandler) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
 		body := c.Request.Body
-		customFields, err := models.CustomFieldsModels.Update(body, id)
+		issues, err := models.IssuesModels.Update(body, id)
 
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
@@ -115,7 +143,7 @@ func (u *CustomFieldsHandler) Update() gin.HandlerFunc {
 		} else {
 			response := MessageResponse{
 				Msg:  "Successful",
-				Data: customFields[0],
+				Data: issues[0],
 			}
 			c.JSON(http.StatusCreated,
 				response,
@@ -124,10 +152,10 @@ func (u *CustomFieldsHandler) Update() gin.HandlerFunc {
 	}
 }
 
-func (u *CustomFieldsHandler) Delete() gin.HandlerFunc {
+func (u *IssuesHandler) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
-		customFields, err := models.CustomFieldsModels.Delete(id)
+		issues, err := models.IssuesModels.Delete(id)
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
@@ -140,7 +168,7 @@ func (u *CustomFieldsHandler) Delete() gin.HandlerFunc {
 		} else {
 			response := MessageResponse{
 				Msg:  "Delete Successfully!",
-				Data: customFields[0],
+				Data: issues[0],
 			}
 			c.JSON(http.StatusOK,
 				response,

@@ -126,3 +126,5 @@ export const updateProject = (data) => async (dispatch) => {
   
   })
 }
+
+export const selectAllProjects = (state) => state.projects.projects

@@ -1,107 +1,120 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import {
-  selectAllCustomFields,
-  fetchCustomFields,
-  deleteCustomField,
-} from '../slices/customFields'
+import { selectAllIssues, fetchIssues, deleteIssue } from '../slices/issues'
 
-const CustomFieldExcerpt = ({ customField }) => {
+const IssueExcerpt = ({ issue }) => {
   const dispatch = useDispatch()
   function deleteConfirm(e, Id) {
     e.preventDefault()
-    dispatch(deleteCustomField({ Id }))
+    dispatch(deleteIssue({ Id }))
   }
   return (
-    <tr key={customField.Id}>
+    <tr key={issue.Id}>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
         <div className="flex items-center">
           <div className="ml-3">
             <p className="text-gray-900 whitespace-no-wrap">
               <Link to="#">
-                <a className="text-blue-400 whitespace-no-wrap">
-                  {customField.Name}
-                </a>
+                <a className="text-blue-400 whitespace-no-wrap">{issue.Key}</a>
               </Link>
             </p>
           </div>
         </div>
       </td>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <p className="text-gray-900 whitespace-no-wrap">
-          {customField.Field_Type}
-        </p>
+        <p className="text-gray-900 whitespace-no-wrap">{issue.Name}</p>
       </td>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <p className="text-gray-900 whitespace-no-wrap">
-          {customField.Description}
-        </p>
+        <p className="text-gray-900 whitespace-no-wrap">{issue.Project}</p>
+      </td>
+      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        <p className="text-gray-900 whitespace-no-wrap">{issue.Project_Name}</p>
+      </td>
+      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        <p className="text-gray-900 whitespace-no-wrap">{issue.Issue_Type_Name}</p>
+      </td>
+      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        <p className="text-gray-900 whitespace-no-wrap">{issue.Icon}</p>
       </td>
       <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
-        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+        {/* <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
           <span
             aria-hidden
             className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
           />
           <Link
-            to={`/editCustomField/${customField.Id}`}
+            to={`/editIssue/${issue.Id}`}
             className="relative cursor-pointer"
           >
             Edit
           </Link>
-        </span>
+        </span> */}
         <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
           <span
             aria-hidden
             className="absolute inset-0 bg-red-400 opacity-50 rounded-full"
           />
           <a
-            onClick={(e) => deleteConfirm(e, customField.Id)}
+            onClick={(e) => deleteConfirm(e, issue.Id)}
             className="relative cursor-pointer text-red-900"
           >
             Delete
           </a>
         </span>
+        {/* <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
+          <span
+            aria-hidden
+            className="absolute inset-0 bg-blue-400 opacity-50 rounded-full"
+          />
+          <Link
+            to={{
+              pathname: `/projectIssueScreens/${issue.Id}`,
+              state: { issue, projectIssueScreensHaveName },
+            }}
+            className="relative cursor-pointer text-blue-900"
+          >
+            Configure
+          </Link>
+        </span> */}
       </td>
     </tr>
   )
 }
 
-export const CustomFields = () => {
+export const Issues = () => {
   const dispatch = useDispatch()
-  const customFields = useSelector(selectAllCustomFields)
+  const issues = useSelector(selectAllIssues)
 
-  const customFieldStatus = useSelector((state) => state.customFields.status)
-  const error = useSelector((state) => state.customFields.error)
+  const issueStatus = useSelector((state) => state.issues.status)
+
+  const error = useSelector((state) => state.issues.error)
+
   useEffect(() => {
-    if (customFieldStatus === 'idle') {
-      dispatch(fetchCustomFields())
+    if (issueStatus === 'idle') {
+      dispatch(fetchIssues())
     }
-  }, [customFieldStatus, dispatch])
+  }, [issueStatus, dispatch])
   let content
 
-  if (customFieldStatus === 'loading') {
+  if (issueStatus === 'loading') {
     content = <div className="loader">Loading...</div>
-  } else if (customFieldStatus === 'succeeded') {
-    console.log(customFields, "kkkkkkkkkkkkkkkkkkk")
-    let tbody = customFields.map((customField) => (
-      <CustomFieldExcerpt key={customField.Id} customField={customField} />
-    ))
+  } else if (issueStatus === 'succeeded') {
+    let tbody = issues.map((issue) => {
+      return <IssueExcerpt key={issue.Id} issue={issue} />
+    })
     content = (
       <div className="container mx-auto px-4 mb-16 sm:px-8">
         <div className="py-8">
           <div>
-            <h2 className="text-2xl font-semibold leading-tight">
-              CustomFields
-            </h2>
+            <h2 className="text-2xl font-semibold leading-tight">Issues</h2>
           </div>
           <div className="my-2 flex justify-between sm:flex-row flex-col">
             <div className="flex flex-row mb-1 sm:mb-0">
               <div className="relative">
                 <select className="appearance-none h-full rounded-l border block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                   <option selected disabled>
-                    CustomField per page
+                    Issue per page
                   </option>
                   <option>5</option>
                   <option>10</option>
@@ -155,10 +168,10 @@ export const CustomFields = () => {
 
             <div className="flex">
               <Link
-                to="/addCustomField"
+                to="/addIssue"
                 className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700"
               >
-                Create CustomField
+                Create Issue
               </Link>
             </div>
           </div>
@@ -168,13 +181,22 @@ export const CustomFields = () => {
                 <thead>
                   <tr>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Key
+                    </th>
+                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Name
                     </th>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Field Type
+                      Project Key
                     </th>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Description
+                      Project Name
+                    </th>
+                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Issue Type
+                    </th>
+                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Icon
                     </th>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Action
@@ -201,14 +223,14 @@ export const CustomFields = () => {
         </div>
       </div>
     )
-  } else if (customFieldStatus === 'error') {
+  } else if (issueStatus === 'error') {
     content = <div>{error}</div>
   }
 
   return (
-    <section className="customFields-list">
+    <section className="issues-list">
       {content}
-      {(console.log('kaka1'), console.log(customFields), console.log('kaka2'))}
+      {(console.log('kaka1'), console.log(issues), console.log('kaka2'))}
     </section>
   )
 }

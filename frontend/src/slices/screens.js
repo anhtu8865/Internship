@@ -25,7 +25,7 @@ export const fetchScreens = createAsyncThunk(
 
 export const addNewScreen = createAsyncThunk(
   'screens/addNewScreen',
-  async (initialScreen) => {
+  async (initialScreen, { rejectWithValue }) => {
     console.log('add new Screen')
     console.log(initialScreen)
     const response = await screenApi
@@ -35,7 +35,7 @@ export const addNewScreen = createAsyncThunk(
         return response
       })
       .catch(function (error) {
-        console.log(error)
+        throw rejectWithValue(error.response.data)
       })
     //console.log(response.screen)
     return response
@@ -44,16 +44,16 @@ export const addNewScreen = createAsyncThunk(
 
 export const updateScreen = createAsyncThunk(
   'screens/updateScreen',
-  async (initialScreen) => {
-    const { Id, Name, Description } = initialScreen
+  async (initialScreen, { rejectWithValue }) => {
+    const { Id, ...fields } = initialScreen
     const response = await screenApi
-      .update(Id, { Name, Description })
+      .update(Id, fields)
       .then(function (response) {
         console.log(response)
         return response
       })
       .catch(function (error) {
-        console.log(error)
+        throw rejectWithValue(error.response.data)
       })
     //console.log(response.screen)
     return response
@@ -62,7 +62,7 @@ export const updateScreen = createAsyncThunk(
 
 export const deleteScreen = createAsyncThunk(
   'screens/deleteScreen',
-  async (initialScreen) => {
+  async (initialScreen, { rejectWithValue }) => {
     const { Id } = initialScreen
     //console.log(Id)
     const response = await screenApi
@@ -72,7 +72,7 @@ export const deleteScreen = createAsyncThunk(
         return response
       })
       .catch(function (error) {
-        console.log(error)
+        throw rejectWithValue(error.response.data)
       })
     //console.log(response.screen)
     return response
@@ -89,32 +89,37 @@ const screensSlice = createSlice({
     },
     [fetchScreens.fulfilled]: (state, action) => {
       state.status = 'succeeded'
-      // Add any fetched screens to the array
-      state.screens = state.screens.concat(action.payload.Data)
-      //   console.log("mới nè")
-      //   console.log(state.screens)
+      if (action.payload.Data) {
+        state.screens = state.screens.concat(action.payload.Data)
+      }
     },
     [fetchScreens.rejected]: (state, action) => {
       state.status = 'failed'
       state.error = action.payload.Msg
     },
+    [addNewScreen.rejected]: (state, action) => {
+      console.log(action.payload.Msg)
+    },
     [addNewScreen.fulfilled]: (state, action) => {
-      state.screens.push(...action.payload.Data)
+      state.screens.push(action.payload.Data)
+    },
+    [updateScreen.rejected]: (state, action) => {
+      console.log(action.payload.Msg)
     },
     [updateScreen.fulfilled]: (state, action) => {
-      const newScreen = { ...action.payload.Data[0] }
-      //console.log(newScreen)
-      const existingScreen = state.screens.find(
-        (screen) => screen.Id == newScreen.Id
+      const newScreen = action.payload.Data
+      state.screens = state.screens.map((screen) =>
+        screen.Id === newScreen.Id ? newScreen : screen
       )
-      if (existingScreen) {
-        existingScreen.Name = newScreen.Name
-        existingScreen.Description = newScreen.Description
-      }
+    },
+    [deleteScreen.rejected]: (state, action) => {
+      console.log(action.payload.Msg)
     },
     [deleteScreen.fulfilled]: (state, action) => {
-      state.screens = [],
-      state.status = 'idle'
+      const returnedScreen = action.payload.Data
+      state.screens = state.screens.filter(
+        (screen) => screen.Id !== returnedScreen.Id
+      )
     },
   },
 })

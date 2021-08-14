@@ -41,12 +41,14 @@ function Navbar() {
               </Link>
             </li>
             <li>
-              <a
-                href
-                className="text-white ml-4 hover:text-yellow-300 cursor-pointer"
-              >
-                Issues
-              </a>
+              <Link to="/issues">
+                <a
+                  href
+                  className="text-white ml-4 hover:text-yellow-300 cursor-pointer"
+                >
+                  Issues
+                </a>
+              </Link>
             </li>
             <div className="relative ml-5 text-gray-600 mr-4 lg:block hidden">
               <input

@@ -1,40 +1,54 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
 import { useHistory } from 'react-router-dom'
-import { addNewCustomField } from '../../slices/customFields'
+import {
+  updateCustomField,
+  selectCustomFieldById,
+} from '../../slices/customFields'
 
 const fieldTypes = [
   { Id: '0', Name: 'Text' },
   { Id: '1', Name: 'Date' },
-  //{ Id: '2', Name: 'Options' },
+  { Id: '2', Name: 'Options' },
 ]
 
-export const AddCustomFieldForm = () => {
-  const [name, setName] = useState('')
-  const [fieldType, setFieldType] = useState('')
-  const [description, setDescription] = useState('')
-  const [addRequestStatus, setAddRequestStatus] = useState('idle')
+export const UpdateCustomFieldForm = ({ match }) => {
+  const { customFieldId } = match.params
+  const customField = useSelector((state) =>
+    selectCustomFieldById(state, customFieldId)
+  )
+  const [name, setName] = useState(customField.Name)
+  const [fieldType, setFieldType] = useState(customField.Field_Type)
+  const [description, setDescription] = useState(customField.Description)
+  const [updateRequestStatus, setUpdateRequestStatus] = useState('idle')
 
   const dispatch = useDispatch()
   const history = useHistory()
   const onNameChanged = (e) => setName(e.target.value)
   const onDescriptionChanged = (e) => setDescription(e.target.value)
   const onFieldTypeChanged = (e) => setFieldType(e.target.value)
-  //console.log(fieldType, "kkkkkkkkkkkkkkkkkkkkkkkkkkk")
+
   const canSave =
-    [name, fieldType].every(Boolean) && addRequestStatus === 'idle'
+    [name, fieldType].every(Boolean) && updateRequestStatus === 'idle'
 
   const onSaveCustomFieldClicked = async () => {
     if (canSave) {
       try {
-        setAddRequestStatus('pending')
+        console.log({
+          Id: customFieldId,
+          Name: name,
+          Field_Type: fieldType,
+          Description: description,
+        })
+        setUpdateRequestStatus('pending')
         setName('')
         setFieldType('')
         setDescription('')
         history.push(`/customFields`)
         const resultAction = await dispatch(
-          addNewCustomField({
+          updateCustomField({
+            Id: customFieldId,
             Name: name,
             Field_Type: fieldType,
             Description: description,
@@ -44,7 +58,7 @@ export const AddCustomFieldForm = () => {
       } catch (err) {
         console.error('Failed to save the customField: ', err)
       } finally {
-        setAddRequestStatus('idle')
+        setUpdateRequestStatus('idle')
       }
     }
   }
@@ -58,12 +72,12 @@ export const AddCustomFieldForm = () => {
     <main>
       <section className="absolute w-full h-full">
         <div className="container mx-auto px-4 h-full">
-          <div className="flex content-center items-center justify-center h-full">
+          <div className="flex description-center items-center justify-center h-full">
             <div className="w-full lg:w-4/12 px-4">
               <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300 border-0">
                 <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                   <div className="text-gray-500 text-center mb-3 font-bold">
-                    <h2>Add a New CustomField</h2>
+                    <h2>Update a New CustomField</h2>
                   </div>
                   <form>
                     <div className="relative w-full mb-3">
@@ -82,7 +96,6 @@ export const AddCustomFieldForm = () => {
                         style={{ transition: 'all .15s ease' }}
                       />
                     </div>
-
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-gray-700 text-xs font-bold mb-2"
@@ -100,7 +113,6 @@ export const AddCustomFieldForm = () => {
                         {fieldTypesOptions}
                       </select>
                     </div>
-
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-gray-700 text-xs font-bold mb-2"
@@ -110,6 +122,7 @@ export const AddCustomFieldForm = () => {
                       </label>
                       <textarea
                         className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
+                        //placeholder="Password"
                         value={description}
                         onChange={onDescriptionChanged}
                         style={{ transition: 'all .15s ease' }}

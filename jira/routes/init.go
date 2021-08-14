@@ -31,6 +31,11 @@ func init() {
 		&ScreensRouter,
 		&PermissionRouter,
 		&PermissionRoleRouter,
+		&ScreenCustomFieldsRouter,
+		&IssueTypesRouter,
+		&ProjectIssueTypeScreensRouter,
+		&IssuesRouter,
+
 	)
 }
 

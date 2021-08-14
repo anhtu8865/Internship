@@ -2,17 +2,11 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
 import { useHistory } from 'react-router-dom'
-import { addNewCustomField } from '../../slices/customFields'
+import { addNewIssueType } from '../../slices/issueTypes'
 
-const fieldTypes = [
-  { Id: '0', Name: 'Text' },
-  { Id: '1', Name: 'Date' },
-  //{ Id: '2', Name: 'Options' },
-]
-
-export const AddCustomFieldForm = () => {
+export const AddIssueTypeForm = () => {
   const [name, setName] = useState('')
-  const [fieldType, setFieldType] = useState('')
+  const [icon, setIcon] = useState('')
   const [description, setDescription] = useState('')
   const [addRequestStatus, setAddRequestStatus] = useState('idle')
 
@@ -20,40 +14,35 @@ export const AddCustomFieldForm = () => {
   const history = useHistory()
   const onNameChanged = (e) => setName(e.target.value)
   const onDescriptionChanged = (e) => setDescription(e.target.value)
-  const onFieldTypeChanged = (e) => setFieldType(e.target.value)
-  //console.log(fieldType, "kkkkkkkkkkkkkkkkkkkkkkkkkkk")
+  const onIconChanged = (e) => setIcon(e.target.value)
   const canSave =
-    [name, fieldType].every(Boolean) && addRequestStatus === 'idle'
+    [name, icon].every(Boolean) && addRequestStatus === 'idle'
 
-  const onSaveCustomFieldClicked = async () => {
+  const onSaveIssueTypeClicked = async () => {
     if (canSave) {
       try {
         setAddRequestStatus('pending')
         setName('')
-        setFieldType('')
+        setIcon('')
         setDescription('')
-        history.push(`/customFields`)
+        history.push(`/issueTypes`)
         const resultAction = await dispatch(
-          addNewCustomField({
+          addNewIssueType({
             Name: name,
-            Field_Type: fieldType,
+            Icon: icon,
             Description: description,
           })
         )
         unwrapResult(resultAction)
       } catch (err) {
-        console.error('Failed to save the customField: ', err)
+        console.error('Failed to save the issueType: ', err)
       } finally {
         setAddRequestStatus('idle')
       }
     }
   }
 
-  const fieldTypesOptions = fieldTypes.map((customField) => (
-    <option key={customField.Id} value={customField.Name}>
-      {customField.Name}
-    </option>
-  ))
+  
   return (
     <main>
       <section className="absolute w-full h-full">
@@ -63,15 +52,15 @@ export const AddCustomFieldForm = () => {
               <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300 border-0">
                 <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                   <div className="text-gray-500 text-center mb-3 font-bold">
-                    <h2>Add a New CustomField</h2>
+                    <h2>Add a New IssueType</h2>
                   </div>
                   <form>
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="customFieldName"
+                        htmlFor="issueTypeName"
                       >
-                        CustomField Name:
+                        IssueType Name:
                       </label>
                       <input
                         type="text"
@@ -86,25 +75,24 @@ export const AddCustomFieldForm = () => {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="customFieldType"
+                        htmlFor="issueTypeIcon"
                       >
-                        CustomField Type:
+                        IssueType Icon:
                       </label>
-                      <select
+                      <input
+                        type="text"
                         className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                        value={fieldType}
-                        onChange={onFieldTypeChanged}
+                        //placeholder="Email"
+                        value={icon}
+                        onChange={onIconChanged}
                         style={{ transition: 'all .15s ease' }}
-                      >
-                        <option value=""></option>
-                        {fieldTypesOptions}
-                      </select>
+                      />
                     </div>
 
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="customFieldDescription"
+                        htmlFor="issueTypeDescription"
                       >
                         Description:
                       </label>
@@ -119,11 +107,11 @@ export const AddCustomFieldForm = () => {
                       <button
                         className="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
                         type="button"
-                        onClick={onSaveCustomFieldClicked}
+                        onClick={onSaveIssueTypeClicked}
                         disabled={!canSave}
                         style={{ transition: 'all .15s ease' }}
                       >
-                        Save CustomField
+                        Save IssueType
                       </button>
                     </div>
                   </form>

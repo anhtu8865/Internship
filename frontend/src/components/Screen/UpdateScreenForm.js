@@ -16,18 +16,19 @@ export const UpdateScreenForm = ({ match }) => {
   const onNameChanged = (e) => setName(e.target.value)
   const onDescriptionChanged = (e) => setDescription(e.target.value)
 
-  const canSave =
-    [name].every(Boolean) && updateRequestStatus === 'idle'
+  const canSave = [name].every(Boolean) && updateRequestStatus === 'idle'
 
   const onSaveScreenClicked = async () => {
     if (canSave) {
       try {
         setUpdateRequestStatus('pending')
-        const resultAction = await dispatch(updateScreen({Id: screenId, Name:name, Description:description }))
+        const resultAction = await dispatch(
+          updateScreen({ Id: screenId, Name: name, Description: description })
+        )
+        history.push(`/screens`)
         unwrapResult(resultAction)
         setName('')
         setDescription('')
-        history.push(`/screens`)
       } catch (err) {
         console.error('Failed to save the screen: ', err)
       } finally {

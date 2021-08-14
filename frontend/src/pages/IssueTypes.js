@@ -2,26 +2,32 @@ import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import {
-  selectAllCustomFields,
-  fetchCustomFields,
-  deleteCustomField,
-} from '../slices/customFields'
+  selectAllIssueTypes,
+  fetchIssueTypes,
+  deleteIssueType,
+} from '../slices/issueTypes'
+import {
+  selectAllProjectIssueTypeScreens,
+  fetchProjectIssueTypeScreens,
+} from '../slices/projectIssueTypeScreens'
+import { selectAllScreens, fetchScreens } from '../slices/screens'
+import { fetchProjects, selectAllProjects } from '../slices/projects'
 
-const CustomFieldExcerpt = ({ customField }) => {
+const IssueTypeExcerpt = ({ issueType, projectIssueTypeScreensHaveName }) => {
   const dispatch = useDispatch()
   function deleteConfirm(e, Id) {
     e.preventDefault()
-    dispatch(deleteCustomField({ Id }))
+    dispatch(deleteIssueType({ Id }))
   }
   return (
-    <tr key={customField.Id}>
+    <tr key={issueType.Id}>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
         <div className="flex items-center">
           <div className="ml-3">
             <p className="text-gray-900 whitespace-no-wrap">
               <Link to="#">
                 <a className="text-blue-400 whitespace-no-wrap">
-                  {customField.Name}
+                  {issueType.Name}
                 </a>
               </Link>
             </p>
@@ -29,13 +35,11 @@ const CustomFieldExcerpt = ({ customField }) => {
         </div>
       </td>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <p className="text-gray-900 whitespace-no-wrap">
-          {customField.Field_Type}
-        </p>
+        <p className="text-gray-900 whitespace-no-wrap">{issueType.Icon}</p>
       </td>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
         <p className="text-gray-900 whitespace-no-wrap">
-          {customField.Description}
+          {issueType.Description}
         </p>
       </td>
       <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
@@ -45,7 +49,7 @@ const CustomFieldExcerpt = ({ customField }) => {
             className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
           />
           <Link
-            to={`/editCustomField/${customField.Id}`}
+            to={`/editIssueType/${issueType.Id}`}
             className="relative cursor-pointer"
           >
             Edit
@@ -57,51 +61,122 @@ const CustomFieldExcerpt = ({ customField }) => {
             className="absolute inset-0 bg-red-400 opacity-50 rounded-full"
           />
           <a
-            onClick={(e) => deleteConfirm(e, customField.Id)}
+            onClick={(e) => deleteConfirm(e, issueType.Id)}
             className="relative cursor-pointer text-red-900"
           >
             Delete
           </a>
+        </span>
+        <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
+          <span
+            aria-hidden
+            className="absolute inset-0 bg-blue-400 opacity-50 rounded-full"
+          />
+          <Link
+            to={{
+              pathname: `/projectIssueTypeScreens/${issueType.Id}`,
+              state: { issueType, projectIssueTypeScreensHaveName },
+            }}
+            className="relative cursor-pointer text-blue-900"
+          >
+            Configure
+          </Link>
         </span>
       </td>
     </tr>
   )
 }
 
-export const CustomFields = () => {
+export const IssueTypes = () => {
   const dispatch = useDispatch()
-  const customFields = useSelector(selectAllCustomFields)
+  const issueTypes = useSelector(selectAllIssueTypes)
+  const projectIssueTypeScreens = useSelector(selectAllProjectIssueTypeScreens)
+  const screens = useSelector(selectAllScreens)
+  const projects = useSelector(selectAllProjects)
 
-  const customFieldStatus = useSelector((state) => state.customFields.status)
-  const error = useSelector((state) => state.customFields.error)
+  const issueTypeStatus = useSelector((state) => state.issueTypes.status)
+  const projectIssueTypeScreenStatus = useSelector(
+    (state) => state.projectIssueTypeScreens.status
+  )
+  const screenStatus = useSelector((state) => state.screens.status)
+  const projectStatus = useSelector((state) => state.projects.loading)
+
+  const error = useSelector((state) => state.issueTypes.error)
+  const errorProjectIssueTypeScreen = useSelector(
+    (state) => state.projectIssueTypeScreens.error
+  )
+  const errorScreens = useSelector((state) => state.screens.error)
+
   useEffect(() => {
-    if (customFieldStatus === 'idle') {
-      dispatch(fetchCustomFields())
+    if (issueTypeStatus === 'idle') {
+      dispatch(fetchIssueTypes())
     }
-  }, [customFieldStatus, dispatch])
+    if (projectIssueTypeScreenStatus === 'idle') {
+      dispatch(fetchProjectIssueTypeScreens())
+    }
+    if (screenStatus === 'idle') {
+      dispatch(fetchScreens())
+    }
+    if (projects.length === 0 && projectStatus === false) {
+      dispatch(fetchProjects())
+    }
+  }, [issueTypeStatus, projectIssueTypeScreenStatus, screenStatus, dispatch])
   let content
 
-  if (customFieldStatus === 'loading') {
+  if (
+    issueTypeStatus === 'loading' ||
+    projectIssueTypeScreenStatus === 'loading' ||
+    screenStatus === 'loading' ||
+    projectStatus === true
+  ) {
     content = <div className="loader">Loading...</div>
-  } else if (customFieldStatus === 'succeeded') {
-    console.log(customFields, "kkkkkkkkkkkkkkkkkkk")
-    let tbody = customFields.map((customField) => (
-      <CustomFieldExcerpt key={customField.Id} customField={customField} />
-    ))
+  } else if (
+    issueTypeStatus === 'succeeded' &&
+    projectIssueTypeScreenStatus === 'succeeded' &&
+    screenStatus === 'succeeded' &&
+    projectStatus === false
+  ) {
+    // gan ten cua screen va project vao danh sach
+    const projectIssueTypeScreensHaveName = []
+    projectIssueTypeScreens.forEach((element) => {
+      screens.forEach((ele) => {
+        if (element.Screen === ele.Id) {
+          projectIssueTypeScreensHaveName.push({ ...element, ScreenName: ele.Name })
+        }
+      })
+    })
+    projectIssueTypeScreensHaveName.forEach((element) => {
+      projects.forEach((ele) => {
+        if (element.Project === ele.ProjectKey) {
+          element.ProjectName = ele.ProjectName
+        }
+      })
+    })
+    
+    let tbody = issueTypes.map((issueType) => {
+      const temp = projectIssueTypeScreensHaveName.filter((item1) =>
+         item1.Issue_Type === issueType.Id
+      )
+      return (
+        <IssueTypeExcerpt
+          key={issueType.Id}
+          issueType={issueType}
+          projectIssueTypeScreensHaveName={temp}
+        />
+      )
+    })
     content = (
       <div className="container mx-auto px-4 mb-16 sm:px-8">
         <div className="py-8">
           <div>
-            <h2 className="text-2xl font-semibold leading-tight">
-              CustomFields
-            </h2>
+            <h2 className="text-2xl font-semibold leading-tight">IssueTypes</h2>
           </div>
           <div className="my-2 flex justify-between sm:flex-row flex-col">
             <div className="flex flex-row mb-1 sm:mb-0">
               <div className="relative">
                 <select className="appearance-none h-full rounded-l border block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                   <option selected disabled>
-                    CustomField per page
+                    IssueType per page
                   </option>
                   <option>5</option>
                   <option>10</option>
@@ -155,10 +230,10 @@ export const CustomFields = () => {
 
             <div className="flex">
               <Link
-                to="/addCustomField"
+                to="/addIssueType"
                 className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700"
               >
-                Create CustomField
+                Create IssueType
               </Link>
             </div>
           </div>
@@ -171,7 +246,7 @@ export const CustomFields = () => {
                       Name
                     </th>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Field Type
+                      Icon
                     </th>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Description
@@ -201,14 +276,14 @@ export const CustomFields = () => {
         </div>
       </div>
     )
-  } else if (customFieldStatus === 'error') {
+  } else if (issueTypeStatus === 'error') {
     content = <div>{error}</div>
   }
 
   return (
-    <section className="customFields-list">
+    <section className="issueTypes-list">
       {content}
-      {(console.log('kaka1'), console.log(customFields), console.log('kaka2'))}
+      {(console.log('kaka1'), console.log(issueTypes), console.log('kaka2'))}
     </section>
   )
 }

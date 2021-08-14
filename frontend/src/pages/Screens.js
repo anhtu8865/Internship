@@ -2,12 +2,21 @@ import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { selectAllScreens, fetchScreens, deleteScreen } from '../slices/screens'
+import {
+  selectAllScreenCustomFields,
+  fetchScreenCustomFields,
+} from '../slices/screenCustomFields'
+import {
+  selectAllCustomFields,
+  fetchCustomFields,
+} from '../slices/customFields'
 
-const ScreenExcerpt = ({ screen }) => {
+const ScreenExcerpt = ({ screen, listCustomFields }) => {
+  //console.log(listCustomFields, "************************")
   const dispatch = useDispatch()
   function deleteConfirm(e, Id) {
     e.preventDefault()
-    dispatch(deleteScreen({Id}))
+    dispatch(deleteScreen({ Id }))
   }
   return (
     <tr key={screen.Id}>
@@ -26,6 +35,13 @@ const ScreenExcerpt = ({ screen }) => {
       </td>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
         <p className="text-gray-900 whitespace-no-wrap">{screen.Description}</p>
+      </td>
+      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        {listCustomFields.map((customField) => (
+          <p key={customField.Id} className="text-gray-900 whitespace-no-wrap">
+            {customField.Name}
+          </p>
+        ))}
       </td>
       <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
         <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
@@ -52,6 +68,21 @@ const ScreenExcerpt = ({ screen }) => {
             Delete
           </a>
         </span>
+        <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
+          <span
+            aria-hidden
+            className="absolute inset-0 bg-blue-400 opacity-50 rounded-full"
+          />
+          <Link
+            to={{
+              pathname: `/screenCustomFields/${screen.Id}`,
+              state: { screen, listCustomFields },
+            }}
+            className="relative cursor-pointer text-blue-900"
+          >
+            Configure
+          </Link>
+        </span>
       </td>
     </tr>
   )
@@ -60,22 +91,68 @@ const ScreenExcerpt = ({ screen }) => {
 export const Screens = () => {
   const dispatch = useDispatch()
   const screens = useSelector(selectAllScreens)
+  const screenCustomFields = useSelector(selectAllScreenCustomFields)
+  const customFields = useSelector(selectAllCustomFields)
 
   const screenStatus = useSelector((state) => state.screens.status)
+  const customFieldStatus = useSelector((state) => state.customFields.status)
+  const screenCustomFieldStatus = useSelector(
+    (state) => state.screenCustomFields.status
+  )
+
   const error = useSelector((state) => state.screens.error)
+  const errorScreenCustomField = useSelector(
+    (state) => state.screenCustomFields.error
+  )
+  const errorCustomFields = useSelector((state) => state.customFields.error)
+
   useEffect(() => {
     if (screenStatus === 'idle') {
       dispatch(fetchScreens())
     }
-  }, [screenStatus, dispatch])
+    if (screenCustomFieldStatus === 'idle') {
+      dispatch(fetchScreenCustomFields())
+    }
+    if (customFieldStatus === 'idle') {
+      dispatch(fetchCustomFields())
+    }
+  }, [screenStatus, screenCustomFieldStatus, customFieldStatus, dispatch])
   let content
 
-  if (screenStatus === 'loading') {
+  if (
+    screenStatus === 'loading' ||
+    screenCustomFieldStatus === 'loading' ||
+    customFieldStatus === 'loading'
+  ) {
     content = <div className="loader">Loading...</div>
-  } else if (screenStatus === 'succeeded') {
-    let tbody = screens.map((screen) => (
-      <ScreenExcerpt key={screen.Id} screen={screen} />
-    ))
+  } else if (
+    screenStatus === 'succeeded' &&
+    screenCustomFieldStatus === 'succeeded' &&
+    customFieldStatus === 'succeeded'
+  ) {
+    let tbody = screens.map((screen) => {
+      const listCustomFieldsId = screenCustomFields.filter(
+        (row) => row?.Screen == screen.Id
+      )
+      const temp = customFields.filter((item1) =>
+        listCustomFieldsId.some((item2) => item1.Id === item2.Custom_Field)
+      )
+      const listCustomFields = []
+      temp.forEach((element) => {
+        listCustomFieldsId.forEach((ele) => {
+          if (element.Id === ele.Custom_Field) {
+            listCustomFields.push({ ...element, Id: ele.Id })
+          }
+        })
+      })
+      return (
+        <ScreenExcerpt
+          key={screen.Id}
+          screen={screen}
+          listCustomFields={listCustomFields}
+        />
+      )
+    })
     content = (
       <div className="container mx-auto px-4 mb-16 sm:px-8">
         <div className="py-8">
@@ -159,6 +236,9 @@ export const Screens = () => {
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Description
                     </th>
+                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Custom Fields
+                    </th>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Action
                     </th>
@@ -184,14 +264,19 @@ export const Screens = () => {
         </div>
       </div>
     )
-  } else if (screenStatus === 'error') {
-    content = <div>{error}</div>
+  } else if (
+    screenStatus === 'error' ||
+    screenCustomFieldStatus === 'error' ||
+    customFieldStatus === 'error'
+  ) {
+    content = (
+      <div>{(error, errorScreenCustomField, errorCustomFields)}</div>
+    )
   }
 
   return (
     <section className="screens-list">
       {content}
-      {(console.log('kaka1'), console.log(screens), console.log('kaka2'))}
     </section>
   )
 }
