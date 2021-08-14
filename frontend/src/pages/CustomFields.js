@@ -84,6 +84,7 @@ export const CustomFields = () => {
   if (customFieldStatus === 'loading') {
     content = <div className="loader">Loading...</div>
   } else if (customFieldStatus === 'succeeded') {
+    console.log(customFields, "kkkkkkkkkkkkkkkkkkk")
     let tbody = customFields.map((customField) => (
       <CustomFieldExcerpt key={customField.Id} customField={customField} />
     ))

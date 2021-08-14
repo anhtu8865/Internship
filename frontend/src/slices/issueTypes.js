@@ -85,7 +85,10 @@ const issueTypesSlice = createSlice({
     },
     [fetchIssueTypes.fulfilled]: (state, action) => {
       state.status = 'succeeded'
-      state.issueTypes = state.issueTypes.concat(action.payload.Data)
+      if (action.payload.Data) {
+        state.issueTypes = state.issueTypes.concat(action.payload.Data)
+      }
+      
     },
     [fetchIssueTypes.rejected]: (state, action) => {
       state.status = 'failed'

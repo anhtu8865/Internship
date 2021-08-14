@@ -85,7 +85,9 @@ const projectIssueTypeScreensSlice = createSlice({
     },
     [fetchProjectIssueTypeScreens.fulfilled]: (state, action) => {
       state.status = 'succeeded'
-      state.projectIssueTypeScreens = state.projectIssueTypeScreens.concat(action.payload.Data)
+      if (action.payload.Data) {
+        state.projectIssueTypeScreens = state.projectIssueTypeScreens.concat(action.payload.Data)
+      }
     },
     [fetchProjectIssueTypeScreens.rejected]: (state, action) => {
       state.status = 'failed'

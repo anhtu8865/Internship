@@ -7,7 +7,7 @@ import { addNewCustomField } from '../../slices/customFields'
 const fieldTypes = [
   { Id: '0', Name: 'Text' },
   { Id: '1', Name: 'Date' },
-  { Id: '2', Name: 'Options' },
+  //{ Id: '2', Name: 'Options' },
 ]
 
 export const AddCustomFieldForm = () => {
@@ -21,7 +21,7 @@ export const AddCustomFieldForm = () => {
   const onNameChanged = (e) => setName(e.target.value)
   const onDescriptionChanged = (e) => setDescription(e.target.value)
   const onFieldTypeChanged = (e) => setFieldType(e.target.value)
-  console.log(fieldType, "kkkkkkkkkkkkkkkkkkkkkkkkkkk")
+  //console.log(fieldType, "kkkkkkkkkkkkkkkkkkkkkkkkkkk")
   const canSave =
     [name, fieldType].every(Boolean) && addRequestStatus === 'idle'
 

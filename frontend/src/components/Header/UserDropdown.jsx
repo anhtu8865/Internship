@@ -3,7 +3,6 @@ import { Link, useHistory } from 'react-router-dom'
 
 function SettingDropdown({ isLogged }) {
   const [setting, setProfile] = useState(false)
-  console.log(setting)
   const history = useHistory()
 
   function SigOut() {

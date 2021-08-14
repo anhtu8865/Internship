@@ -89,7 +89,9 @@ const screensSlice = createSlice({
     },
     [fetchScreens.fulfilled]: (state, action) => {
       state.status = 'succeeded'
-      state.screens = state.screens.concat(action.payload.Data)
+      if (action.payload.Data) {
+        state.screens = state.screens.concat(action.payload.Data)
+      }
     },
     [fetchScreens.rejected]: (state, action) => {
       state.status = 'failed'

@@ -85,7 +85,9 @@ const customFieldsSlice = createSlice({
     },
     [fetchCustomFields.fulfilled]: (state, action) => {
       state.status = 'succeeded'
-      state.customFields = state.customFields.concat(action.payload.Data)
+      if (action.payload.Data) {
+        state.customFields = state.customFields.concat(action.payload.Data)
+      }
     },
     [fetchCustomFields.rejected]: (state, action) => {
       state.status = 'failed'

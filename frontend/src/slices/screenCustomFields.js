@@ -85,7 +85,9 @@ const screenCustomFieldsSlice = createSlice({
     },
     [fetchScreenCustomFields.fulfilled]: (state, action) => {
       state.status = 'succeeded'
-      state.screenCustomFields = state.screenCustomFields.concat(action.payload.Data)
+      if (action.payload.Data) {
+        state.screenCustomFields = state.screenCustomFields.concat(action.payload.Data)
+      }
     },
     [fetchScreenCustomFields.rejected]: (state, action) => {
       state.status = 'failed'

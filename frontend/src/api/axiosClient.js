@@ -18,8 +18,8 @@ axiosClient.interceptors.request.use(async (config) => {
   const accessToken = localStorage.getItem("accessToken");
   if (accessToken) {
 
-    console.log("have accesstoken")
-    console.log(accessToken)
+    //console.log("have accesstoken")
+    //console.log(accessToken)
     config.headers.Authorization = "Bearer " + accessToken
   }
   else{
