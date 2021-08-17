@@ -187,19 +187,23 @@ func CheckAdmin(c *gin.Context) {
 	claims := token.Claims.(jwt.MapClaims)
 	//  accessUuid, ok := claims["username"].(string)
 	role, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["role"]), 10, 64)
+	fmt.Println(role)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
 		c.Abort()
 	}
 	if role == 0 {
+		fmt.Println("Admin")
 		c.Next()
 	}
 	if role == 1 {
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
+		fmt.Println("Trusted")
 		c.Abort()
 	}
 	if role == 2 {
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
+		fmt.Println("member")
 		c.Abort()
 	}
 	c.Abort()
@@ -281,7 +285,7 @@ func RefreshToken(c *gin.Context) {
 			c.Abort()
 		}
 		role, _ := claims["role"].(int64)
-
+        
 		//Delete the previous Refresh Token
 		deleted, delErr := DeleteAuth(refreshUuid)
 		if delErr != nil || deleted == 0 { //if any goes wrong

@@ -1,7 +1,7 @@
 // api/axiosClient.js
-import axios from 'axios';
-import queryString from 'query-string';
-import userApi from './userApi';
+import axios from 'axios'
+import queryString from 'query-string'
+import userApi from './userApi'
 import { useHistory } from 'react-router-dom'
 
 // Set up default config for http requests here
@@ -13,28 +13,31 @@ const axiosClient = axios.create({
   headers: {
     'content-type': 'application/json',
   },
-  paramsSerializer: params => queryString.stringify(params),
-});
+  paramsSerializer: (params) => queryString.stringify(params),
+})
 axiosClient.interceptors.request.use(async (config) => {
   // Handle token here ...
   // const customHeaders = {};
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = localStorage.getItem('accessToken')
   if (accessToken) {
-
-    config.headers.Authorization = "Bearer " + accessToken
+    config.headers.Authorization = 'Bearer ' + accessToken
+  } else {
+    console.log('not have accesstoken')
   }
-  else{
-    console.log("not have accesstoken")
-  }
-  return config;
+  return config
 })
-axiosClient.interceptors.response.use((response) => {
-  if (response && response.data) {
-    return response.data;
-  }
-  return response;
-}, (error) => { 
-    if (error.response.data.Msg == 'Token expired, please login again' && error.config.url != '/users/logout') {
+axiosClient.interceptors.response.use(
+  (response) => {
+    if (response && response.data) {
+      return response.data
+    }
+    return response
+  },
+  (error) => {
+    if (
+      error.response.data.Msg == 'Token expired, please login again' &&
+      error.config.url != '/users/logout'
+    ) {
       const refresh_token = localStorage.getItem('refreshToken')
       const data = {
         refresh_token: refresh_token,
@@ -46,7 +49,7 @@ axiosClient.interceptors.response.use((response) => {
           localStorage.setItem('refreshToken', response.refresh_token)
           const config = error.config
           config.headers['Authorization'] = `Bearer ${accessToken}`
-          console.log("oke1")
+          console.log('oke1')
           return new Promise((resolve, reject) => {
             axios
               .request(config)
@@ -63,6 +66,8 @@ axiosClient.interceptors.response.use((response) => {
         })
       }
     }
-  // Handle errors
-});
-export default axiosClient;
+    return error
+    // Handle errors
+  }
+)
+export default axiosClient

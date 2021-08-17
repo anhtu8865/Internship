@@ -26,7 +26,7 @@ import PermissionManager from './pages/PermissionManager';
 import DetailPermission from './pages/DetailPermission';
 import { ScreenCustomFields } from './pages/ScreenCustomFields';
 import { ProjectIssueTypeScreens } from './pages/ProjectIssueTypeScreens';
-
+import ProjectUserRole from './pages/ProjectUserRole';
 function App() {
  
 
@@ -51,9 +51,21 @@ function App() {
             <AddScreenForm />
           </Route>
 
-          <Route exact path="/editScreen/:screenId" component={UpdateScreenForm} />
-          <Route exact path="/screenCustomFields/:screenId" component={ScreenCustomFields} />
-          <Route exact path="/projectIssueTypeScreens/:issueTypeId" component={ProjectIssueTypeScreens} />
+          <Route
+            exact
+            path="/editScreen/:screenId"
+            component={UpdateScreenForm}
+          />
+          <Route
+            exact
+            path="/screenCustomFields/:screenId"
+            component={ScreenCustomFields}
+          />
+          <Route
+            exact
+            path="/projectIssueTypeScreens/:issueTypeId"
+            component={ProjectIssueTypeScreens}
+          />
 
           <Route path="/customFields">
             <CustomFields />
@@ -62,7 +74,11 @@ function App() {
             <AddCustomFieldForm />
           </Route>
 
-          <Route exact path="/editCustomField/:customFieldId" component={UpdateCustomFieldForm} />
+          <Route
+            exact
+            path="/editCustomField/:customFieldId"
+            component={UpdateCustomFieldForm}
+          />
           <Route path="/issueTypes">
             <IssueTypes />
           </Route>
@@ -75,7 +91,11 @@ function App() {
           <Route path="/addIssue">
             <AddIssueForm />
           </Route>
-          <Route exact path="/editIssueType/:issueTypeId" component={UpdateIssueTypeForm} />
+          <Route
+            exact
+            path="/editIssueType/:issueTypeId"
+            component={UpdateIssueTypeForm}
+          />
 
           <Route path="/user-manager">
             <Users></Users>
@@ -88,6 +108,9 @@ function App() {
           </Route>
           <Route path="/detail-permission">
             <DetailPermission></DetailPermission>
+          </Route>
+          <Route path="/project-user/:keyProject">
+            <ProjectUserRole></ProjectUserRole>
           </Route>
           <Route exact path="/">
             <Home />

@@ -18,9 +18,7 @@ type UserRoute struct {
 func (u *UserRoute) Init(router *gin.Engine) {
 	u.RouterGroup = router.Group(u.GroupName)
 	{
-		//u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
-		// u.RouterGroup.POST("/", u.Signin())
-
+	
 		u.RouterGroup.POST("/sign-up",auth.CheckUserLoged, auth.CheckAdmin, u.Signup())
 		u.RouterGroup.GET("/",auth.CheckUserLoged, auth.CheckAdmin, u.Index())
 		u.RouterGroup.DELETE("/delete-user",auth.CheckUserLoged, auth.CheckAdmin, u.DeleteUser())
@@ -28,15 +26,6 @@ func (u *UserRoute) Init(router *gin.Engine) {
 		u.RouterGroup.POST("/",u.Singin())
 		u.RouterGroup.POST("/logout",auth.CheckUserLoged,auth.Logout)
 		u.RouterGroup.POST("/refresh",auth.RefreshToken)
-// =======
-// 		u.RouterGroup.POST("/sign-up", u.Signup())
-// 		u.RouterGroup.GET("/", auth.CheckUserLoged, u.Index())
-// 		u.RouterGroup.DELETE("/delete-user", u.DeleteUser())
-// 		u.RouterGroup.PUT("/admin/update-user", u.UpdateUserByAdmin())
-// 		u.RouterGroup.POST("/", u.Singin())
-// >>>>>>> new
-		// u.RouterGroup.PUT("/:id", auth.CheckUserLoged, auth.CheckAdmin, u.UpdateUser())
-		// u.RouterGroup.DELETE("/:id", auth.CheckUserLoged, auth.CheckAdmin, u.DeleteUser())
 	}
 }
 

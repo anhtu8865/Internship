@@ -72,11 +72,6 @@ const UserItem = ({ user }) => {
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">{globalrole}</p>
         </td>
-        {/* <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <Link to="#">
-            <a className="text-blue-400 whitespace-no-wrap">DEV ASAM</a>
-          </Link>
-        </td> */}
         <td className="px-5 py-5 border-b text-center border-gray-200 bg-white text-sm">
           <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
             <span

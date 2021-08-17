@@ -25,7 +25,6 @@ func (pr *RoleModel) GetAllRole() ([]Role,error){
 	//query
 	smt := `SELECT * FROM NEW_JIRA_ROLE`
 	rows, err := DbOracle.Db.Query(smt)
-	fmt.Println(rows)
 	if err == nil{
 		for rows.Next(){
            role := Role{}
@@ -34,7 +33,6 @@ func (pr *RoleModel) GetAllRole() ([]Role,error){
 			   &role.RoleName,
 			   &role.RoleDescription,
 		   )
-		   fmt.Println(rows)
 		   temp_role = append(temp_role, role)
 		}
 		return temp_role,nil

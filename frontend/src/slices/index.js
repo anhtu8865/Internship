@@ -11,6 +11,7 @@ import issueReducer from './issues'
 import roleReducer from './roles'
 import permissionsReducer from './permission'
 import permissionRolesReducer from './per-role'
+import projectUserRoleReducer from './pro-user-role'
 const rootReducer = combineReducers({
   users: userReducer,
   projects: projectReducer,
@@ -22,9 +23,8 @@ const rootReducer = combineReducers({
   issues: issueReducer,
   roles: roleReducer,
   permissions: permissionsReducer,
-  permissionroles:permissionRolesReducer,
-  
-
+  permissionroles: permissionRolesReducer,
+  projectUserRoles: projectUserRoleReducer,
 })
 export default rootReducer
 
