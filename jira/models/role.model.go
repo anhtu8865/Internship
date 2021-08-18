@@ -102,7 +102,7 @@ func (pr *RoleModel) Check_Role_Exist_By_Id(id string) ([]Role, error){
 	}
 }
 //Update role
-func (pr *RoleModel) UpdateRole (id int, strName string, strDescription string) (sql.Result, error) {
+func (pr *RoleModel) UpdateRole(id int, strName string, strDescription string) (sql.Result, error) {
 	var NameQuery, DescriptionQuery string
 	if strName != ""{
 		NameQuery = fmt.Sprintf("ROLE_NAME = '%v',",strName)
