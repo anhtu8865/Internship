@@ -18,6 +18,8 @@ func (pr *ProjectUserRoleRoute) Init(router *gin.Engine) {
 	{
 	  pr.RouterGroup.GET("",pr.getAll())
 	  pr.RouterGroup.PUT("",pr.UpdateRoleUserInProject())
+	  pr.RouterGroup.DELETE("",pr.DeleteUserForProject())
+	  pr.RouterGroup.POST("",pr.AddUserRoleToProject())
 
 	}
 }
@@ -26,4 +28,10 @@ func (pr *ProjectUserRoleRoute) getAll() gin.HandlerFunc{
 }
 func (pr *ProjectUserRoleRoute) UpdateRoleUserInProject() gin.HandlerFunc{
 	return ProjectUserRoleHandlers.UpdateRoleForUser()
+}
+func (pr *ProjectUserRoleRoute) DeleteUserForProject() gin.HandlerFunc{
+	return ProjectUserRoleHandlers.DeleteUserForProject()
+}
+func (pr* ProjectUserRoleRoute) AddUserRoleToProject() gin.HandlerFunc{
+	return ProjectUserRoleHandlers.AddUserRoleToProject()
 }

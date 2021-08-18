@@ -40,10 +40,15 @@ func (pr *ProjectUserRoleModel) GetAllUser(key_project string) ([]ProjectUserRol
 		return nil, err
 	}
 }
+//Add User and role to project
+func (pr *ProjectUserRoleModel) AddUserRoleToProject(key_project string,id_user_new string, id_role_new string) (sql.Result, error) {
+	smt := `INSERT INTO "NEW_JIRA_USER_PROJECT_ROLE"("USER_ID", "PROJECT_KEY", "ROLE_ID") VALUES (:1, :2, :3)`
+	return DbOracle.Db.Exec(smt,id_user_new,key_project,id_role_new)
+}
 //Check exists
-func (pr *ProjectUserRoleModel) ExistsProjecUserRole(key_project string,id_user string, id_role string) ([]ProjectUserRole, error){
+func (pr *ProjectUserRoleModel) ExistsProjecUser(key_project string,id_user string) ([]ProjectUserRole, error){
    var temp_exist []ProjectUserRole
-   query :=fmt.Sprintf("SELECT * FROM NEW_JIRA_USER_PROJECT_ROLE WHERE USER_ID = '%v' AND PROJECT_KEY ='%v' AND ROLE_ID ='%v' ",id_user,key_project,id_role) 
+   query :=fmt.Sprintf("SELECT * FROM NEW_JIRA_USER_PROJECT_ROLE WHERE USER_ID = '%v' AND PROJECT_KEY ='%v'  ",id_user,key_project) 
    rows,err := DbOracle.Db.Query(query)
    if err == nil {
 	   for rows.Next(){
@@ -62,7 +67,7 @@ func (pr *ProjectUserRoleModel) ExistsProjecUserRole(key_project string,id_user 
 
 }
 //update role user in project 
-func (pr *ProjectUserRoleModel) UpdateRoleForUser(key_project string,id_user string, id_role string, id_role_new string) (sql.Result,error){
+func (pr *ProjectUserRoleModel) UpdateRoleForUser(key_project string,id_user string, id_role_new string) (sql.Result,error){
 	var RoleQuery string
 	if id_role_new != ""{
       RoleQuery = fmt.Sprintf("ROLE_ID ='%v'",id_role_new)
@@ -70,6 +75,12 @@ func (pr *ProjectUserRoleModel) UpdateRoleForUser(key_project string,id_user str
 		RoleQuery = "ROLE_ID=ROLE_ID"
 	}
 	smt := fmt.Sprintf(`UPDATE "NEW_JIRA_USER_PROJECT_ROLE" SET %v
-	WHERE "USER_ID"=:1 AND "PROJECT_KEY"=:2 AND "ROLE_ID"=:3`,RoleQuery)
-	return DbOracle.Db.Exec(smt,id_user,key_project,id_role)
+	WHERE "USER_ID"=:1 AND "PROJECT_KEY"=:2`,RoleQuery)
+	return DbOracle.Db.Exec(smt,id_user,key_project)
+}
+
+//delete user
+func (pr *ProjectUserRoleModel) DeleteUserForProject(key_project string,id_user string) (sql.Result,error){
+	query := fmt.Sprintf("DELETE FROM NEW_JIRA_USER_PROJECT_ROLE WHERE USER_ID = '%v' AND PROJECT_KEY ='%v'", id_user,key_project)
+	return DbOracle.Db.Exec(query)
 }
