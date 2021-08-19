@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import roleApi from '../api/roleApi'
 
-
 export const initialState = {
   loading: false,
   hasErrors: false,
@@ -23,37 +22,35 @@ const rolesSlice = createSlice({
       )
       state.roles = filteredRole
     },
-    startLoading: (state) => {        
-        state.loading = true
-      },
-    getRoleSuccess:(state, action) =>{
-        state.roles = action.payload
-        state.loading = false
-        state.hasErrors = false
+    startLoading: (state) => {
+      state.loading = true
     },
-    getRoleFailure:(state)=>{
-        state.loading = false
-        state.hasErrors = true
+    getRoleSuccess: (state, action) => {
+      state.roles = action.payload
+      state.loading = false
+      state.hasErrors = false
     },
-    setRoleUpdate:(state,action) =>{
+    getRoleFailure: (state) => {
+      state.loading = false
+      state.hasErrors = true
+    },
+    setRoleUpdate: (state, action) => {
       state.roleUpdate = action.payload
     },
-    updateRole:(state,action) =>{
-        const {id,data} = action.payload
-        let newRoles = state.roles.map(
-            (
-                role => (role.Role_Id === id ? {Role_Id: id, ...data} : role)
-            ))
-        state.roles = newRoles
-
-    }
+    updateRole: (state, action) => {
+      const { id, data } = action.payload
+      let newRoles = state.roles.map((role) =>
+        role.Role_Id === id ? { Role_Id: id, ...data } : role
+      )
+      state.roles = newRoles
+    },
   },
 })
 
-const {addRole, getRoleSuccess,startLoading,getRoleFailure,removeRole} =
-rolesSlice.actions
+const { addRole, getRoleSuccess, startLoading, getRoleFailure, removeRole } =
+  rolesSlice.actions
 
-const {actions} = rolesSlice
+const { actions } = rolesSlice
 
 //export role
 export const rolesSelector = (state) => state.roles
@@ -63,68 +60,65 @@ export const rolesUpdateSelector = (state) => state.roleUpdate
 const roleReducer = rolesSlice.reducer
 export default roleReducer
 //Actions
-export const fetchRoles = () => async(dispatch) =>{
-    dispatch(startLoading())
-    roleApi
+export const fetchRoles = () => async (dispatch) => {
+  dispatch(startLoading())
+  roleApi
     .getAllRole()
-    .then((res)=>{
-        if(res.Data) {
-            dispatch(getRoleSuccess(res.Data))
-        }
-        return(res)
-
+    .then((res) => {
+      if (res.Data) {
+        dispatch(getRoleSuccess(res.Data))
+      }
+      return res
     })
-    .catch((err)=>{
+    .catch((err) => {
       dispatch(getRoleFailure())
-      return(err)
+      return err
     })
-
 }
-//create role 
-export const createRole = (Role) => async(dispatch) =>{
-    console.log(Role)
-    roleApi
+//create role
+export const createRole = (Role) => async (dispatch) => {
+  console.log(Role)
+  roleApi
     .createRole(Role)
-    .then((res)=>{
+    .then((res) => {
       dispatch(addRole(Role))
       return res
-    }).catch((err)=>{
+    })
+    .catch((err) => {
       alert(err.response.data.Msg)
       dispatch(getRoleFailure())
     })
-  
 }
-export const deleteRole = (id) => async(dispatch) =>{
+export const deleteRole = (id) => async (dispatch) => {
   roleApi
-  .delete(id)
-  .then((res)=>{
-    dispatch(removeRole(id))
-    console.log(res)
-  })
-  .catch((err)=>{
-    dispatch(getRoleFailure())
-    return(err)
-  })
+    .delete(id)
+    .then((res) => {
+      dispatch(removeRole(id))
+      console.log(res)
+    })
+    .catch((err) => {
+      dispatch(getRoleFailure())
+      return err
+    })
 }
 
-export const setRoleUpdate = (role) => async(dispatch) =>{
+export const setRoleUpdate = (role) => async (dispatch) => {
   try {
-        dispatch(actions.setRoleUpdate(role))
+    dispatch(actions.setRoleUpdate(role))
   } catch (error) {
     dispatch(getRoleFailure())
-
   }
 }
 
-export const updateRole = (role) => async(dispatch) =>{
+export const updateRole = (role) => async (dispatch) => {
   roleApi
-  .updateRole(role)
-  .then((res)=>{
-    dispatch(actions.updateRole(role))
-    return res
-  })
-  .catch((err)=>{
-    dispatch(getRoleFailure())
-    return err
-  })
+    .updateRole(role)
+    .then((res) => {
+      dispatch(actions.updateRole(role))
+      return res
+    })
+    .catch((err) => {
+      dispatch(getRoleFailure())
+      return err
+    })
 }

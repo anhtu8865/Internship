@@ -8,7 +8,6 @@ import (
 	//_ "github.com/alexbrainman/odbc"
 	"jira/common/helpers"
 	"net/http"
-
 	"github.com/gin-gonic/gin"
 	_ "github.com/godror/godror"
 )
@@ -46,6 +45,7 @@ func (pr *ProjectUserRoleHandler) UpdateRoleForUser() gin.HandlerFunc {
 		json.NewDecoder(c.Request.Body).Decode(&myMap)
 		//id_project
 		project_key = fmt.Sprintf("%v", myMap["projectKey"])
+		fmt.Println(project_key)
 		//id_user
 		user_id = fmt.Sprintf("%v", myMap["userId"])
 		// id role new
@@ -110,6 +110,7 @@ func (pr *ProjectUserRoleHandler) AddUserRoleToProject() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "ids are not enough"})
 		} else {
 			existsProjectUser, err := models.ProjectUserRoleModels.ExistsProjecUser(project_key, new_user_id)
+		    fmt.Println(existsProjectUser)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 			} else {
@@ -133,13 +134,16 @@ func (pr *ProjectUserRoleHandler) AddUserRoleToProject() gin.HandlerFunc {
 //delete user
 func (pr *ProjectUserRoleHandler) DeleteUserForProject() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var project_key, user_id string
-		var myMap map[string]string
-		json.NewDecoder(c.Request.Body).Decode(&myMap)
-		project_key = fmt.Sprintf("%v", myMap["projectKey"])
+		// var myMap map[string]string
+		// json.NewDecoder(c.Request.Body).Decode(&myMap)
+		project_key :=c.Query("ProjectKey")
+		fmt.Println(project_key)
 		//id_user
-		user_id = fmt.Sprintf("%v", myMap["userId"])
-		if project_key == " " || user_id == " " {
+		user_id :=c.Query("UserId")
+		fmt.Println(user_id)
+		// user_id = fmt.Sprintf("%v", myMap["UserId"])
+	   
+		if project_key == "" || user_id == "" {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "ids are not enough"})
 		} else {
 			existsProjectUser, err := models.ProjectUserRoleModels.ExistsProjecUser(project_key, user_id)

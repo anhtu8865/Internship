@@ -32,7 +32,6 @@ func (pr *ProjectUserRoleModel) GetAllUser(key_project string) ([]ProjectUserRol
 			projectuserrole := ProjectUserRole{}
 			rows.Scan(&projectuserrole.UserName,&projectuserrole.UserMail,&projectuserrole.UserId,&projectuserrole.RoleName,&projectuserrole.RoleId)
 			temp_projectuserrole = append(temp_projectuserrole, projectuserrole)
-			fmt.Println(temp_projectuserrole)
 		}
 		
 		return temp_projectuserrole, nil

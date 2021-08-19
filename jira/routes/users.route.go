@@ -26,6 +26,7 @@ func (u *UserRoute) Init(router *gin.Engine) {
 		u.RouterGroup.POST("/",u.Singin())
 		u.RouterGroup.POST("/logout",auth.CheckUserLoged,auth.Logout)
 		u.RouterGroup.POST("/refresh",auth.RefreshToken)
+		u.RouterGroup.GET("/info-user",u.GetUserbyId())
 	}
 }
 
@@ -52,6 +53,9 @@ func (u *UserRoute) UpdateUserByAdmin() gin.HandlerFunc {
 //Login User
 func (u *UserRoute) Singin() gin.HandlerFunc {
 	return UserHandlers.Singin()
+}
+func (u *UserRoute) GetUserbyId() gin.HandlerFunc{
+	return UserHandlers.GetUserbyId()
 }
 
 // func (u *UserRoute) UpdateUser() gin.HandlerFunc {

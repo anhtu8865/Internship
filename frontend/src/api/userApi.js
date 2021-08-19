@@ -11,7 +11,8 @@ const userApi = {
   update: ({id, data}) => axiosClient.put("/users/admin/update-user?id=" + id, data),
   delete: (id) => axiosClient.delete("/users/delete-user?id=" + id),
   logout: () => axiosClient.post("/users/logout"),
-  refresh :(body) => axiosClient.post("users/refresh",body)
+  refresh :(body) => axiosClient.post("users/refresh",body),
+  infoUser: (id) => axiosClient.get("users/info-user?id="+id)
   // getMe = async (payload) => {
   //   const url = '/me';
   //   const response = await axiosClient.get(url, payload);

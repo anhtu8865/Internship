@@ -55,7 +55,7 @@ export const fetchPermissionRoles = (id) => async (dispatch) => {
   permissionApi
     .getPrmissionRole(id)
     .then((res) => {
-      if(!res.Data) dispatch(getPermissionsRolesSuccess([]))
+      if (!res.Data) dispatch(getPermissionsRolesSuccess([]))
       if (res.Data) dispatch(getPermissionsRolesSuccess(res.Data))
     })
     .catch((err) => {
@@ -64,18 +64,20 @@ export const fetchPermissionRoles = (id) => async (dispatch) => {
     })
 }
 //add role
-export const AddRoleToPermission = (data) => async(dispatch)=>{
+export const AddRoleToPermission = (data) => async (dispatch) => {
   permissionApi
-  .addRoleToPermission(data)
-  .then((res)=>{
-    dispatch(addRoleToPermission(data))
-    return res
-  }).catch((err)=>{
-    alert(err.response.data.Msg)
+    .addRoleToPermission(data)
+    .then((res) => {
+      dispatch(addRoleToPermission(data))
+      return res
+    })
+    .catch((err) => {
+      alert(err.response.data.Msg)
       dispatch(getPermissionRolesFailure())
-  })
+    })
 }
-export const deleteRoleInPermission =(idpermission, idrole) => async (dispatch) => {
+export const deleteRoleInPermission =
+  (idpermission, idrole) => async (dispatch) => {
     permissionApi
       .deleteRoleInPermission(idpermission, idrole)
       .then((res) => {

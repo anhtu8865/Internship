@@ -5,15 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"jira/common/helpers"
+	. "jira/common/middleware/auth"
 	"jira/models"
 	"log"
 	"net/http"
 	"strconv"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/godror/godror"
-	. "jira/common/middleware/auth"
-
-	
 )
 
 
@@ -294,7 +293,20 @@ func (u *UserHandler) UpdateUser() gin.HandlerFunc {
 	}
 }
 
-
+//get user by id 
+func (u *UserHandler) GetUserbyId() gin.HandlerFunc {
+	//Do everything here, call model etc...
+	return func(c *gin.Context) {
+		//call model
+		id_user := c.Query("id")
+		users, err := models.UserModels.Check_User_Exist_By_Id(id_user)
+		if err == nil {
+			c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Get data Success", Data: users[0]})
+		} else {
+			fmt.Println(err)
+		}
+	}
+}
 
 // func (u *UserHandler) Signin() gin.HandlerFunc {
 // 	return func(c *gin.Context) {
