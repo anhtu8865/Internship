@@ -12,6 +12,7 @@ import (
 
 	//_ "github.com/alexbrainman/odbc"
 	_ "github.com/godror/godror"
+
 )
 
 var ProjectsModels = ProjectsModel{}
@@ -260,6 +261,25 @@ func (pm *ProjectsModel) Check_project(n string, k string) ([]Project, error) {
 
 			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.WorkflowId, &project.ProjectLead)
 
+			temp_project = append(temp_project, project)
+		}
+		return temp_project, nil
+	} else {
+		return nil, err
+	}
+}
+
+
+//get user's project
+func (pr *ProjectsModel) GetProjectUser(username string) ([]Project, error) {
+	var temp_project []Project
+	query := fmt.Sprintf("SELECT NEW_JIRA_PROJECT.* FROM NEW_JIRA_USER,NEW_JIRA_PROJECT,NEW_JIRA_USER_PROJECT_ROLE WHERE   NEW_JIRA_USER_PROJECT_ROLE.PROJECT_KEY = new_jira_project.project_key AND NEW_JIRA_USER_PROJECT_ROLE.USER_ID = NEW_JIRA_USER.USER_ID AND NEW_JIRA_USER.USER_NAME = '%v'",username)
+	rows,err := DbOracle.Db.Query(query)
+	if err == nil {
+		for rows.Next() {
+			// fmt.Println(rows.Err().Error())
+			project := Project{}
+			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.WorkflowId, &project.ProjectLead)
 			temp_project = append(temp_project, project)
 		}
 		return temp_project, nil

@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/twinj/uuid"
+	// "encoding/json"
 
 )
 
@@ -96,33 +97,72 @@ func CreateAuth(username string, td *TokenDetails) error {
 type AccessDetails struct {
 	AccessUuid string
 	UserName   string
+	Role       uint64
+}
+func ExtractToken(r *http.Request) string {
+  bearToken := r.Header.Get("Authorization")
+  //normally Authorization the_token_xxx
+  strArr := strings.Split(bearToken, " ")
+  if len(strArr) == 2 {
+     return strArr[1]
+  }
+  return ""
+}
+func VerifyToken(r *http.Request) (*jwt.Token, error) {
+  tokenString := ExtractToken(r)
+  token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+     //Make sure that the token method conform to "SigningMethodHMAC"
+     if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+        return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+     }
+     return []byte(os.Getenv("ACCESS_SECRET")), nil
+  })
+  if err != nil {
+     return nil, err
+  }
+  return token, nil
+}
+func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
+  token, err := VerifyToken(r)
+  if err != nil {
+     return nil, err
+  }
+  claims, ok := token.Claims.(jwt.MapClaims)
+  if ok && token.Valid {
+     accessUuid, ok := claims["access_uuid"].(string)
+     if !ok {
+        return nil, err
+     }
+	username,ok := claims["username"].(string)
+	  if !ok{
+        return nil, err
+    }
+     role, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["role"]), 10, 64)
+     if err != nil {
+        return nil, err
+     }
+	 
+     return &AccessDetails{
+        AccessUuid: accessUuid,
+        UserName:   username,
+		Role :      role,
+     }, nil
+  }
+  return nil, err
 }
 
-func init() {
-	//Initializing redis
-	dsn := os.Getenv("REDIS_DSN")
-	if len(dsn) == 0 {
-		dsn = "localhost:6379"
-	}
-	client = redis.NewClient(&redis.Options{
-		Addr: dsn, //redis port
-	})
-	_, err := client.Ping().Result()
-	if err != nil {
-		panic(err)
-	}
-}
 
+
+//////////////
 func CheckUserLoged(c *gin.Context) {
 	var tknStr string
 	var tknStr1 string
-	// var jwtKey = []byte("jdnfksdmfksd")
 	var rule bool
+	
 	auth := c.Request.Header["Authorization"]
 	if len(auth) > 0 {
 		tknStr = strings.Trim(auth[0], "Bearer")
 		tknStr1 = strings.Trim(tknStr, " ")
-
 		tkn, err := jwt.Parse(tknStr1, func(token *jwt.Token) (interface{}, error) {
 			//Make sure that the token method conform to "SigningMethodHMAC"
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -169,41 +209,20 @@ func CheckUserLoged(c *gin.Context) {
 }
 
 func CheckAdmin(c *gin.Context) {
-	var tknStr string
-	var tknStr1 string
-	auth := c.Request.Header["Authorization"]
-	tknStr = strings.Trim(auth[0], "Bearer")
-	tknStr1 = strings.Trim(tknStr, " ")
-	token, err := jwt.Parse(tknStr1, func(token *jwt.Token) (interface{}, error) {
-		//Make sure that the token method conform to "SigningMethodHMAC"
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte(os.Getenv("ACCESS_SECRET")), nil
-	})
-	if err != nil {
-		fmt.Println(err)
-	}
-	claims := token.Claims.(jwt.MapClaims)
-	//  accessUuid, ok := claims["username"].(string)
-	role, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["role"]), 10, 64)
-	fmt.Println(role)
+    tokenAuth, err := ExtractTokenMetadata(c.Request)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
 		c.Abort()
 	}
-	if role == 0 {
-		fmt.Println("Admin")
+	if tokenAuth.Role == 0 {
 		c.Next()
 	}
-	if role == 1 {
+	if tokenAuth.Role == 1 {
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
-		fmt.Println("Trusted")
 		c.Abort()
 	}
-	if role == 2 {
+	if tokenAuth.Role == 2 {
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
-		fmt.Println("member")
 		c.Abort()
 	}
 	c.Abort()

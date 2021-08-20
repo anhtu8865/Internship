@@ -3,14 +3,14 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"jira/common/helpers"
 	. "jira/common/helpers"
+	. "jira/common/middleware/auth"
 	"jira/loggers"
 	"jira/models"
 	"net/http"
 	"strconv"
-
-	"github.com/gin-gonic/gin"
 	//"github.com/godror/godror/odpi/src"
 	_ "github.com/godror/godror"
 )
@@ -24,28 +24,59 @@ func (u *ProjectsHandler) Get() gin.HandlerFunc {
 	//Do everything here, call model etc...
 
 	return func(c *gin.Context) {
-		// loggers.Logger.Println("get a get request")
-		projects, err := models.ProjectsModels.Get()
+		//Check user để lấy project của user đó
+		//Admin, Trusted load all
+		//member check
+		tokenAuth, err := ExtractTokenMetadata(c.Request)
 		if err != nil {
-			loggers.Logger.Errorln(err.Error())
-			response := MessageResponse{
-				Msg:  err.Error(),
-				Data: projects,
-			}
-			c.JSON(http.StatusNotFound,
-				response,
-			)
-		} else {
-			response := MessageResponse{
-				Msg:  "Successful",
-				Data: projects,
-			}
-			c.JSON(http.StatusOK,
-				response,
-			)
+			c.JSON(http.StatusUnauthorized, "unauthorized")
+			return
 		}
+		if tokenAuth.Role == 0 || tokenAuth.Role == 1 {
+			projects, err := models.ProjectsModels.Get()
+			if err != nil {
+				loggers.Logger.Errorln(err.Error())
+				response := MessageResponse{
+					Msg:  err.Error(),
+					Data: projects,
+				}
+				c.JSON(http.StatusNotFound,
+					response,
+				)
+			} else {
+				response := MessageResponse{
+					Msg:  "Successful",
+					Data: projects,
+				}
+				c.JSON(http.StatusOK,
+					response,
+				)
+			}
+		} 
+		if tokenAuth.Role == 2{
+			projects, err := models.ProjectsModels.GetProjectUser(tokenAuth.UserName)
+			if err != nil {
+				loggers.Logger.Errorln(err.Error())
+				response := MessageResponse{
+					Msg:  err.Error(),
+					Data: projects,
+				}
+				c.JSON(http.StatusNotFound,
+					response,
+				)
+			} else {
+				response := MessageResponse{
+					Msg:  "Successful",
+					Data: projects,
+				}
+				c.JSON(http.StatusOK,
+					response,
+				)
+			}
+		}
+		// loggers.Logger.Println("get a get request")
 
-	}
+	} 
 }
 
 func (u *ProjectsHandler) GetByKey() gin.HandlerFunc {

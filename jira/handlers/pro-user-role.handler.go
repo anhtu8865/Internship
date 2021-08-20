@@ -45,7 +45,6 @@ func (pr *ProjectUserRoleHandler) UpdateRoleForUser() gin.HandlerFunc {
 		json.NewDecoder(c.Request.Body).Decode(&myMap)
 		//id_project
 		project_key = fmt.Sprintf("%v", myMap["projectKey"])
-		fmt.Println(project_key)
 		//id_user
 		user_id = fmt.Sprintf("%v", myMap["userId"])
 		// id role new
@@ -137,7 +136,6 @@ func (pr *ProjectUserRoleHandler) DeleteUserForProject() gin.HandlerFunc {
 		// var myMap map[string]string
 		// json.NewDecoder(c.Request.Body).Decode(&myMap)
 		project_key :=c.Query("ProjectKey")
-		fmt.Println(project_key)
 		//id_user
 		user_id :=c.Query("UserId")
 		fmt.Println(user_id)
@@ -166,3 +164,4 @@ func (pr *ProjectUserRoleHandler) DeleteUserForProject() gin.HandlerFunc {
 
 	}
 }
+

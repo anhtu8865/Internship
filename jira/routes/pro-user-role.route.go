@@ -1,7 +1,7 @@
 package routes
 
 import (
-	// "jira/common/middleware/auth"
+	"jira/common/middleware/auth"
 
 	. "jira/handlers"
 
@@ -16,10 +16,10 @@ type ProjectUserRoleRoute struct{
 func (pr *ProjectUserRoleRoute) Init(router *gin.Engine) {
 	pr.RouterGroup = router.Group(pr.GroupName)
 	{
-	  pr.RouterGroup.GET("",pr.getAll())
-	  pr.RouterGroup.PUT("",pr.UpdateRoleUserInProject())
-	  pr.RouterGroup.DELETE("",pr.DeleteUserForProject())
-	  pr.RouterGroup.POST("",pr.AddUserRoleToProject())
+	  pr.RouterGroup.GET("",auth.CheckUserLoged,pr.getAll())
+	  pr.RouterGroup.PUT("",auth.CheckUserLoged, pr.UpdateRoleUserInProject())
+	  pr.RouterGroup.DELETE("",auth.CheckUserLoged, auth.CheckAdmin,pr.DeleteUserForProject())
+	  pr.RouterGroup.POST("",auth.CheckUserLoged, auth.CheckAdmin,pr.AddUserRoleToProject())
 
 	}
 }

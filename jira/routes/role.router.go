@@ -16,8 +16,9 @@ type RoleRoute struct{
 func (rt *RoleRoute) Init(router *gin.Engine){
 	rt.RouterGroup = router.Group(rt.GroupName)
 	{
-		   rt.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
-            rt.RouterGroup.GET("/",rt.GetAllRole())
+		   
+            rt.RouterGroup.GET("/",auth.CheckUserLoged,rt.GetAllRole())
+			rt.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
 			rt.RouterGroup.POST("",rt.CreateRole())
 			rt.RouterGroup.PUT("",rt.UpdateRole())
 			rt.RouterGroup.DELETE("",rt.DeleteRole())

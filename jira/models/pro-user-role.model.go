@@ -83,3 +83,8 @@ func (pr *ProjectUserRoleModel) DeleteUserForProject(key_project string,id_user 
 	query := fmt.Sprintf("DELETE FROM NEW_JIRA_USER_PROJECT_ROLE WHERE USER_ID = '%v' AND PROJECT_KEY ='%v'", id_user,key_project)
 	return DbOracle.Db.Exec(query)
 }
+
+///permission
+
+
+
