@@ -18,22 +18,23 @@ var IssuesModels = IssuesModel{}
 // var IssueModels = Issue{}
 
 type Issue struct {
-	Key        string
-	Name       string
-	Project    string
-	Issue_Type int
-	Id         int
-	Icon       string
-}
-
-type Issue2 struct {
 	Key             string
 	Name            string
 	Project         string
-	Project_Name    string
-	Issue_Type_Name string
+	Issue_Type      int
 	Id              int
 	Icon            string
+	Fields          []Field
+	Project_Name    string
+	Issue_Type_Name string
+	Project_Avatar  string
+}
+
+type CustomField2 struct {
+	Custom_Field int
+	Name         string
+	Field_Type   string
+	Description  string
 }
 
 type ProjectIssueTypeScreen2 struct {
@@ -50,16 +51,17 @@ type IssuesModel struct {
 	Issues []Issue
 }
 
-func (pm *IssuesModel) Get() ([]Issue2, error) {
-	rows, err := DbOracle.Db.Query(`select A.KEY, A.NAME, A.PROJECT, B.PROJECT_NAME, C.NAME AS ISSUE_TYPE_NAME, A.ID, A.ICON from NEW_JIRA_ISSUE A JOIN NEW_JIRA_PROJECT B ON A.PROJECT = B.PROJECT_KEY JOIN NEW_JIRA_ISSUE_TYPE C ON A.ISSUE_TYPE = C.ID`)
+func (pm *IssuesModel) GetAllCustomFieldsOfScreen(id string) ([]CustomField2, error) {
+	query := fmt.Sprintf("select custom_field, name, field_type, description from new_jira_screen_custom_field A, new_jira_custom_field B where A.custom_field = B.id and A.screen = '%v'", id)
+	rows, err := DbOracle.Db.Query(query)
 	if err == nil {
-		var ListIssues []Issue2
+		var ListCustomFields []CustomField2
 		for rows.Next() {
-			issue := Issue2{}
-			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Project_Name, &issue.Issue_Type_Name, &issue.Id, &issue.Icon)
-			ListIssues = append(ListIssues, issue)
+			customField := CustomField2{}
+			rows.Scan(&customField.Custom_Field, &customField.Name, &customField.Field_Type, &customField.Description)
+			ListCustomFields = append(ListCustomFields, customField)
 		}
-		return ListIssues, nil
+		return ListCustomFields, nil
 	} else {
 		return nil, err
 	}
@@ -80,32 +82,97 @@ func (pm *IssuesModel) CreateInit() ([]ProjectIssueTypeScreen2, error) {
 	}
 }
 
-func (pm *IssuesModel) GetById(id string) ([]Issue, error) {
-	query := fmt.Sprintf("select * from NEW_JIRA_ISSUE where ID = '%v'", id)
-	fmt.Println(query)
+func (pm *IssuesModel) Get() ([]Issue, error) {
+	query := fmt.Sprintf("select * from NEW_JIRA_ISSUE")
 	rows, err := DbOracle.Db.Query(query)
+	var ListIssues []Issue
 	if err == nil {
-		var ListIssues []Issue
 		for rows.Next() {
 			issue := Issue{}
 			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon)
+			issue.Fields, err = FieldsModels.GetAllFieldsByIssueKey(issue.Key)
+			if err != nil {
+
+				return nil, err
+			}
+			query = fmt.Sprintf("select project_name, project_avatar from new_jira_project where project_key = '%v'", issue.Project)
+			rows, err := DbOracle.Db.Query(query)
+			if err == nil {
+				for rows.Next() {
+					rows.Scan(&issue.Project_Name, &issue.Project_Avatar)
+				}
+			} else {
+				return nil, err
+			}
+			query = fmt.Sprintf("select name from new_jira_issue_type where ID = '%v'", issue.Issue_Type)
+			rows, err = DbOracle.Db.Query(query)
+			if err == nil {
+				for rows.Next() {
+					rows.Scan(&issue.Issue_Type_Name)
+				}
+			} else {
+				return nil, err
+			}
 			ListIssues = append(ListIssues, issue)
 		}
-		return ListIssues, nil
 	} else {
 		return nil, err
 	}
+	return ListIssues, nil
+}
+
+func (pm *IssuesModel) GetById(id string) ([]Issue, error) {
+	query := fmt.Sprintf("select * from NEW_JIRA_ISSUE where ID = '%v'", id)
+	rows, err := DbOracle.Db.Query(query)
+	issue := Issue{}
+	var ListIssues []Issue
+	if err == nil {
+		for rows.Next() {
+			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon)
+			issue.Fields, err = FieldsModels.GetAllFieldsByIssueKey(issue.Key)
+			if err != nil {
+
+				return nil, err
+			}
+			query = fmt.Sprintf("select project_name, project_avatar from new_jira_project where project_key = '%v'", issue.Project)
+			rows, err := DbOracle.Db.Query(query)
+			if err == nil {
+				for rows.Next() {
+					rows.Scan(&issue.Project_Name, &issue.Project_Avatar)
+				}
+			} else {
+				return nil, err
+			}
+			query = fmt.Sprintf("select name from new_jira_issue_type where ID = '%v'", issue.Issue_Type)
+			rows, err = DbOracle.Db.Query(query)
+			if err == nil {
+				for rows.Next() {
+					rows.Scan(&issue.Issue_Type_Name)
+				}
+			} else {
+				return nil, err
+			}
+			ListIssues = append(ListIssues, issue)
+		}
+	} else {
+		return nil, err
+	}
+	return ListIssues, nil
 }
 
 func (pm *IssuesModel) Create(r io.ReadCloser) ([]Issue, error) {
 	var issue Issue
 	json.NewDecoder(r).Decode(&issue)
 	query := fmt.Sprintf(
-		`INSERT INTO NEW_JIRA_ISSUE (KEY,NAME,PROJECT,ISSUE_TYPE,ID,ICON) 
+		`INSERT INTO NEW_JIRA_ISSUE (KEY,NAME,PROJECT,ISSUE_TYPE,ID,ICON)
 		VALUES ('%v', '%v', '%v', '%v', SEQ_NEW_JIRA_ISSUE.nextval, '%v')`,
 		issue.Key, issue.Name, issue.Project, issue.Issue_Type, issue.Icon)
 	_, err := DbOracle.Db.Exec(query)
 	if err == nil {
+		_, err := FieldsModels.Create(issue.Fields)
+		if err != nil {
+			return nil, err
+		}
 		rowsLastRecord, errLastRecord :=
 			DbOracle.Db.Query("SELECT * FROM (SELECT * FROM NEW_JIRA_ISSUE ORDER BY ID DESC) WHERE ROWNUM = 1")
 		if errLastRecord == nil {
@@ -124,65 +191,22 @@ func (pm *IssuesModel) Create(r io.ReadCloser) ([]Issue, error) {
 	}
 }
 
-func UpdateQueryIssue(issue map[string]interface{}, id string) string {
-
-	var Key, Name, Project, Issue_Type, Icon string
-	if issue["Key"] != nil {
-		Key = fmt.Sprintf("'%v'", issue["Key"])
-	} else {
-		Key = ""
-	}
-	if issue["Name"] != nil {
-		Name = fmt.Sprintf("'%v'", issue["Name"])
-	} else {
-		Name = ""
-	}
-	if issue["Project"] != nil {
-		Project = fmt.Sprintf("'%v'", issue["Project"])
-	} else {
-		Project = ""
-	}
-	if issue["Issue_Type"] != nil {
-		Issue_Type = fmt.Sprintf("'%v'", issue["Issue_Type"])
-	} else {
-		Issue_Type = ""
-	}
-	if issue["Icon"] != nil {
-		Icon = fmt.Sprintf("'%v'", issue["Icon"])
-	} else {
-		Icon = ""
-	}
-	query := fmt.Sprintf("UPDATE NEW_JIRA_ISSUE SET KEY = %v, NAME = %v, PROJECT = %v, ISSUE_TYPE = %v, ICON = %v WHERE ID = %v",
-		Key, Name, Project, Issue_Type, Icon, id)
-	//fmt.Println(query)
-	return query
-}
-
 func (pm *IssuesModel) Update(r io.ReadCloser, id string) ([]Issue, error) {
-	var myMap map[string]interface{}
-	json.NewDecoder(r).Decode(&myMap)
-	query := UpdateQueryIssue(myMap, id)
-	row, err := DbOracle.Db.Exec(query)
+	var issue Issue
+	json.NewDecoder(r).Decode(&issue)
+	query := fmt.Sprintf(`UPDATE new_jira_issue SET name = '%v' WHERE id = '%v'`, issue.Name, id)
+	_, err := DbOracle.Db.Exec(query)
 	if err == nil {
-		rowsAffect, _ := row.RowsAffected()
-		if rowsAffect == 0 {
-			return nil, errors.New("no row affect")
-		}
-		query := fmt.Sprintf("select * from NEW_JIRA_ISSUE where ID = '%v'", id)
-		rowsUpdatedtRecord, errUpdatedtRecord :=
-			DbOracle.Db.Query(query)
-		if errUpdatedtRecord == nil {
-			var ListIssues []Issue
-			for rowsUpdatedtRecord.Next() {
-				issue := Issue{}
-				rowsUpdatedtRecord.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon)
-				ListIssues = append(ListIssues, issue)
-			}
-			return ListIssues, nil
-		} else {
+		query := fmt.Sprintf("delete from new_jira_field where issue = '%v'", issue.Key)
+		_, err = DbOracle.Db.Exec(query)
+		if err != nil {
 			return nil, err
 		}
-
+		_, err := FieldsModels.Create(issue.Fields)
+		if err != nil {
+			return nil, err
+		}
+		return nil, nil
 	} else {
 		return nil, err
 	}
@@ -193,7 +217,12 @@ func (pm *IssuesModel) Delete(id string) ([]Issue, error) {
 	if err != nil {
 		return nil, err
 	}
-	query := fmt.Sprintf("DELETE FROM NEW_JIRA_ISSUE WHERE ID = %v", id)
+	query := fmt.Sprintf("delete from new_jira_field where issue = '%v'", issues[0].Key)
+	_, err = DbOracle.Db.Exec(query)
+	if err != nil {
+		return nil, err
+	}
+	query = fmt.Sprintf("DELETE FROM NEW_JIRA_ISSUE WHERE KEY = '%v'", issues[0].Key)
 	row, err := DbOracle.Db.Exec(query)
 	if err == nil {
 		rowsAffect, _ := row.RowsAffected()

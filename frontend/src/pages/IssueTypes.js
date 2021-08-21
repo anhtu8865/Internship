@@ -283,7 +283,6 @@ export const IssueTypes = () => {
   return (
     <section className="issueTypes-list">
       {content}
-      {(console.log('kaka1'), console.log(issueTypes), console.log('kaka2'))}
     </section>
   )
 }

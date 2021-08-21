@@ -4,6 +4,7 @@ import issueApi from '../api/issueApi'
 const initialState = {
   issues: [],
   projectIssueTypeScreens: [],
+  customFields: [],
   status: 'idle',
   statusAddIssue: 'idle',
   error: null,
@@ -41,6 +42,23 @@ export const fetchProjectIssueTypeScreens = createAsyncThunk(
   }
 )
 
+export const fetchCustomFields = createAsyncThunk(
+  'issues/fetchCustomFields',
+  async (initialIssue, { rejectWithValue }) => {
+    const { Id } = initialIssue
+    const response = await issueApi
+      .getCustomFields(Id)
+      .then(function (response) {
+        console.log(response)
+        return response
+      })
+      .catch(function (error) {
+        throw rejectWithValue(error.response.data)
+      })
+    return response
+  }
+)
+
 export const addNewIssue = createAsyncThunk(
   'issues/addNewIssue',
   async (initialIssue, { rejectWithValue }) => {
@@ -62,9 +80,10 @@ export const addNewIssue = createAsyncThunk(
 export const updateIssue = createAsyncThunk(
   'issues/updateIssue',
   async (initialIssue, { rejectWithValue }) => {
-    const { Id, ...fields } = initialIssue
+    //const { Id, ...fields } = initialIssue
+    //console.log(Id, fields)
     const response = await issueApi
-      .update(Id, fields)
+      .update(initialIssue.Id, initialIssue)
       .then(function (response) {
         console.log(response)
         return response
@@ -126,17 +145,19 @@ const issuesSlice = createSlice({
       console.log(action.payload.Msg)
     },
     [addNewIssue.fulfilled]: (state, action) => {
-      //state.issues.push(action.payload.Data)
+      state.issues = []
       state.status = 'idle'
     },
     [updateIssue.rejected]: (state, action) => {
       console.log(action.payload.Msg)
     },
     [updateIssue.fulfilled]: (state, action) => {
-      const newIssue = action.payload.Data
-      state.issues = state.issues.map((issue) =>
-        issue.Id === newIssue.Id ? newIssue : issue
-      )
+      state.issues = []
+      state.status = 'idle'
+      // const newIssue = action.payload.Data
+      // state.issues = state.issues.map((issue) =>
+      //   issue.Id === newIssue.Id ? newIssue : issue
+      // )
     },
     [deleteIssue.rejected]: (state, action) => {
       console.log(action.payload.Msg)
@@ -146,6 +167,14 @@ const issuesSlice = createSlice({
       state.issues = state.issues.filter(
         (issue) => issue.Id !== returnedIssue.Id
       )
+    },
+    [fetchCustomFields.rejected]: (state, action) => {
+      console.log(action.payload.Msg)
+    },
+    [fetchCustomFields.fulfilled]: (state, action) => {
+      if (action.payload.Data) {
+        state.customFields = action.payload.Data
+      }
     },
   },
 })

@@ -84,7 +84,6 @@ export const CustomFields = () => {
   if (customFieldStatus === 'loading') {
     content = <div className="loader">Loading...</div>
   } else if (customFieldStatus === 'succeeded') {
-    console.log(customFields, "kkkkkkkkkkkkkkkkkkk")
     let tbody = customFields.map((customField) => (
       <CustomFieldExcerpt key={customField.Id} customField={customField} />
     ))
@@ -208,7 +207,6 @@ export const CustomFields = () => {
   return (
     <section className="customFields-list">
       {content}
-      {(console.log('kaka1'), console.log(customFields), console.log('kaka2'))}
     </section>
   )
 }

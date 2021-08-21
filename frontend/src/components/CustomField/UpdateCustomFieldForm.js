@@ -10,7 +10,7 @@ import {
 const fieldTypes = [
   { Id: '0', Name: 'Text' },
   { Id: '1', Name: 'Date' },
-  //{ Id: '2', Name: 'Options' },
+  { Id: '2', Name: 'Text area' },
 ]
 
 export const UpdateCustomFieldForm = ({ match }) => {

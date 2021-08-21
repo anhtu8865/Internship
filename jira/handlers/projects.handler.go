@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"jira/common/helpers"
 	. "jira/common/helpers"
 	. "jira/common/middleware/auth"
@@ -11,6 +10,9 @@ import (
 	"jira/models"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+
 	//"github.com/godror/godror/odpi/src"
 	_ "github.com/godror/godror"
 )
@@ -53,8 +55,8 @@ func (u *ProjectsHandler) Get() gin.HandlerFunc {
 					response,
 				)
 			}
-		} 
-		if tokenAuth.Role == 2{
+		}
+		if tokenAuth.Role == 2 {
 			projects, err := models.ProjectsModels.GetProjectUser(tokenAuth.UserName)
 			if err != nil {
 				loggers.Logger.Errorln(err.Error())
@@ -77,7 +79,7 @@ func (u *ProjectsHandler) Get() gin.HandlerFunc {
 		}
 		// loggers.Logger.Println("get a get request")
 
-	} 
+	}
 }
 
 func (u *ProjectsHandler) GetByKey() gin.HandlerFunc {
@@ -119,13 +121,11 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 		//project_url = fmt.Sprintf("%v",myMapNew["ProjectUrl"])
 		//project_avatar = fmt.Sprintf("%v",myMapNew["ProjectAvatar"])
 		project_lead = fmt.Sprintf("%v", myMapNew["ProjectLead"])
-		// workflow_id = fmt.Sprintf("%v", myMapNew["WorkflowId"])
 		// Parameters are null
 		if project_key == "" || project_name == "" {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "The parameters are not enough"})
 		} else {
 			Exist_project, err := models.ProjectsModels.Check_project(project_name, project_key)
-			// wf_id, _ := strconv.Atoi(workflow_id)
 			lead_id, _ := strconv.Atoi(project_lead)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running 1 query"})
