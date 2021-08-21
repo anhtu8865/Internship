@@ -28,7 +28,7 @@ type Project struct {
 	//DefaultAssignee    int
 	ProjectAvatar      string `json:"ProjectAvatar"`
 	ProjectDescription string `json:"ProjectDescription"`
-	WorkflowId         int    `json:"WorkflowId"` // New addition
+	// WorkflowId         int    `json:"WorkflowId"` // New addition
 	ProjectLead        int    `json:"ProjectLead"`
 }
 
@@ -47,7 +47,7 @@ func (pm *ProjectsModel) Get() ([]Project, error) {
 		for rows.Next() {
 			// fmt.Println(rows.Err().Error())
 			project := Project{}
-			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.WorkflowId, &project.ProjectLead)
+			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.ProjectLead)
 			ListProjects = append(ListProjects, project)
 		}
 		return ListProjects, nil
@@ -69,7 +69,7 @@ func (pm *ProjectsModel) GetByKey(key string) ([]Project, error) {
 		for rows.Next() {
 			// fmt.Println(err.Error())
 			project := Project{}
-			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.WorkflowId, &project.ProjectLead)
+			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.ProjectLead)
 			// fmt.Println(project)
 			ListProjects = append(ListProjects, project)
 		}
@@ -86,7 +86,7 @@ func (pm *ProjectsModel) CreateProject(r io.ReadCloser) ([]Project, error) {
 	// fmt.Println(project)
 	//query := fmt.Sprintf("INSERT INTO JIRA_PROJECT (PROJECT_NAME, PROJECT_LEAD, PROJECT_URL, PROJECT_DESCRIPTION, PROJECT_AVATAR, PROJECT_KEY) VALUES('%v', %v, '%v', '%v', '%v', '%v')", project.ProjectName, project.ProjectLead, project.ProjectUrl, project.ProjectDescription, project.ProjectAvatar, project.ProjectKey)
 
-	query := fmt.Sprintf("INSERT INTO NEW_JIRA_PROJECT (PROJECT_KEY, PROJECT_NAME, PROJECT_URL, PROJECT_AVATAR, PROJECT_DESCRIPTION, ID_WORKFLOW, PROJECT_LEAD) VALUES(%v, %v, '%v', %v, '%v', '%v', '%v')", project.ProjectKey, project.ProjectName, project.ProjectUrl, project.ProjectAvatar, project.ProjectDescription, project.WorkflowId, project.ProjectLead)
+	query := fmt.Sprintf("INSERT INTO NEW_JIRA_PROJECT (PROJECT_KEY, PROJECT_NAME, PROJECT_URL, PROJECT_AVATAR, PROJECT_DESCRIPTION, ID_WORKFLOW, PROJECT_LEAD) VALUES(%v, %v, '%v', %v, '%v', '%v', '%v')", project.ProjectKey, project.ProjectName, project.ProjectUrl, project.ProjectAvatar, project.ProjectDescription, project.ProjectLead)
 	// query := "INSERT INTO JIRA_PROJECT (PROJECT_NAME, PROJECT_LEAD, PROJECT_URL, DEFAULT_ASSIGNEE, PROJECT_DESCRIPTION, PROJECT_AVATAR, PROJECT_KEY) VALUES('project_name92', 41, 'link92', 1, 'description92', 'link92', 'abc') RETURNING PROJECT_ID into v_id"
 	_, err := DbOracle.Db.Exec(query)
 	// fmt.Println(result)
@@ -107,7 +107,7 @@ func (pm *ProjectsModel) CreateProject(r io.ReadCloser) ([]Project, error) {
 			for rowsLastRecord.Next() {
 				// fmt.Println(err.Error())
 				project := Project{}
-				rowsLastRecord.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.WorkflowId, &project.ProjectLead)
+				rowsLastRecord.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.ProjectLead)
 				// fmt.Println(project)
 				ListProjects = append(ListProjects, project)
 			}
@@ -125,7 +125,7 @@ func (pm *ProjectsModel) CreateProject(r io.ReadCloser) ([]Project, error) {
 func (pm *ProjectsModel) InsertProject(project Project) (sql.Result, error) {
 	smt := `INSERT INTO "NEW_JIRA_PROJECT"("PROJECT_KEY", "PROJECT_NAME", "PROJECT_DESCRIPTION","PROJECT_LEAD","ID_WORKFLOW") VALUES (:1, :2, :3, :4, :5)`
 
-	return DbOracle.Db.Exec(smt, project.ProjectKey, project.ProjectName, project.ProjectDescription, project.ProjectLead, project.WorkflowId)
+	return DbOracle.Db.Exec(smt, project.ProjectKey, project.ProjectName, project.ProjectDescription, project.ProjectLead)
 
 }
 
@@ -259,7 +259,7 @@ func (pm *ProjectsModel) Check_project(n string, k string) ([]Project, error) {
 		for rows.Next() {
 			project := Project{}
 
-			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.WorkflowId, &project.ProjectLead)
+			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.ProjectLead)
 
 			temp_project = append(temp_project, project)
 		}
@@ -279,7 +279,7 @@ func (pr *ProjectsModel) GetProjectUser(username string) ([]Project, error) {
 		for rows.Next() {
 			// fmt.Println(rows.Err().Error())
 			project := Project{}
-			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.WorkflowId, &project.ProjectLead)
+			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.ProjectLead)
 			temp_project = append(temp_project, project)
 		}
 		return temp_project, nil

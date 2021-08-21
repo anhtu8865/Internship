@@ -20,9 +20,9 @@ func (u *ProjectsRoute) Init(router *gin.Engine) {
 		// u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
 		u.RouterGroup.GET("/",auth.CheckUserLoged, u.Get())
 		u.RouterGroup.GET("/:key",auth.CheckUserLoged, u.GetByKey())
-		u.RouterGroup.POST("/",auth.CheckUserLoged, auth.CheckAdmin, u.CreateProject())
-		u.RouterGroup.PUT("/:key",auth.CheckUserLoged, auth.CheckAdmin, u.UpdateProject())
-		u.RouterGroup.DELETE("/:key",auth.CheckUserLoged, auth.CheckAdmin, u.DeleteProject())
+		u.RouterGroup.POST("/",auth.CheckUserLoged, auth.CheckTrusted, u.CreateProject())
+		u.RouterGroup.PUT("/:key",auth.CheckUserLoged, auth.CheckTrusted, u.UpdateProject())
+		u.RouterGroup.DELETE("/:key",auth.CheckUserLoged, auth.CheckTrusted, u.DeleteProject())
 	}
 
 }

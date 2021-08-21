@@ -20,7 +20,7 @@ export default function ProjectUserRole() {
     dispatch(fetchProjectUserRole(projectkey))
   }, [dispatch])
 
-  console.log(projectUserRoles)
+
   const renderUserRole = () => {
       return projectUserRoles.map((projectUserRole) => (
         <ProjectUserItems
@@ -43,6 +43,7 @@ export default function ProjectUserRole() {
     handleOpen: handleAddUser,
     handleClose: handleCloseAdd,
     projectkey: projectkey,
+    listUser: projectUserRoles,
     // data_permission: temp,
     // fulldata: permissionroles,
   }

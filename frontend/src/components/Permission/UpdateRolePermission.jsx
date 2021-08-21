@@ -39,15 +39,11 @@ export default function UpdateRolePermission({ modalDialog }) {
   }
   //filter role which permission don't aleardy
 
-  let id_role = []
-  roles.map((temp) => {
-    id_role.push(temp.Role_Id)
-  })
-  fulldata.map((temp) => {
-    id_role.push(temp.RoleId)
-  })
-
-  var options = roles.map((option) => {
+   
+   const temp = roles.filter(
+     (item1) => !fulldata.some((item2) => item1.Role_Id === item2.RoleId)
+   )
+  var options = temp.map((option) => {
     return (
       <option key={option.Role_Id} value={option.Role_Id}>
         {option.Role_Name}

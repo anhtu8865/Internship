@@ -12,7 +12,7 @@ import FormInput from '../Form/FormInput'
 import Select from 'react-select'
 
 export default function AddUserProject({ modalDialog }) {
-  const { handleClose, projectkey } = modalDialog
+  const { handleClose, projectkey, listUser } = modalDialog
   const { register, handleSubmit } = useForm()
   const dispatch = useAppDispatch()
   //load user
@@ -20,10 +20,13 @@ export default function AddUserProject({ modalDialog }) {
   useEffect(() => {
     dispatch(fetchUsers())
   }, [dispatch])
-
-  const options_user = users.map((user) => ({
+   const temp = users.filter(
+     (item1) => !listUser.some((item2) => item1.User_Id === item2.UserId)
+   )
+ 
+  const options_user = temp.map((user) => ({
     value: user.User_Id,
-    label: user.Username,
+    label: user.User_Name,
   }))
 
   //load role
@@ -63,6 +66,7 @@ export default function AddUserProject({ modalDialog }) {
   }
   return (
     <>
+    
       <DialogModal
         title="Grant Permission"
         modalDialog={modalDialog}

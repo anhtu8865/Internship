@@ -50,7 +50,7 @@ const UserItem = ({ user }) => {
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
             <div className="flex-shrink-0 w-10 h-10">
-           <img
+              <img
                 className="w-full h-full rounded-full"
                 src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
                 alt=""
@@ -64,7 +64,9 @@ const UserItem = ({ user }) => {
           </div>
         </td>
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <p className="text-gray-900 whitespace-no-wrap">{user.Username}</p>
+          <p className="text-gray-900 whitespace-no-wrap">
+            {user.Username || user.User_Name}
+          </p>
         </td>
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">{user.User_Email}</p>
@@ -79,8 +81,11 @@ const UserItem = ({ user }) => {
               className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
             />
             <a
-            onClick={(e) => handleOpenUpdate(e, user)} 
-            className="relative cursor-pointer">Edit</a>
+              onClick={(e) => handleOpenUpdate(e, user)}
+              className="relative cursor-pointer"
+            >
+              Edit
+            </a>
           </span>
           <span className="relative inline-block px-3 py-1 ml-1.5 font-semibold text-green-900 leading-tight">
             <span

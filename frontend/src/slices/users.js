@@ -66,8 +66,6 @@ export const fetchUsers = () => async (dispatch) => {
   userApi
     .getAll()
     .then((res) => {
-      console.log("oke")
-      console.log(res)
       if (res.Data) dispatch(getUsersSuccess(res.Data))
     })
     .catch((err) => {

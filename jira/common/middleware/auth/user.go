@@ -227,7 +227,24 @@ func CheckAdmin(c *gin.Context) {
 	}
 	c.Abort()
 }
-
+func CheckTrusted(c *gin.Context) {
+    tokenAuth, err := ExtractTokenMetadata(c.Request)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
+		c.Abort()
+	}
+	if tokenAuth.Role == 0 {
+		c.Next()
+	}
+	if tokenAuth.Role == 1 {
+		c.Next()
+	}
+	if tokenAuth.Role == 2 {
+		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
+		c.Abort()
+	}
+	c.Abort()
+}
 func Logout(c *gin.Context) {
 	var tknStr string
 	var tknStr1 string

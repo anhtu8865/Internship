@@ -84,7 +84,7 @@ export const AddUserToProject = (data) => async (dispatch) => {
         console.log(user.Data)
         let newuser = {
           UserId: user.Data.User_Id,
-          UserName: user.Data.Username,
+          UserName: user.Data.User_Name,
           UserMail: user.Data.User_Email,
           RoleName: data.RoleName,
         }

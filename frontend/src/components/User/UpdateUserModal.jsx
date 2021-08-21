@@ -60,7 +60,7 @@ function UpdateUserModal({ modalDialog }) {
               r={register}
               name="Username"
               label={'Username'}
-              value={userUpdate.Username}
+              value={userUpdate.User_Name}
               required
             />
             <FormInput
@@ -85,13 +85,13 @@ function UpdateUserModal({ modalDialog }) {
               <label className="uppercase md:text-sm text-xs text-gray-500 text-light">
                 Global Role
               </label>
-              <select  className="py-2 px-3 rounded-md border border-green-500 mt-2 focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-transparent"
-              {...register("globalrole")}
+              <select
+                className="py-2 px-3 rounded-md border border-green-500 mt-2 focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-transparent"
+                {...register('globalrole')}
               >
                 <option value="0">Admin</option>
                 <option value="1">Trusted</option>
                 <option value="2">Member</option>
-
               </select>
             </div>
           </DialogContent>

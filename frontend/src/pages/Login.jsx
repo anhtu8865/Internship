@@ -12,8 +12,7 @@ function Login(props) {
       {
       localStorage.setItem("accessToken", response.Data.access_token)
       localStorage.setItem('refreshToken', response.Data.refresh_token)
-      // cookies.set('access-token', response.Data.access_token)
-      props.history.push('/Home')
+      props.history.push('/')
       }
       else{
         alert(response.Msg)

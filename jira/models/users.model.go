@@ -12,7 +12,7 @@ var UserModels = UserModel{}
 
 type User struct {
 	UserId       int    `json:"User_Id"`
-	UserName     string `json:"Username"`
+	UserName     string `json:"User_Name"`
 	UserFullName string `json:"User_Full_Name"`
 	UserEmail    string `json:"User_Email"`
 	UserPassword string `json:"User_Password"`
