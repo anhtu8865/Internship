@@ -77,7 +77,7 @@ func (u *ProjectsHandler) GetByKey() gin.HandlerFunc {
 
 func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var project_key, project_name, project_description, project_lead, workflow_id string
+		var project_key, project_name, project_description, project_lead string
 
 		var myMapNew map[string]string
 		json.NewDecoder(c.Request.Body).Decode(&myMapNew)
@@ -87,13 +87,11 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 		//project_url = fmt.Sprintf("%v",myMapNew["ProjectUrl"])
 		//project_avatar = fmt.Sprintf("%v",myMapNew["ProjectAvatar"])
 		project_lead = fmt.Sprintf("%v", myMapNew["ProjectLead"])
-		workflow_id = fmt.Sprintf("%v", myMapNew["WorkflowId"])
 		// Parameters are null
 		if project_key == "" || project_name == "" {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "The parameters are not enough"})
 		} else {
 			Exist_project, err := models.ProjectsModels.Check_project(project_name, project_key)
-			wf_id, _ := strconv.Atoi(workflow_id)
 			lead_id, _ := strconv.Atoi(project_lead)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running 1 query"})
@@ -140,7 +138,7 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 					}
 				*/
 
-				scr := models.Project{ProjectKey: project_key, ProjectName: project_name, ProjectDescription: project_description, ProjectLead: lead_id, WorkflowId: wf_id}
+				scr := models.Project{ProjectKey: project_key, ProjectName: project_name, ProjectDescription: project_description, ProjectLead: lead_id}
 
 				if _, err := models.ProjectsModels.InsertProject(scr); err != nil {
 					fmt.Println(err)
