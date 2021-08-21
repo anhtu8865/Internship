@@ -1,113 +1,51 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
-import { addNewIssue, fetchCustomFields } from '../../slices/issues'
-import {
-  selectAllProjectIssueTypeScreens,
-  fetchProjectIssueTypeScreens,
-} from '../../slices/issues'
+import { updateIssue } from '../../slices/issues'
+import { selectIssueById } from '../../slices/issues'
 import { useForm } from 'react-hook-form'
+import { useHistory } from 'react-router-dom'
 
-export const AddIssueForm = () => {
-  const { register, handleSubmit, reset } = useForm()
-  const [name, setName] = useState('')
-  const [key, setKey] = useState('')
-  const [projectName, setProjectName] = useState('')
-  const [issueTypeName, setIssueTypeName] = useState('')
-  const [addRequestStatus, setAddRequestStatus] = useState('idle')
-
+export const UpdateIssueForm = ({ match }) => {
+  const { issueId } = match.params
+  const issue = useSelector((state) => selectIssueById(state, issueId))
   const dispatch = useDispatch()
-  const projectIssueTypeScreens = useSelector(selectAllProjectIssueTypeScreens)
-
-  const filteredProjects = projectIssueTypeScreens
-    .map((item) => item.Project_Name)
-    .filter((value, index, self) => self.indexOf(value) === index)
-
-  const filteredIssueTypes = projectIssueTypeScreens.filter(
-    (item) => item.Project_Name === projectName
-  )
-
-  const projectsOptions = filteredProjects.map((item) => (
-    <option key={item} value={item}>
-      {item}
-    </option>
-  ))
-  const issueTypesOptions = filteredIssueTypes.map((item) => (
-    <option key={item.Issue_Type_Name} value={item.Issue_Type_Name}>
-      {item.Issue_Type_Name}
-    </option>
-  ))
-
-  const issueStatus = useSelector((state) => state.issues.statusAddIssue)
-  const customFields = useSelector((state) => state.issues.customFields)
-  useEffect(() => {
-    if (issueStatus === 'idle') {
-      dispatch(fetchProjectIssueTypeScreens())
-    }
-    if ([projectName, issueTypeName].every(Boolean)) {
-      const { Screen } = projectIssueTypeScreens.find(
-        (element) =>
-          element.Project_Name === projectName &&
-          element.Issue_Type_Name === issueTypeName
-      )
-      if (Screen) {
-        dispatch(fetchCustomFields({ Id: Screen }))
-      }
-    }
-  }, [issueStatus, dispatch, projectName, issueTypeName])
-
+  const { register, handleSubmit, reset } = useForm()
+  const [name, setName] = useState(issue.Name)
+  const [key, setKey] = useState(issue.Key)
+  const [projectName, setProjectName] = useState(issue.Project_Name)
+  const [issueTypeName, setIssueTypeName] = useState(issue.Issue_Type_Name)
+  const [editRequestStatus, setEditRequestStatus] = useState('idle')
+  useEffect(() => {}, [dispatch])
   const onNameChanged = (e) => setName(e.target.value)
-  const onKeyChanged = (e) => setKey(e.target.value)
-  const onIssueTypeChanged = (e) => setIssueTypeName(e.target.value)
-  const onProjectChanged = (e) => setProjectName(e.target.value)
-  const canSave =
-    [name, key, projectName, issueTypeName].every(Boolean) &&
-    addRequestStatus === 'idle'
-
+  const canSave = [name, key].every(Boolean) && editRequestStatus === 'idle'
+  const history = useHistory()
   const onSaveIssueClicked = async (data) => {
     if (canSave) {
       try {
-        setAddRequestStatus('pending')
-        setName('')
-        setKey('')
-        setProjectName('')
-        setIssueTypeName('')
-        const found = projectIssueTypeScreens.find(
-          (element) =>
-            element.Project_Name === projectName &&
-            element.Issue_Type_Name === issueTypeName
-        )
-        const result = customFields.map((item) => ({
+        const newIssue = { ...issue, Key: key, Name: name }
+        newIssue.Fields = newIssue.Fields.map((item) => ({
           ...item,
           Value: data[item.Name],
-          Issue: key,
         }))
-        reset()
-        const resultAction = await dispatch(
-          addNewIssue({
-            Key: key,
-            Name: name,
-            Project: found.Project,
-            Issue_Type: found.Issue_Type,
-            Icon: found.Issue_Type_Icon,
-            Fields: result,
-          })
-        )
+        setEditRequestStatus('pending')
+        history.push(`/issues`)
+        const resultAction = await dispatch(updateIssue(newIssue))
         unwrapResult(resultAction)
       } catch (err) {
         console.error('Failed to save the issue: ', err)
       } finally {
-        setAddRequestStatus('idle')
+        setEditRequestStatus('idle')
       }
     }
   }
   let inputFields
-  if (customFields.length !== 0) {
-    inputFields = customFields.map((item) => {
+  if (issue.Fields.length !== 0) {
+    inputFields = issue.Fields.map((item) => {
       switch (item.Field_Type) {
         case 'Text':
           return (
-            <div key={item.Custom_Field} className="relative w-full mb-3">
+            <div key={item.Name} className="relative w-full mb-3">
               <label
                 className="block uppercase text-gray-700 text-xs font-bold mb-2"
                 htmlFor={item.Name}
@@ -118,13 +56,14 @@ export const AddIssueForm = () => {
                 type="text"
                 className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
                 {...register(item.Name)}
+                defaultValue={item.Value}
                 style={{ transition: 'all .15s ease' }}
               />
             </div>
           )
         case 'Date':
           return (
-            <div key={item.Custom_Field} className="relative w-full mb-3">
+            <div key={item.Name} className="relative w-full mb-3">
               <label
                 className="block uppercase text-gray-700 text-xs font-bold mb-2"
                 htmlFor={item.Name}
@@ -135,13 +74,14 @@ export const AddIssueForm = () => {
                 type="date"
                 className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
                 {...register(item.Name)}
+                defaultValue={item.Value}
                 style={{ transition: 'all .15s ease' }}
               />
             </div>
           )
         case 'Text area':
           return (
-            <div key={item.Custom_Field} className="relative w-full mb-3">
+            <div key={item.Name} className="relative w-full mb-3">
               <label
                 className="block uppercase text-gray-700 text-xs font-bold mb-2"
                 htmlFor={item.Name}
@@ -151,6 +91,7 @@ export const AddIssueForm = () => {
               <textarea
                 className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
                 {...register(item.Name)}
+                defaultValue={item.Value}
                 style={{ transition: 'all .15s ease' }}
               />
             </div>
@@ -168,7 +109,7 @@ export const AddIssueForm = () => {
               <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300 border-0">
                 <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                   <div className="text-gray-500 text-center mb-3 font-bold">
-                    <h2>Add a New Issue</h2>
+                    <h2>Edit a Issue</h2>
                   </div>
                   <form>
                     <div className="relative w-full mb-3">
@@ -198,7 +139,7 @@ export const AddIssueForm = () => {
                         type="text"
                         className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
                         value={key}
-                        onChange={onKeyChanged}
+                        disabled={true}
                         style={{ transition: 'all .15s ease' }}
                       />
                     </div>
@@ -209,15 +150,13 @@ export const AddIssueForm = () => {
                       >
                         Project:
                       </label>
-                      <select
+                      <input
+                        type="text"
                         className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
                         value={projectName}
-                        onChange={onProjectChanged}
+                        disabled={true}
                         style={{ transition: 'all .15s ease' }}
-                      >
-                        <option value=""></option>
-                        {projectsOptions}
-                      </select>
+                      />
                     </div>
 
                     <div className="relative w-full mb-3">
@@ -227,15 +166,13 @@ export const AddIssueForm = () => {
                       >
                         Issue Type:
                       </label>
-                      <select
+                      <input
+                        type="text"
                         className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
                         value={issueTypeName}
-                        onChange={onIssueTypeChanged}
+                        disabled={true}
                         style={{ transition: 'all .15s ease' }}
-                      >
-                        <option value=""></option>
-                        {issueTypesOptions}
-                      </select>
+                      />
                     </div>
                     {inputFields}
                     <div className="text-center mt-6">

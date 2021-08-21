@@ -8,6 +8,7 @@ const issueApi = {
   create: (data) => axiosClient.post(url, data),
   update: (id, data) => axiosClient.put(url + id, data),
   delete: (id) => axiosClient.delete(url + id),
+  getCustomFields: (id) => axiosClient.get(url +"getCustomFields/" + id),
 }
 
 export default issueApi;

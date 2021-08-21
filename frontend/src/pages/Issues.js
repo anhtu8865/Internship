@@ -38,7 +38,7 @@ const IssueExcerpt = ({ issue }) => {
         <p className="text-gray-900 whitespace-no-wrap">{issue.Icon}</p>
       </td>
       <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
-        {/* <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
           <span
             aria-hidden
             className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
@@ -49,7 +49,7 @@ const IssueExcerpt = ({ issue }) => {
           >
             Edit
           </Link>
-        </span> */}
+        </span>
         <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
           <span
             aria-hidden
@@ -230,7 +230,6 @@ export const Issues = () => {
   return (
     <section className="issues-list">
       {content}
-      {(console.log('kaka1'), console.log(issues), console.log('kaka2'))}
     </section>
   )
 }
