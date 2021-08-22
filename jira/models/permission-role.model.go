@@ -89,3 +89,5 @@ func (pr *PemissionRoleModel) DeletePermissionRole(idpermission string, idrole s
 	query := fmt.Sprintf("DELETE FROM NEW_JIRA_ROLE_PERMISSION  WHERE PERMISSION_ID ='%v' AND ROLE_ID ='%v' ",idpermission,idrole)
 	return DbOracle.Db.Exec(query)
 }
+
+

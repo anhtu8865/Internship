@@ -13,8 +13,7 @@ type PermissionRoleRoute struct{
 func (pr *PermissionRoleRoute) Init(router *gin.Engine){
 	pr.RouterGroup = router.Group(pr.GroupName)
 	{
-	pr.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
-    pr.RouterGroup.GET("/permission-role",auth.CheckUserLoged, auth.CheckAdmin,pr.GetRolePermissionRouter())
+    pr.RouterGroup.GET("/permission-role",auth.CheckUserLoged,auth.CheckTrusted,pr.GetRolePermissionRouter())
 	
 	}
 }

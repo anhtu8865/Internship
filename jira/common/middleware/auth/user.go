@@ -50,7 +50,7 @@ type AccessDetails struct {
 //create token
 func CreateToken(userid int64, globalrole int64) (*TokenDetails, error) {
 	td := &TokenDetails{}
-	td.AtExpires = time.Now().Add(time.Hour * 1).Unix()
+	td.AtExpires = time.Now().Add(time.Minute * 30).Unix()
 	td.AccessUuid = uuid.NewV4().String()
 
 	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
@@ -312,9 +312,9 @@ func RefreshToken(c *gin.Context) {
 	}
 	//Since token is valid, get the uuid:
 	claims, ok := token.Claims.(jwt.MapClaims) //the token claims should conform to MapClaims
+	fmt.Println(claims)
 	if ok && token.Valid {
 		refreshUuid, ok := claims["refresh_uuid"].(string) //convert the interface to string
-		fmt.Println(refreshUuid)
 		if !ok {
 			c.JSON(http.StatusUnprocessableEntity, err)
 			return
@@ -325,8 +325,13 @@ func RefreshToken(c *gin.Context) {
 			c.JSON(http.StatusUnprocessableEntity, "Error occurred")
 			c.Abort()
 		}
-		globalrole, _ := claims["globalrole"].(int64)
-        
+		globalrole, err := strconv.ParseInt(fmt.Sprintf("%.f", claims["globalrole"]), 10, 64)
+		fmt.Println(globalrole)
+	    if err!=nil {
+			c.JSON(http.StatusUnprocessableEntity, "Error occurred")
+			c.Abort()
+		}
+        fmt.Println(globalrole)
 		//Delete the previous Refresh Token
 		deleted, delErr := DeleteAuth(refreshUuid)
 		if delErr != nil || deleted == 0 { //if any goes wrong

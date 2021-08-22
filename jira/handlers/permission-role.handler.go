@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	// "encoding/json"
-	// "fmt"
 	"jira/common/helpers"
 	"jira/models"
 	"net/http"
@@ -28,4 +26,19 @@ func (pr *PermissionRoleHandler) GetAllPermissionRole() gin.HandlerFunc{
 
 		}
 	}
+}
+// check permission project
+func CheckPermissionUserInProject(key_project string, id_user int, action_permission int) (bool){
+	permission_list, err := models.PermissionModels.GetPermissionUserInProject(key_project,id_user)
+	if err != nil{
+		return false
+	}else{
+		for i:=0; i< len(permission_list); i++{
+            if permission_list[i].PermissionId == action_permission{
+               return true
+			}
+		}
+		return false
+	}
+
 }

@@ -9,7 +9,6 @@ import (
 	"jira/loggers"
 	"jira/models"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -32,9 +31,7 @@ func (u *ProjectsHandler) Get() gin.HandlerFunc {
 		tokenAuth, err := ExtractTokenMetadata(c.Request)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, "unauthorized")
-			return
 		}
-		fmt.Println(tokenAuth)
 		if tokenAuth.GlobalRole == 0 || tokenAuth.GlobalRole == 1 {
 			projects, err := models.ProjectsModels.Get()
 			if err != nil {
@@ -58,6 +55,7 @@ func (u *ProjectsHandler) Get() gin.HandlerFunc {
 		}
 		if tokenAuth.GlobalRole == 2 {
 			projects, err := models.ProjectsModels.GetProjectUser(int(tokenAuth.UserId))
+			fmt.Println(projects)
 			if err != nil {
 				loggers.Logger.Errorln(err.Error())
 				response := MessageResponse{
@@ -111,22 +109,25 @@ func (u *ProjectsHandler) GetByKey() gin.HandlerFunc {
 
 func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var project_key, project_name, project_description, project_lead string
-
+		//get user id
+		tokenAuth, err := ExtractTokenMetadata(c.Request)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, "unauthorized")
+			return
+		}
+		var project_key, project_name, project_description string
 		var myMapNew map[string]string
 		json.NewDecoder(c.Request.Body).Decode(&myMapNew)
 		project_key = fmt.Sprintf("%v", myMapNew["ProjectKey"])
 		project_name = fmt.Sprintf("%v", myMapNew["ProjectName"])
 		project_description = fmt.Sprintf("%v", myMapNew["ProjectDescription"])
-		//project_url = fmt.Sprintf("%v",myMapNew["ProjectUrl"])
-		//project_avatar = fmt.Sprintf("%v",myMapNew["ProjectAvatar"])
-		project_lead = fmt.Sprintf("%v", myMapNew["ProjectLead"])
+		// project_lead = fmt.Sprintf("%v", myMapNew["ProjectLead"])
 		// Parameters are null
 		if project_key == "" || project_name == "" {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "The parameters are not enough"})
 		} else {
 			Exist_project, err := models.ProjectsModels.Check_project(project_name, project_key)
-			lead_id, _ := strconv.Atoi(project_lead)
+			// lead_id, _ := strconv.Atoi(tokenAuth)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running 1 query"})
 
@@ -148,64 +149,23 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 			}
 
 			if len(Exist_project) == 0 {
-				/*
-					body := c.Request.Body
-					projects, err := models.ProjectsModels.CreateProject(body)
-
-					if err != nil e{
-						loggers.Logger.Errorln(err.Error())
-						response := MessageResponse{
-							Msg:  err.Error(),
-							Data: projcts,
-						}
-						c.JSON(http.StatusNotFound,
-							response,
-						)
-					} else {
-						response := MessageResponse{
-							Msg:  "Successful",
-							Data: projects,
-						}
-						c.JSON(http.StatusCreated,
-							response,
-						)
-					}
-				*/
-
-				scr := models.Project{ProjectKey: project_key, ProjectName: project_name, ProjectDescription: project_description, ProjectLead: lead_id}
+				scr := models.Project{ProjectKey: project_key, ProjectName: project_name, ProjectDescription: project_description, ProjectLead: int(tokenAuth.UserId)}
 
 				if _, err := models.ProjectsModels.InsertProject(scr); err != nil {
 					fmt.Println(err)
 					c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
 				} else {
-					fmt.Println(err)
-					c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Create Project Success", Data: scr})
-				}
-				/*
-					err != nil {
-						loggers.Logger.Errorln(err.Error())
-						response := MessageResponse{
-							Msg:  err.Error(),
-							Data: nil,
-						}
-						c.JSON(http.StatusNotFound,
-							response,
-						)
+					projects, err := models.PermissionModels.GetProjectLeadByKeyProject(project_key)
+					if err != nil {
+						c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 					} else {
-						response := MessageResponse{
-							Msg:  "Successfull",
-							Data: nil,
-						}
-						c.JSON(http.StatusConflict,
-							response,
-						)
-					}*/
+						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: projects[0]})
+					}
+				}
 			}
 		}
 
-		// json.NewDecoder(c.Request.Body).Decode(&book)
-		// fmt.Println(c.Request.Body)
 	}
 }
 
@@ -213,53 +173,79 @@ func (u *ProjectsHandler) UpdateProject() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		key := c.Param("key")
 		body := c.Request.Body
-		// fmt.Println(params[0])
-		message, err := models.ProjectsModels.UpdateProject(body, key)
-		if err != nil {
-			loggers.Logger.Errorln(err.Error())
-			response := MessageResponse{
-				Msg:  err.Error(),
-				Data: nil,
-			}
-			c.JSON(http.StatusNotFound,
-				response,
-			)
-		} else {
-			response := MessageResponse{
-				Msg:  message,
-				Data: nil,
-			}
-			c.JSON(http.StatusOK,
-				response,
-			)
+		tokenAuth, error := ExtractTokenMetadata(c.Request)
+		if error != nil {
+			c.JSON(http.StatusUnauthorized, "unauthorized")
 		}
-
-		// json.NewDecoder(c.Request.Body).Decode(&book)
-
+		if CheckProjectLead(key, int(tokenAuth.UserId)) || tokenAuth.GlobalRole == 0 {
+			// fmt.Println(params[0])
+			message, err := models.ProjectsModels.UpdateProject(body, key)
+			if err != nil {
+				loggers.Logger.Errorln(err.Error())
+				response := MessageResponse{
+					Msg:  err.Error(),
+					Data: nil,
+				}
+				c.JSON(http.StatusNotFound,
+					response,
+				)
+			} else {
+				response := MessageResponse{
+					Msg:  message,
+					Data: nil,
+				}
+				c.JSON(http.StatusOK,
+					response,
+				)
+			}
+		} else {
+			c.JSON(http.StatusBadRequest, "you do not own this project")
+		}
 	}
 }
 
+//delete project
 func (u *ProjectsHandler) DeleteProject() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		key := c.Param("key")
-		_, err := models.ProjectsModels.DeleteProject(key)
-		if err != nil {
-			loggers.Logger.Errorln(err.Error())
-			response := MessageResponse{
-				Msg:  err.Error(),
-				Data: nil,
-			}
-			c.JSON(http.StatusNotFound,
-				response,
-			)
-		} else {
-			response := MessageResponse{
-				Msg:  "Delete Successfully!",
-				Data: nil,
-			}
-			c.JSON(http.StatusOK,
-				response,
-			)
+		tokenAuth, error := ExtractTokenMetadata(c.Request)
+		if error != nil {
+			c.JSON(http.StatusUnauthorized, "unauthorized")
 		}
+		if CheckProjectLead(key, int(tokenAuth.UserId)) || tokenAuth.GlobalRole == 0 {
+			_, err := models.ProjectsModels.DeleteProject(key)
+			//get userid
+			if err != nil {
+				loggers.Logger.Errorln(err.Error())
+				response := MessageResponse{
+					Msg:  err.Error(),
+					Data: nil,
+				}
+				c.JSON(http.StatusNotFound,
+					response,
+				)
+			} else {
+				response := MessageResponse{
+					Msg:  "Delete Successfully!",
+					Data: nil,
+				}
+				c.JSON(http.StatusOK,
+					response,
+				)
+			}
+		} else {
+			c.JSON(http.StatusBadRequest, "you do not own this project")
+		}
+	}
+
+}
+
+//check project lead
+func CheckProjectLead(project_key string, id_user int) bool {
+	projects, err := models.PermissionModels.GetProjectLeadByKeyProject(project_key)
+	if err != nil {
+		return false
+	} else {
+		return projects[0].ProjectLead == id_user
 	}
 }

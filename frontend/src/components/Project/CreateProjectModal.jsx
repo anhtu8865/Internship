@@ -26,8 +26,8 @@ function CreateProjectModal({ modalDialog }) {
         <DialogContent dividers className="mx-12">
           <FormInput r={register} name="ProjectName" label={'Name'} required />
           <FormInput r={register} name="ProjectKey" label={'Key'} required />
-          <FormInput r={register} name="WorkflowId" label={'WorkflowId'} required />
-          <FormInput r={register} name="ProjectLead" label={'ProjectLead'} required/>
+          {/* <FormInput r={register} name="WorkflowId" label={'WorkflowId'} required />
+          <FormInput r={register} name="ProjectLead" label={'ProjectLead'} required/> */}
           
           {/*<input {...register('DefaultAssignee')} className="hidden" defaultValue="22" />*/}
         </DialogContent>

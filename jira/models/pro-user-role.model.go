@@ -84,7 +84,5 @@ func (pr *ProjectUserRoleModel) DeleteUserForProject(key_project string,id_user 
 	return DbOracle.Db.Exec(query)
 }
 
-///permission
-
 
 

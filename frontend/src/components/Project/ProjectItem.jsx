@@ -72,7 +72,7 @@ const ProjectItem = ({ project }) => {
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <Link to="#">
             <a className="text-blue-400 whitespace-no-wrap">
-              {project.ProjectLead}
+              {project.ProjectLeadName}
             </a>
           </Link>
         </td>

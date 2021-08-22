@@ -17,9 +17,9 @@ func (pr *ProjectUserRoleRoute) Init(router *gin.Engine) {
 	pr.RouterGroup = router.Group(pr.GroupName)
 	{
 	  pr.RouterGroup.GET("",auth.CheckUserLoged,pr.getAll())
-	  pr.RouterGroup.PUT("",auth.CheckUserLoged,auth.CheckTrusted, pr.UpdateRoleUserInProject())
-	  pr.RouterGroup.DELETE("",auth.CheckUserLoged, auth.CheckUserLoged,pr.DeleteUserForProject())
-	  pr.RouterGroup.POST("",auth.CheckUserLoged, auth.CheckTrusted,pr.AddUserRoleToProject())
+	  pr.RouterGroup.PUT("",auth.CheckUserLoged, pr.UpdateRoleUserInProject())
+	  pr.RouterGroup.DELETE("",auth.CheckUserLoged,pr.DeleteUserForProject())
+	  pr.RouterGroup.POST("",auth.CheckUserLoged,pr.AddUserRoleToProject())
 
 	}
 }

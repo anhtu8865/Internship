@@ -76,13 +76,10 @@ export const fetchProjects = () => async (dispatch) => {
 }
 
 export const createProject = (project) => async (dispatch) => {
-  
   projectApi
   .create(project)
   .then((res) => {
-    console.log(res)
-    dispatch(actions.addProject(project))
-    
+    dispatch(actions.addProject(res.Data))
   })
   .catch((err) => {
     alert(err.response.data.Msg)

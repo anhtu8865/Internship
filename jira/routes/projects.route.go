@@ -17,12 +17,14 @@ type ProjectsRoute struct {
 func (u *ProjectsRoute) Init(router *gin.Engine) {
 	u.RouterGroup = router.Group(u.GroupName)
 	{
-		// u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
 		u.RouterGroup.GET("/",auth.CheckUserLoged, u.Get())
 		u.RouterGroup.GET("/:key",auth.CheckUserLoged, u.GetByKey())
+		//Trusted create project
 		u.RouterGroup.POST("/",auth.CheckUserLoged, auth.CheckTrusted, u.CreateProject())
-		u.RouterGroup.PUT("/:key",auth.CheckUserLoged, auth.CheckTrusted, u.UpdateProject())
-		u.RouterGroup.DELETE("/:key",auth.CheckUserLoged, auth.CheckTrusted, u.DeleteProject())
+        // Check admin 
+		u.RouterGroup.PUT("/:key",auth.CheckUserLoged, u.UpdateProject())
+		//project lead delete project
+		u.RouterGroup.DELETE("/:key",auth.CheckUserLoged,auth.CheckTrusted, u.DeleteProject())
 	}
 
 }

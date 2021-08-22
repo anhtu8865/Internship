@@ -22,12 +22,12 @@ type Project struct {
 	ProjectKey string `json:"ProjectKey"`
 	//ProjectId          int
 	ProjectName string `json:"ProjectName"`
-
 	ProjectUrl string `json:"ProjectUrl"`
 	//DefaultAssignee    int
 	ProjectAvatar      string `json:"ProjectAvatar"`
 	ProjectDescription string `json:"ProjectDescription"`
 	ProjectLead        int    `json:"ProjectLead"`
+	ProjectLeadName    string `json:"ProjectLeadName"`
 }
 
 type ProjectsModel struct {
@@ -37,7 +37,7 @@ type ProjectsModel struct {
 //Lấy thông tin tất cả Project có trong db
 func (pm *ProjectsModel) Get() ([]Project, error) {
 	var ListProjects []Project
-	rows, err := DbOracle.Db.Query("select * from NEW_JIRA_PROJECT")
+	rows, err := DbOracle.Db.Query("SELECT P.*, U.USER_NAME FROM NEW_JIRA_PROJECT P, NEW_JIRA_USER U WHERE P.PROJECT_LEAD = U.USER_ID")
 	// a := byte([]`{}`)
 
 	if err == nil {
@@ -45,7 +45,7 @@ func (pm *ProjectsModel) Get() ([]Project, error) {
 		for rows.Next() {
 			// fmt.Println(rows.Err().Error())
 			project := Project{}
-			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.ProjectLead)
+			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.ProjectLead,&project.ProjectLeadName)
 			ListProjects = append(ListProjects, project)
 		}
 		return ListProjects, nil
@@ -220,28 +220,25 @@ func UpdateQuery(project map[string]interface{}, key string) string {
 	return query
 }
 
-// Kiểm tra Project có tồn tại trong DB chưa
-/*
-func (pm *ProjectsModel) Check_Project_Exist(key string) ([]Project, error){
-	var temp_exist []Project
-	query := fmt.Sprintf("SELECT * FROM NEW_JIRA_PROJECT WHERE PROJECT_KEY = '%v'", key)
-
+//get project's lead 
+func (pr *PermissionModel) GetProjectLeadByKeyProject(projectkey string)  ([]Project, error) {
+	var ListProjects []Project
+	query := fmt.Sprintf("SELECT P.*, U.USER_NAME FROM NEW_JIRA_PROJECT P, NEW_JIRA_USER U WHERE P.PROJECT_LEAD = U.USER_ID AND P.PROJECT_KEY = '%v'",projectkey)
 	rows, err := DbOracle.Db.Query(query)
+	if err == nil {
 
-	if err == nil{
 		for rows.Next() {
-			project_ := Project{}
-
-			rows.Scan(&project_.ProjectKey, &project_.ProjectName, &project_.ProjectLead, &project_.ProjectUrl, &project_.ProjectAvatar, &project_.ProjectDescription, &project_.WorkflowId)
-
-			temp_exist = append(temp_exist, project_)
+			// fmt.Println(rows.Err().Error())
+			project := Project{}
+			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.ProjectLead,&project.ProjectLeadName)
+			ListProjects = append(ListProjects, project)
 		}
-		return temp_exist, nil
-	}else{
+		return ListProjects, nil
+	} else {
 		return nil, err
 	}
 }
-*/
+
 func (pm *ProjectsModel) Check_project(n string, k string) ([]Project, error) {
 	var temp_project []Project
 	query := fmt.Sprintf("SELECT * FROM \"NEW_JIRA_PROJECT\" WHERE \"PROJECT_NAME\" = '%v' OR \"PROJECT_KEY\" = '%v'", n, k)
@@ -263,13 +260,13 @@ func (pm *ProjectsModel) Check_project(n string, k string) ([]Project, error) {
 //get user's project
 func (pr *ProjectsModel) GetProjectUser(userid int) ([]Project, error) {
 	var temp_project []Project
-	query := fmt.Sprintf("SELECT NEW_JIRA_PROJECT.* FROM NEW_JIRA_USER,NEW_JIRA_PROJECT,NEW_JIRA_USER_PROJECT_ROLE WHERE   NEW_JIRA_USER_PROJECT_ROLE.PROJECT_KEY = new_jira_project.project_key AND NEW_JIRA_USER_PROJECT_ROLE.USER_ID = NEW_JIRA_USER.USER_ID AND NEW_JIRA_USER.USER_ID = '%v'", userid)
+	query := fmt.Sprintf("SELECT p.*,u.user_name FROM NEW_JIRA_USER u,NEW_JIRA_PROJECT p,NEW_JIRA_USER_PROJECT_ROLE upr WHERE upr.PROJECT_KEY = p.project_key AND u.USER_ID = p.PROJECT_LEAD AND upr.user_id= '%v'", userid)
 	rows, err := DbOracle.Db.Query(query)
 	if err == nil {
 		for rows.Next() {
 			// fmt.Println(rows.Err().Error())
 			project := Project{}
-			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.ProjectLead)
+			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.ProjectLead,&project.ProjectLeadName)
 			temp_project = append(temp_project, project)
 		}
 		return temp_project, nil
@@ -277,3 +274,4 @@ func (pr *ProjectsModel) GetProjectUser(userid int) ([]Project, error) {
 		return nil, err
 	}
 }
+
