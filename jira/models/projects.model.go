@@ -261,9 +261,9 @@ func (pm *ProjectsModel) Check_project(n string, k string) ([]Project, error) {
 }
 
 //get user's project
-func (pr *ProjectsModel) GetProjectUser(username string) ([]Project, error) {
+func (pr *ProjectsModel) GetProjectUser(userid int) ([]Project, error) {
 	var temp_project []Project
-	query := fmt.Sprintf("SELECT NEW_JIRA_PROJECT.* FROM NEW_JIRA_USER,NEW_JIRA_PROJECT,NEW_JIRA_USER_PROJECT_ROLE WHERE   NEW_JIRA_USER_PROJECT_ROLE.PROJECT_KEY = new_jira_project.project_key AND NEW_JIRA_USER_PROJECT_ROLE.USER_ID = NEW_JIRA_USER.USER_ID AND NEW_JIRA_USER.USER_NAME = '%v'", username)
+	query := fmt.Sprintf("SELECT NEW_JIRA_PROJECT.* FROM NEW_JIRA_USER,NEW_JIRA_PROJECT,NEW_JIRA_USER_PROJECT_ROLE WHERE   NEW_JIRA_USER_PROJECT_ROLE.PROJECT_KEY = new_jira_project.project_key AND NEW_JIRA_USER_PROJECT_ROLE.USER_ID = NEW_JIRA_USER.USER_ID AND NEW_JIRA_USER.USER_ID = '%v'", userid)
 	rows, err := DbOracle.Db.Query(query)
 	if err == nil {
 		for rows.Next() {

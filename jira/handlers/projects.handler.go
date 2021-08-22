@@ -35,7 +35,7 @@ func (u *ProjectsHandler) Get() gin.HandlerFunc {
 			return
 		}
 		fmt.Println(tokenAuth)
-		if tokenAuth.Role == 0 || tokenAuth.Role == 1 {
+		if tokenAuth.GlobalRole == 0 || tokenAuth.GlobalRole == 1 {
 			projects, err := models.ProjectsModels.Get()
 			if err != nil {
 				loggers.Logger.Errorln(err.Error())
@@ -56,8 +56,8 @@ func (u *ProjectsHandler) Get() gin.HandlerFunc {
 				)
 			}
 		}
-		if tokenAuth.Role == 2 {
-			projects, err := models.ProjectsModels.GetProjectUser(tokenAuth.UserName)
+		if tokenAuth.GlobalRole == 2 {
+			projects, err := models.ProjectsModels.GetProjectUser(int(tokenAuth.UserId))
 			if err != nil {
 				loggers.Logger.Errorln(err.Error())
 				response := MessageResponse{

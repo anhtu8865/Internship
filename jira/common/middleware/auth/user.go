@@ -41,15 +41,20 @@ type TokenDetails struct {
 	AtExpires    int64
 	RtExpires    int64
 }
+type AccessDetails struct {
+	AccessUuid string
+	UserId   int64
+	GlobalRole int64
+}
 
 //create token
-func CreateToken(username string, globalrole int64) (*TokenDetails, error) {
+func CreateToken(userid int64, globalrole int64) (*TokenDetails, error) {
 	td := &TokenDetails{}
 	td.AtExpires = time.Now().Add(time.Hour * 1).Unix()
 	td.AccessUuid = uuid.NewV4().String()
 
 	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
-	td.RefreshUuid = td.AccessUuid + "++" + username
+	td.RefreshUuid = td.AccessUuid + "++" + strconv.Itoa(int(userid))
 
 	var err error
 	//Creating Access Token
@@ -57,8 +62,8 @@ func CreateToken(username string, globalrole int64) (*TokenDetails, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
 	atClaims["access_uuid"] = td.AccessUuid
-	atClaims["username"] = username
-	atClaims["role"] = globalrole
+	atClaims["userid"] = userid
+	atClaims["globalrole"] = globalrole
 	atClaims["exp"] = td.AtExpires
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
@@ -69,8 +74,8 @@ func CreateToken(username string, globalrole int64) (*TokenDetails, error) {
 	os.Setenv("REFRESH_SECRET", "mcmvmkmsdnfsdmfdsjf") //this should be in an env file
 	rtClaims := jwt.MapClaims{}
 	rtClaims["refresh_uuid"] = td.RefreshUuid
-	rtClaims["username"] = username
-	rtClaims["role"] = globalrole
+	rtClaims["userid"] = userid
+	rtClaims["globalrole"] = globalrole
 	rtClaims["exp"] = td.RtExpires
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
 	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))
@@ -79,26 +84,22 @@ func CreateToken(username string, globalrole int64) (*TokenDetails, error) {
 	}
 	return td, nil
 }
-func CreateAuth(username string, td *TokenDetails) error {
+func CreateAuth(userid int64, td *TokenDetails) error {
 	at := time.Unix(td.AtExpires, 0) //converting Unix to UTC(to Time object)
 	rt := time.Unix(td.RtExpires, 0)
 	now := time.Now()
 
-	errAccess := client.Set(td.AccessUuid, username, at.Sub(now)).Err()
+	errAccess := client.Set(td.AccessUuid, userid, at.Sub(now)).Err()
 	if errAccess != nil {
 		return errAccess
 	}
-	errRefresh := client.Set(td.RefreshUuid, username, rt.Sub(now)).Err()
+	errRefresh := client.Set(td.RefreshUuid, userid, rt.Sub(now)).Err()
 	if errRefresh != nil {
 		return errRefresh
 	}
 	return nil
 }
-type AccessDetails struct {
-	AccessUuid string
-	UserName   string
-	Role       uint64
-}
+
 func ExtractToken(r *http.Request) string {
   bearToken := r.Header.Get("Authorization")
   //normally Authorization the_token_xxx
@@ -122,6 +123,7 @@ func VerifyToken(r *http.Request) (*jwt.Token, error) {
   }
   return token, nil
 }
+//get data from token
 func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
   token, err := VerifyToken(r)
   if err != nil {
@@ -133,19 +135,19 @@ func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
      if !ok {
         return nil, err
      }
-	username,ok := claims["username"].(string)
-	  if !ok{
+	userid,err := strconv.ParseInt(fmt.Sprintf("%.f", claims["userid"]), 10, 64)
+	  if err != nil {
         return nil, err
     }
-     role, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["role"]), 10, 64)
+     globalrole, err := strconv.ParseInt(fmt.Sprintf("%.f", claims["globalrole"]), 10, 64)
      if err != nil {
         return nil, err
      }
 	 
      return &AccessDetails{
         AccessUuid: accessUuid,
-        UserName:   username,
-		Role :      role,
+        UserId:   userid,
+		GlobalRole :   globalrole,
      }, nil
   }
   return nil, err
@@ -214,14 +216,14 @@ func CheckAdmin(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
 		c.Abort()
 	}
-	if tokenAuth.Role == 0 {
+	if tokenAuth.GlobalRole == 0 {
 		c.Next()
 	}
-	if tokenAuth.Role == 1 {
+	if tokenAuth.GlobalRole == 1 {
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
 		c.Abort()
 	}
-	if tokenAuth.Role == 2 {
+	if tokenAuth.GlobalRole == 2 {
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
 		c.Abort()
 	}
@@ -233,17 +235,26 @@ func CheckTrusted(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
 		c.Abort()
 	}
-	if tokenAuth.Role == 0 {
+	if tokenAuth.GlobalRole == 0 {
 		c.Next()
 	}
-	if tokenAuth.Role == 1 {
+	if tokenAuth.GlobalRole == 1 {
 		c.Next()
 	}
-	if tokenAuth.Role == 2 {
+	if tokenAuth.GlobalRole == 2 {
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
 		c.Abort()
 	}
 	c.Abort()
+}
+
+///Delete when logout
+func DeleteAuth(givenUuid string) (int64, error) {
+	deleted, err := client.Del(givenUuid).Result()
+	if err != nil {
+		return 0, err
+	}
+	return deleted, nil
 }
 func Logout(c *gin.Context) {
 	var tknStr string
@@ -270,13 +281,7 @@ func Logout(c *gin.Context) {
 		c.Next()
 	}
 }
-func DeleteAuth(givenUuid string) (int64, error) {
-	deleted, err := client.Del(givenUuid).Result()
-	if err != nil {
-		return 0, err
-	}
-	return deleted, nil
-}
+
 
 //refresh token
 func RefreshToken(c *gin.Context) {
@@ -314,13 +319,13 @@ func RefreshToken(c *gin.Context) {
 			c.JSON(http.StatusUnprocessableEntity, err)
 			return
 		}
-		username, ok := claims["username"].(string)
-		// userId, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["user_id"]), 10, 64)
-		if !ok {
+		// username, ok := claims["username"].(string)
+		userid, err := strconv.ParseInt(fmt.Sprintf("%.f", claims["userid"]), 10, 64)
+		if err!=nil {
 			c.JSON(http.StatusUnprocessableEntity, "Error occurred")
 			c.Abort()
 		}
-		role, _ := claims["role"].(int64)
+		globalrole, _ := claims["globalrole"].(int64)
         
 		//Delete the previous Refresh Token
 		deleted, delErr := DeleteAuth(refreshUuid)
@@ -329,13 +334,13 @@ func RefreshToken(c *gin.Context) {
 			return
 		}
 		//Create new pairs of refresh and access tokens
-		ts, createErr := CreateToken(username, role)
+		ts, createErr := CreateToken(userid, globalrole)
 		if createErr != nil {
 			c.JSON(http.StatusForbidden, createErr.Error())
 			return
 		}
 		//save the tokens metadata to redis
-		saveErr := CreateAuth(username, ts)
+		saveErr := CreateAuth(userid, ts)
 		if saveErr != nil {
 			c.JSON(http.StatusForbidden, saveErr.Error())
 			return
