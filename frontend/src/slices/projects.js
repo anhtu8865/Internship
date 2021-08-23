@@ -16,7 +16,6 @@ const projectsSlice = createSlice({
       state.projects.unshift(action.payload)
     },
     removeProject: (state,  action) => {
-      console.log('remove', action)
       let filteredProject = state.projects.filter((project) => project.ProjectKey !== action.payload)
       state.projects = filteredProject
     },
@@ -91,7 +90,6 @@ export const deleteProject = (key) => async (dispatch) => {
   projectApi
   .delete(key)
   .then((res) => {
-    console.log(res)
     dispatch(removeProject(key))
   })
   .catch((err) => {

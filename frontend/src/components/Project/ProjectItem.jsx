@@ -115,7 +115,7 @@ const ProjectItem = ({ project }) => {
               to={`/project-user/${project.ProjectKey}`}
               className="relative cursor-pointer"
             >
-              User
+              Access
             </Link>
           </span>
           <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
