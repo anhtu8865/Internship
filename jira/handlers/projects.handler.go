@@ -47,12 +47,39 @@ func (u *ProjectsHandler) Get() gin.HandlerFunc {
 
 	}
 }
+func (u *ProjectsHandler) GetAllProjectKey() gin.HandlerFunc {
+	//Do everything here, call model etc...
 
-func (u *ProjectsHandler) GetByKey() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// loggers.Logger.Println("get a get request")
+		projects, err := models.ProjectsModels.GetAllProjectKey()
+		if err != nil {
+			loggers.Logger.Errorln(err.Error())
+			response := MessageResponse{
+				Msg:  err.Error(),
+				Data: projects,
+			}
+			c.JSON(http.StatusNotFound,
+				response,
+			)
+		} else {
+			response := MessageResponse{
+				Msg:  "Successful",
+				Data: projects,
+			}
+			c.JSON(http.StatusOK,
+				response,
+			)
+		}
+
+	}
+}
+
+func (u *ProjectsHandler) GetByIdWorkflow() gin.HandlerFunc {
 	//Do everything here, call model etc...
 	return func(c *gin.Context) {
-		key := c.Param("key")
-		projects, err := models.ProjectsModels.GetByKey(key)
+		id := c.Param("id")
+		projects, err := models.ProjectsModels.GetByIdWorkflow(id)
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
@@ -77,23 +104,23 @@ func (u *ProjectsHandler) GetByKey() gin.HandlerFunc {
 
 func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var project_key, project_name, project_description, project_lead, workflow_id string
+		var project_key, project_name, project_lead string
 
 		var myMapNew map[string]string
 		json.NewDecoder(c.Request.Body).Decode(&myMapNew)
 		project_key = fmt.Sprintf("%v", myMapNew["ProjectKey"])
 		project_name = fmt.Sprintf("%v", myMapNew["ProjectName"])
-		project_description = fmt.Sprintf("%v", myMapNew["ProjectDescription"])
+
 		//project_url = fmt.Sprintf("%v",myMapNew["ProjectUrl"])
 		//project_avatar = fmt.Sprintf("%v",myMapNew["ProjectAvatar"])
 		project_lead = fmt.Sprintf("%v", myMapNew["ProjectLead"])
-		workflow_id = fmt.Sprintf("%v", myMapNew["WorkflowId"])
+
 		// Parameters are null
 		if project_key == "" || project_name == "" {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "The parameters are not enough"})
 		} else {
 			Exist_project, err := models.ProjectsModels.Check_project(project_name, project_key)
-			wf_id, _ := strconv.Atoi(workflow_id)
+
 			lead_id, _ := strconv.Atoi(project_lead)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running 1 query"})
@@ -140,14 +167,20 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 					}
 				*/
 
-				scr := models.Project{ProjectKey: project_key, ProjectName: project_name, ProjectDescription: project_description, ProjectLead: lead_id, WorkflowId: wf_id}
-
+				scr := models.Project{ProjectKey: project_key, ProjectName: project_name, ProjectLead: lead_id}
+				fmt.Println(scr)
 				if _, err := models.ProjectsModels.InsertProject(scr); err != nil {
 					fmt.Println(err)
 					c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
 				} else {
 					fmt.Println(err)
+					scr1 := models.Project{ProjectKey: project_key}
+					if _, err := models.ProjectsModels.InsertProjectInProjectWorkflow(scr1); err != nil {
+						fmt.Println(err)
+						c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
+
+					}
 					c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Create Project Success", Data: scr})
 				}
 				/*
@@ -210,7 +243,7 @@ func (u *ProjectsHandler) UpdateProject() gin.HandlerFunc {
 func (u *ProjectsHandler) DeleteProject() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		key := c.Param("key")
-		_, err := models.ProjectsModels.DeleteProject(key)
+		_, err := models.ProjectsModels.DeleteProjectInWorkflow(key)
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
@@ -221,6 +254,17 @@ func (u *ProjectsHandler) DeleteProject() gin.HandlerFunc {
 				response,
 			)
 		} else {
+			_, err := models.ProjectsModels.DeleteProject(key)
+			if err != nil {
+				loggers.Logger.Errorln(err.Error())
+				response := MessageResponse{
+					Msg:  err.Error(),
+					Data: nil,
+				}
+				c.JSON(http.StatusNotFound,
+					response,
+				)
+			}
 			response := MessageResponse{
 				Msg:  "Delete Successfully!",
 				Data: nil,
@@ -230,4 +274,5 @@ func (u *ProjectsHandler) DeleteProject() gin.HandlerFunc {
 			)
 		}
 	}
+
 }

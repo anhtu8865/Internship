@@ -27,8 +27,9 @@ type Project struct {
 	//DefaultAssignee    int
 	ProjectAvatar      string `json:"ProjectAvatar"`
 	ProjectDescription string `json:"ProjectDescription"`
-	WorkflowId         int    `json:"WorkflowId"` // New addition
-	ProjectLead        int    `json:"ProjectLead"`
+
+	ProjectLead int `json:"ProjectLead"`
+	WorkflowId  int `json:"WorkflowId"` // New addition
 }
 
 type ProjectsModel struct {
@@ -38,7 +39,7 @@ type ProjectsModel struct {
 //Lấy thông tin tất cả Project có trong db
 func (pm *ProjectsModel) Get() ([]Project, error) {
 	var ListProjects []Project
-	rows, err := DbOracle.Db.Query("select * from NEW_JIRA_PROJECT")
+	rows, err := DbOracle.Db.Query("SELECT A.PROJECT_KEY, A.PROJECT_NAME, A.PROJECT_URL, A.PROJECT_AVATAR, A.PROJECT_DESCRIPTION, A.PROJECT_LEAD, B.ID_WORKFLOW FROM NEW_JIRA_PROJECT A, NEW_JIRA_WORKFLOWPROJECT B WHERE A.PROJECT_KEY = B.PROJECT_KEY")
 	// a := byte([]`{}`)
 
 	if err == nil {
@@ -46,9 +47,10 @@ func (pm *ProjectsModel) Get() ([]Project, error) {
 		for rows.Next() {
 			// fmt.Println(rows.Err().Error())
 			project := Project{}
-			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.WorkflowId, &project.ProjectLead)
+			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.ProjectLead, &project.WorkflowId)
 			ListProjects = append(ListProjects, project)
 		}
+		fmt.Println(ListProjects)
 		return ListProjects, nil
 	} else {
 		return nil, err
@@ -56,8 +58,8 @@ func (pm *ProjectsModel) Get() ([]Project, error) {
 }
 
 // Lấy 1 Project dựa vào Key
-func (pm *ProjectsModel) GetByKey(key string) ([]Project, error) {
-	query := fmt.Sprintf("select PROJECT_KEY, PROJECT_NAME, PROJECT_URL, PROJECT_AVATAR, PROJECT_DESCRIPTION, ID_WORKFLOW, PROJECT_LEAD from NEW_JIRA_PROJECT where PROJECT_KEY = '%v'", key)
+func (pm *ProjectsModel) GetByIdWorkflow(id string) ([]Project, error) {
+	query := fmt.Sprintf("select * from NEW_JIRA_PROJECT where ID_WORKFLOW = '%v'", id)
 	// fmt.Println(query)
 	rows, err := DbOracle.Db.Query(query)
 	// a := byte([]`{}`)
@@ -122,9 +124,17 @@ func (pm *ProjectsModel) CreateProject(r io.ReadCloser) ([]Project, error) {
 	}
 }
 func (pm *ProjectsModel) InsertProject(project Project) (sql.Result, error) {
-	smt := `INSERT INTO "NEW_JIRA_PROJECT"("PROJECT_KEY", "PROJECT_NAME", "PROJECT_DESCRIPTION","PROJECT_LEAD","ID_WORKFLOW") VALUES (:1, :2, :3, :4, :5)`
+	fmt.Println(project)
+	smt := `INSERT INTO "NEW_JIRA_PROJECT"("PROJECT_KEY", "PROJECT_NAME", "PROJECT_DESCRIPTION","PROJECT_LEAD") VALUES (:1, :2, :3, :4)`
 
-	return DbOracle.Db.Exec(smt, project.ProjectKey, project.ProjectName, project.ProjectDescription, project.ProjectLead, project.WorkflowId)
+	return DbOracle.Db.Exec(smt, project.ProjectKey, project.ProjectName, project.ProjectDescription, project.ProjectLead)
+
+}
+func (pm *ProjectsModel) InsertProjectInProjectWorkflow(project Project) (sql.Result, error) {
+	fmt.Println(project)
+	smt := `INSERT INTO "NEW_JIRA_WORKFLOWPROJECT"("PROJECT_KEY", "ID_WORKFLOW") VALUES (:1, :2)`
+
+	return DbOracle.Db.Exec(smt, project.ProjectKey, project.WorkflowId)
 
 }
 
@@ -155,9 +165,9 @@ func (pm *ProjectsModel) UpdateProject(r io.ReadCloser, key string) (string, err
 }
 
 // Xóa project
-func (pm *ProjectsModel) DeleteProject(key string) ([]Project, error) {
+func (pm *ProjectsModel) DeleteProjectInWorkflow(key string) ([]Project, error) {
 	var project Project
-	query := fmt.Sprintf("DELETE FROM NEW_JIRA_PROJECT WHERE PROJECT_KEY = '%v'", key)
+	query := fmt.Sprintf("DELETE FROM NEW_JIRA_WORKFLOWPROJECT WHERE PROJECT_KEY = '%v'", key)
 
 	row, err := DbOracle.Db.Exec(query)
 
@@ -174,11 +184,16 @@ func (pm *ProjectsModel) DeleteProject(key string) ([]Project, error) {
 		return nil, err
 	}
 }
+func (pm *ProjectsModel) DeleteProject(key string) (sql.Result, error) {
+	fmt.Println(key)
+	query := fmt.Sprintf("DELETE FROM NEW_JIRA_PROJECT WHERE ID_WORKFLOW = '%v'", key)
+	return DbOracle.Db.Exec(query)
+}
 
 func UpdateQuery(project map[string]interface{}, key string) string {
 	// "UPDATE JIRA_PROJECT SET PROJECT_NAME = '%v', PROJECT_LEAD = %v, PROJECT_URL = '%v', DEFAULT_ASSIGNEE = %v, PROJECT_DESCRIPTION = '%v', PROJECT_AVATAR = '%v' WHERE PROJECT_ID = '%v'", project.Project_Name, project.Project_Lead, project.Project_Url, project.Default_Assignee, project.Project_Description, project.Project_Avatar, id)""
 	// "project.Project_Name, project.Project_Lead, project.Project_Url, project.Default_Assignee, project.Project_Description, project.Project_Avatar"
-	var ProjectNameVal, ProjectUrlVal, ProjectAvatarVal, ProjectDescriptionVal, WorkflowIdVal, ProjectLeadVal string
+	var ProjectNameVal, ProjectUrlVal, ProjectAvatarVal, ProjectDescriptionVal, ProjectLeadVal string
 	// a := project["Project_Name"]
 	// fmt.Println(a)
 	if project["ProjectName"] != nil {
@@ -217,13 +232,7 @@ func UpdateQuery(project map[string]interface{}, key string) string {
 		ProjectDescriptionVal = "PROJECT_DESCRIPTION"
 	}
 
-	if project["WorkflowId"] != nil {
-		WorkflowIdVal = fmt.Sprintf("'%v'", project["WorkflowId"])
-	} else {
-		WorkflowIdVal = "ID_WORKFLOW"
-	}
-
-	query := fmt.Sprintf("UPDATE NEW_JIRA_PROJECT SET PROJECT_NAME = %v, PROJECT_URL = %v, PROJECT_AVATAR = %v, PROJECT_DESCRIPTION = %v, ID_WORKFLOW = %v, PROJECT_LEAD = %v WHERE PROJECT_KEY = '%v'", ProjectNameVal, ProjectUrlVal, ProjectAvatarVal, ProjectDescriptionVal, WorkflowIdVal, ProjectLeadVal, key)
+	query := fmt.Sprintf("UPDATE NEW_JIRA_PROJECT SET PROJECT_NAME = %v, PROJECT_URL = %v, PROJECT_AVATAR = %v, PROJECT_DESCRIPTION = %v, PROJECT_LEAD = %v WHERE PROJECT_KEY = '%v'", ProjectNameVal, ProjectUrlVal, ProjectAvatarVal, ProjectDescriptionVal, ProjectLeadVal, key)
 
 	return query
 }
@@ -252,17 +261,35 @@ func (pm *ProjectsModel) Check_Project_Exist(key string) ([]Project, error){
 */
 func (pm *ProjectsModel) Check_project(n string, k string) ([]Project, error) {
 	var temp_project []Project
-	query := fmt.Sprintf("SELECT * FROM \"NEW_JIRA_PROJECT\" WHERE \"PROJECT_NAME\" = '%v' OR \"PROJECT_KEY\" = '%v'", n, k)
+	query := fmt.Sprintf("SELECT A.PROJECT_KEY, A.PROJECT_NAME, A.PROJECT_URL, A.PROJECT_AVATAR, A.PROJECT_DESCRIPTION, A.PROJECT_LEAD, B.ID_WORKFLOW FROM NEW_JIRA_PROJECT A, NEW_JIRA_WORKFLOWPROJECT B WHERE A.PROJECT_KEY = '%v' AND A.PROJECT_KEY = B.PROJECT_KEY", n)
 	rows, err := DbOracle.Db.Query(query)
 	if err == nil {
 		for rows.Next() {
 			project := Project{}
 
-			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.WorkflowId, &project.ProjectLead)
+			rows.Scan(&project.ProjectKey, &project.ProjectName, &project.ProjectUrl, &project.ProjectAvatar, &project.ProjectDescription, &project.ProjectLead, &project.WorkflowId)
 
 			temp_project = append(temp_project, project)
 		}
 		return temp_project, nil
+	} else {
+		return nil, err
+	}
+}
+func (pm *ProjectsModel) GetAllProjectKey() ([]Project, error) {
+	var ListProjects []Project
+	rows, err := DbOracle.Db.Query("select * from NEW_JIRA_WORKFLOWPROJECT WHERE ID_WORKFLOW > 0")
+	// a := byte([]`{}`)
+
+	if err == nil {
+
+		for rows.Next() {
+			// fmt.Println(rows.Err().Error())
+			project := Project{}
+			rows.Scan(&project.WorkflowId, &project.ProjectKey)
+			ListProjects = append(ListProjects, project)
+		}
+		return ListProjects, nil
 	} else {
 		return nil, err
 	}

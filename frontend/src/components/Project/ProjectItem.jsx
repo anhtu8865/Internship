@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
 import { deleteProject, setProjectUpdate } from '../../slices/projects'
 import UpdateProjectModal from './UpdateProjectModal';
-
+import ViewProject from './ViewProject';
 
 
 const ProjectItem = ({ project }) => {
@@ -34,10 +34,28 @@ const ProjectItem = ({ project }) => {
     handleClose: handleCloseUpdate,
   }
 
+  
+  const [openView, setOpenView] = React.useState(false)
+
+  const handleOpenView = (e, project) => {
+    e.preventDefault()
+    dispatch(setProjectUpdate(project))
+    setOpenView(true)
+  }
+  const handleCloseView = () => {
+    setOpenView(false)
+  }
+  const modalView = {
+    open: openView,
+    handleOpenViewProject: handleOpenView,
+    handleCloseViewProject: handleCloseView,
+  }
+
 
   return (
     <>
       <UpdateProjectModal modalDialog={modalUpdate} />
+      <ViewProject modalDialog={modalView} />
       <tr key={project.ProjectKey}>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
               <div className="flex items-center">
@@ -82,7 +100,7 @@ const ProjectItem = ({ project }) => {
                   className="absolute inset-0 bg-blue-200 opacity-100 rounded-full"
                 />
                 <a
-                onClick={(e) => handleOpenUpdate(e, project)} 
+                onClick={(e) => handleOpenView(e, project)} 
                 className="relative cursor-pointer">View</a>
               </span>
               <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">

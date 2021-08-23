@@ -29,6 +29,11 @@ func init() {
 		&ProjectsRouter,
 		&CustomFieldsRouter,
 		&ScreensRouter,
+		&WorkflowsRouter,
+		&TransitionsRouter,
+		&StatussRouter,
+		&WorkflowProjectRouter,
+		&TransitionStatusRouter,
 	)
 }
 

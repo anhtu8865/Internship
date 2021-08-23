@@ -1,20 +1,27 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { fetchRoles, rolesSelector } from '../slices/roles'
+import { fetchStatuss, statussSelector } from '../slices/statuss'
 import { Link } from 'react-router-dom'
-import RoleItem from '../components/Role/RoleItem'
+import StatusItem from '../components/Status/StatusItem'
 import { useAppDispatch } from '../store'
 
-const Roles = () => {
+const Statuss = () => {
+  
+  
+  
   const dispatch = useAppDispatch()
-  const { roles, loading, hasErrors } = useSelector(rolesSelector)
+  const { statuss, loading, hasErrors } = useSelector(statussSelector)
   useEffect(() => {
-    dispatch(fetchRoles())
+    dispatch(fetchStatuss())
   }, [dispatch])
-  const renderRole = () => {
-    console.log(roles)
-    return roles.map((role) => 
-    <RoleItem  key={role.Role_Id} role={role} />)
+  localStorage.setItem('Status', JSON.stringify(statuss))
+  const renderStatus = () => {
+    if(statuss){
+      console.log(statuss)
+      return statuss.map((status) => 
+      <StatusItem  key={status.StatusId} status={status} />)
+    }
+    else return <div> NULL STATUS </div>
   }
   if (loading) {
     return (
@@ -28,13 +35,13 @@ const Roles = () => {
     <div className="container mx-auto px-4 mb-16 sm:px-8">
       <div className="py-8">
         <div>
-          <h2 className="text-2xl font-semibold leading-tight">Project Role</h2>
+          <h2 className="text-2xl font-semibold leading-tight"> Status</h2>
         </div>
 <div className="my-2 flex justify-between sm:flex-row flex-col">
           <div className="flex">
-            <Link to="/create-roles">
+            <Link to="/create-statuss">
               <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700">
-                Create role
+                Create status
               </button>
             </Link>
             {/* <Link to="/invite-user">
@@ -50,7 +57,7 @@ const Roles = () => {
               <thead>
                 <tr>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Role Name
+                    Status Name
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Description
@@ -66,7 +73,7 @@ const Roles = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody>{renderRole()}</tbody>
+              <tbody>{renderStatus()}</tbody>
             </table>
           </div>
         </div>
@@ -74,4 +81,4 @@ const Roles = () => {
     </div>
   )
 }
-export default Roles
+export default Statuss

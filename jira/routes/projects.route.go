@@ -17,9 +17,11 @@ type ProjectsRoute struct {
 func (u *ProjectsRoute) Init(router *gin.Engine) {
 	u.RouterGroup = router.Group(u.GroupName)
 	{
+		u.RouterGroup.GET("/projectkey", u.GetProjectKey())
 		u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
 		u.RouterGroup.GET("/", u.Get())
-		u.RouterGroup.GET("/:key", u.GetByKey())
+
+		u.RouterGroup.GET("/:key", u.GetByIdWorkflow())
 		u.RouterGroup.POST("/", u.CreateProject())
 		u.RouterGroup.PUT("/:key", u.UpdateProject())
 		u.RouterGroup.DELETE("/:key", u.DeleteProject())
@@ -32,9 +34,14 @@ func (u *ProjectsRoute) Get() gin.HandlerFunc {
 	return ProjectsHandlers.Get()
 }
 
-func (u *ProjectsRoute) GetByKey() gin.HandlerFunc {
+func (u *ProjectsRoute) GetProjectKey() gin.HandlerFunc {
+
+	return ProjectsHandlers.GetAllProjectKey()
+}
+
+func (u *ProjectsRoute) GetByIdWorkflow() gin.HandlerFunc {
 	// u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
-	return ProjectsHandlers.GetByKey()
+	return ProjectsHandlers.GetByIdWorkflow()
 }
 
 func (u *ProjectsRoute) CreateProject() gin.HandlerFunc {
