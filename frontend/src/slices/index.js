@@ -9,9 +9,18 @@ import projectIssueTypeScreenReducer from './projectIssueTypeScreens'
 import issueTypeReducer from './issueTypes'
 import issueReducer from './issues'
 import roleReducer from './roles'
+
 import permissionsReducer from './permission'
 import permissionRolesReducer from './per-role'
 import projectUserRoleReducer from './pro-user-role'
+
+import workflowReducer from './workflows'
+import transitionReducer from './transition'
+import workflowProjectsReducer from './wor-pro'
+
+import statusReducer from './statuss'
+import transitionStatussReducer from './tra-sta'
+
 const rootReducer = combineReducers({
   users: userReducer,
   projects: projectReducer,
@@ -25,6 +34,12 @@ const rootReducer = combineReducers({
   permissions: permissionsReducer,
   permissionroles: permissionRolesReducer,
   projectUserRoles: projectUserRoleReducer,
+  workflows: workflowReducer,
+  transitions: transitionReducer,
+  workflowprojects: workflowProjectsReducer, 
+  statuss: statusReducer,
+  transitionstatuss: transitionStatussReducer,
+
 })
 export default rootReducer
 

@@ -29,6 +29,7 @@ func init() {
 		&ProjectsRouter,
 		&CustomFieldsRouter,
 		&ScreensRouter,
+
 		&PermissionRouter,
 		&PermissionRoleRouter,
 		&ScreenCustomFieldsRouter,
@@ -37,6 +38,11 @@ func init() {
 		&IssuesRouter,
 		&ProjectUserRoleRouter,
 
+		&WorkflowsRouter,
+		&TransitionsRouter,
+		&StatussRouter,
+		&WorkflowProjectRouter,
+		&TransitionStatusRouter,
 	)
 }
 

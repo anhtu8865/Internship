@@ -40,6 +40,7 @@ function Navbar() {
                 </a>
               </Link>
             </li>
+          
             <li>
               <Link to="/issues">
                 <a

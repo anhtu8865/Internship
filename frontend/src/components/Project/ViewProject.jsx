@@ -12,13 +12,13 @@ function ViewProject({ modalDialog }) {
   const dispatch = useAppDispatch()
   const { register, handleSubmit } = useForm()
   const { projectUpdate } = useSelector(projectsSelector)
-  const { handleClose } = modalDialog
+  const { handleCloseViewProject } = modalDialog
   const onSubmit = (formData) => {
     const data = Object.assign({}, projectUpdate, formData)
     console.log(data);
     alert(projectUpdate)
-    dispatch(updateProject({key: projectUpdate.ProjectKey, data}))
-    handleClose()
+    // dispatch(updateProject({key: projectUpdate.ProjectKey, data}))
+    handleCloseViewProject()
   }
   return (
     <>
@@ -49,7 +49,7 @@ function ViewProject({ modalDialog }) {
             <FormInput r={register} name="ProjectUrl" label={'URL'} value={projectUpdate.ProjectUrl} required />
             <FormInput r={register} name="ProjectLead" label={'Project Lead'} value={projectUpdate.ProjectLead} required/>
             {/* <FormSelect label={'Project Type'}>
-              <option>Software</option>
+              <option>Software</option> 
               <option>Option 2</option>
               <option>Option 3</option>
             </FormSelect> */}
@@ -63,12 +63,12 @@ function ViewProject({ modalDialog }) {
         </DialogContent>
         <DialogActions>
           <div className="my-3 mx-5">
-            <Button onClick={handleClose} color="secondary">
+            <Button onClick={handleCloseViewProject} color="secondary">
               Cancel
             </Button>
-            <Button type="submit" color="primary">
+            {/* <Button type="submit" color="primary">
               Submit
-            </Button>
+            </Button> */}
           </div>
         </DialogActions>
         </form>
