@@ -20,6 +20,7 @@ func (pr *WorkflowProjectRoute) Init(router *gin.Engine) {
 		pr.RouterGroup.POST("", pr.CreateWorkflow())
 		pr.RouterGroup.DELETE("", pr.DeleteWorkflow())
 		pr.RouterGroup.GET("/workflow-project", pr.GetProjectWorkflowRouter())
+		pr.RouterGroup.PUT("", pr.UpdateWorkflow())
 
 	}
 }
@@ -43,4 +44,9 @@ func (u *WorkflowProjectRoute) DeleteWorkflow() gin.HandlerFunc {
 func (pr *WorkflowProjectRoute) GetProjectWorkflowRouter() gin.HandlerFunc {
 
 	return WorkflowProjectHandlers.GetAllWorkflowProject()
+}
+
+func (u *WorkflowProjectRoute) UpdateWorkflow() gin.HandlerFunc {
+	// u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
+	return WorkflowsHandlers.UpdateWorkflow()
 }
