@@ -29,6 +29,7 @@ type Issue struct {
 	Project_Name    string
 	Issue_Type_Name string
 	Project_Avatar  string
+	Status          string
 }
 
 type CustomField2 struct {
@@ -90,7 +91,7 @@ func (pm *IssuesModel) Get() ([]Issue, error) {
 	if err == nil {
 		for rows.Next() {
 			issue := Issue{}
-			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon)
+			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon, &issue.Status)
 			issue.Fields, err = FieldsModels.GetAllFieldsByIssueKey(issue.Key)
 			if err != nil {
 
@@ -129,7 +130,7 @@ func (pm *IssuesModel) GetById(id string) ([]Issue, error) {
 	var ListIssues []Issue
 	if err == nil {
 		for rows.Next() {
-			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon)
+			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon, &issue.Status)
 			issue.Fields, err = FieldsModels.GetAllFieldsByIssueKey(issue.Key)
 			if err != nil {
 
@@ -202,7 +203,7 @@ func (pm *IssuesModel) Create(r io.ReadCloser, userId int64) ([]Issue, error) {
 			var ListIssues []Issue
 			for rowsLastRecord.Next() {
 				issue := Issue{}
-				rowsLastRecord.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon)
+				rowsLastRecord.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon, &issue.Status)
 				ListIssues = append(ListIssues, issue)
 			}
 			issues, err := IssuesModels.GetById(strconv.Itoa(ListIssues[0].Id))
