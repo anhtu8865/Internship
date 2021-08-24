@@ -93,7 +93,7 @@ export const deleteProject = (key) => async (dispatch) => {
     dispatch(removeProject(key))
   })
   .catch((err) => {
-    console.log(err)
+    console.log(err.response.data.Msg)
     alert(err.response.data.Msg)
             //NEW
   })
@@ -104,6 +104,7 @@ export const setProjectUpdate = (Project) => async (dispatch) => {
     dispatch(actions.setProjectUpdate(Project))
   } catch (error) {
     dispatch(getProjectsFailure())
+    
   }
 }
 

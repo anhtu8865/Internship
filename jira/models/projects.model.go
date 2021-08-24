@@ -221,7 +221,7 @@ func UpdateQuery(project map[string]interface{}, key string) string {
 }
 
 //get project's lead 
-func (pr *PermissionModel) GetProjectLeadByKeyProject(projectkey string)  ([]Project, error) {
+func (pr *ProjectsModel) GetProjectLeadByKeyProject(projectkey string)  ([]Project, error) {
 	var ListProjects []Project
 	query := fmt.Sprintf("SELECT P.*, U.USER_NAME FROM NEW_JIRA_PROJECT P, NEW_JIRA_USER U WHERE P.PROJECT_LEAD = U.USER_ID AND P.PROJECT_KEY = '%v'",projectkey)
 	rows, err := DbOracle.Db.Query(query)

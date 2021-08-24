@@ -156,7 +156,7 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 					c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
 				} else {
-					projects, err := models.PermissionModels.GetProjectLeadByKeyProject(project_key)
+					projects, err := models.ProjectsModels.GetProjectLeadByKeyProject(project_key)
 					if err != nil {
 						c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 					} else {
@@ -242,7 +242,7 @@ func (u *ProjectsHandler) DeleteProject() gin.HandlerFunc {
 
 //check project lead
 func CheckProjectLead(project_key string, id_user int) bool {
-	projects, err := models.PermissionModels.GetProjectLeadByKeyProject(project_key)
+	projects, err := models.ProjectsModels.GetProjectLeadByKeyProject(project_key)
 	if err != nil {
 		return false
 	} else {
