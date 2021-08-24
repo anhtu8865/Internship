@@ -9,7 +9,7 @@ import (
 	"jira/loggers"
 	"jira/models"
 	"net/http"
-
+    "strconv"
 	"github.com/gin-gonic/gin"
 
 	//"github.com/godror/godror/odpi/src"
@@ -192,12 +192,23 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 						c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
 					} else {
-						projects, err := models.ProjectsModels.GetProjectLeadByKeyProject(project_key)
-						if err != nil {
+						//insert project lead to role admin
+						
+						user_id:= strconv.FormatInt(tokenAuth.UserId,10)
+						sm := models.ProjectUserRoleModel{}
+						if _, err := sm.AddUserRoleToProject(project_key,user_id, "241"); err != nil {
+							fmt.Println("lỗi")
 							c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 						} else {
-							c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: projects[0]})
+							//get new project
+							projects, err := models.ProjectsModels.GetProjectLeadByKeyProject(project_key)
+							if err != nil {
+								c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
+							} else {
+								c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: projects[0]})
+							}
 						}
+
 					}
 
 					// err != nil {
