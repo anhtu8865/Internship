@@ -19,6 +19,11 @@ const projectsSlice = createSlice({
       let filteredProject = state.projects.filter((project) => project.ProjectKey !== action.payload)
       state.projects = filteredProject
     },
+    GetByIdWorkflow: (state,  action) => {
+    
+      let filterProject = state.projects.filter((project) => project.ProjectKey !== action.payload)
+      state.projects = filterProject
+    },
     startLoading: (state) => {
       state.loading = true
     },
@@ -48,7 +53,7 @@ const projectsSlice = createSlice({
 })
 
 // Actions generated from the slice
-const { removeProject, startLoading, getProjectsFailure, getProjectsSuccess } =
+const { removeProject, startLoading, getProjectsFailure, getProjectsSuccess,GetByIdWorkflow } =
   projectsSlice.actions
 
 const { actions } = projectsSlice
@@ -124,3 +129,17 @@ export const updateProject = (data) => async (dispatch) => {
 }
 
 export const selectAllProjects = (state) => state.projects.projects
+export const getDataByIdWorkflow = (key) => async (dispatch) => {
+  projectApi
+  .getDataByIdWorkflow(key)
+  .then((res) => {
+    console.log(res)
+    dispatch(GetByIdWorkflow(key))
+  })
+  .catch((err) => {
+    console.log(err)
+    alert(err.response.data.Msg)
+            //NEW
+  })
+}
+

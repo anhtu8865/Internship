@@ -6,6 +6,8 @@ import (
 	"jira/models"
 	"net/http"
 
+	. "jira/common/middleware/auth"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -125,9 +127,12 @@ func (u *IssuesHandler) GetAllCustomFieldsOfScreen() gin.HandlerFunc {
 
 func (u *IssuesHandler) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		tokenAuth, err := ExtractTokenMetadata(c.Request)
 		body := c.Request.Body
-		issues, err := models.IssuesModels.Create(body)
-		if err != nil {
+		issues, err := models.IssuesModels.Create(body, tokenAuth.UserId)
+		if issues == nil && err == nil {
+			c.JSON(http.StatusForbidden, MessageResponse{Msg: "You cannot have a permission"})
+		} else if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
 				Msg:  err.Error(),
@@ -151,9 +156,12 @@ func (u *IssuesHandler) Create() gin.HandlerFunc {
 func (u *IssuesHandler) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
+		tokenAuth, err := ExtractTokenMetadata(c.Request)
 		body := c.Request.Body
-		issues, err := models.IssuesModels.Update(body, id)
-		if err != nil {
+		issues, err := models.IssuesModels.Update(body, id, tokenAuth.UserId)
+		if issues == nil && err == nil {
+			c.JSON(http.StatusForbidden, MessageResponse{Msg: "You cannot have a permission"})
+		} else if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
 				Msg:  err.Error(),
@@ -164,9 +172,9 @@ func (u *IssuesHandler) Update() gin.HandlerFunc {
 			)
 		} else {
 			response := MessageResponse{
-				Msg: "Successful",
-				//Data: issues[0],
-				Data: issues,
+				Msg:  "Successful",
+				Data: issues[0],
+				//Data: issues,
 			}
 			c.JSON(http.StatusCreated,
 				response,
@@ -178,8 +186,11 @@ func (u *IssuesHandler) Update() gin.HandlerFunc {
 func (u *IssuesHandler) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
-		issues, err := models.IssuesModels.Delete(id)
-		if err != nil {
+		tokenAuth, err := ExtractTokenMetadata(c.Request)
+		issues, err := models.IssuesModels.Delete(id, tokenAuth.UserId)
+		if issues == nil && err == nil {
+			c.JSON(http.StatusForbidden, MessageResponse{Msg: "You cannot have a permission"})
+		} else if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
 				Msg:  err.Error(),

@@ -145,19 +145,18 @@ const issuesSlice = createSlice({
       console.log(action.payload.Msg)
     },
     [addNewIssue.fulfilled]: (state, action) => {
-      state.issues = []
-      state.status = 'idle'
+      state.issues.push(action.payload.Data)
     },
     [updateIssue.rejected]: (state, action) => {
       console.log(action.payload.Msg)
     },
     [updateIssue.fulfilled]: (state, action) => {
-      state.issues = []
-      state.status = 'idle'
-      // const newIssue = action.payload.Data
-      // state.issues = state.issues.map((issue) =>
-      //   issue.Id === newIssue.Id ? newIssue : issue
-      // )
+      // state.issues = []
+      // state.status = 'idle'
+      const newIssue = action.payload.Data
+      state.issues = state.issues.map((issue) =>
+        issue.Id === newIssue.Id ? newIssue : issue
+      )
     },
     [deleteIssue.rejected]: (state, action) => {
       console.log(action.payload.Msg)

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
 import { deleteProject, setProjectUpdate } from '../../slices/projects'
 import UpdateProjectModal from './UpdateProjectModal';
-
+import ViewProject from './ViewProject';
 
 
 const ProjectItem = ({ project }) => {
@@ -34,11 +34,30 @@ const ProjectItem = ({ project }) => {
     handleClose: handleCloseUpdate,
   }
 
+  
+  const [openView, setOpenView] = React.useState(false)
+
+  const handleOpenView = (e, project) => {
+    e.preventDefault()
+    dispatch(setProjectUpdate(project))
+    setOpenView(true)
+  }
+  const handleCloseView = () => {
+    setOpenView(false)
+  }
+  const modalView = {
+    open: openView,
+    handleOpenViewProject: handleOpenView,
+    handleCloseViewProject: handleCloseView,
+  }
+
 
   return (
     <>
       <UpdateProjectModal modalDialog={modalUpdate} />
+      <ViewProject modalDialog={modalView} />
       <tr key={project.ProjectKey}>
+
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
             <div className="flex-shrink-0 w-10 h-10">
@@ -132,6 +151,7 @@ const ProjectItem = ({ project }) => {
           </span>
         </td>
       </tr>
+
     </>
   )
 }
