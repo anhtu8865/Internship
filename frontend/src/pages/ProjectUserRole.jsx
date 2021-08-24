@@ -10,8 +10,10 @@ import ProjectUserItems from '../components/ProjectUser/ProjectUserItems'
 import AddUserToProject from '../components/ProjectUser/AddUserToProject'
 
 export default function ProjectUserRole() {
-  let temp = window.location.pathname.split('/')
-  let projectkey = temp[temp.length - 1]
+  let temp = window.location.pathname.split(/[/,-]/)
+  let projectkey = temp[temp.length - 2]
+  let projectname = temp[temp.length - 1]
+
   const dispatch = useAppDispatch()
   const { projectUserRoles, loading, hasErrors } = useSelector(
     projectUserRolesSelector
@@ -53,8 +55,11 @@ export default function ProjectUserRole() {
       <div className="container mx-auto px-4 mb-16 sm:px-8">
         <div className="py-8">
           <div>
+            <h1 className="text-3xl font-semibold leading-tight">
+              Access Project
+            </h1>
             <h2 className="text-2xl font-semibold leading-tight">
-              Project
+              {projectname}
             </h2>
           </div>
           <div className="my-2 flex justify-between sm:flex-row flex-col">

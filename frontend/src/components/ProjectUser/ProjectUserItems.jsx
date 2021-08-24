@@ -43,6 +43,9 @@ export default function ProjectUserItems({ dataItem, projectkey }) {
      ProjectUserRoleApi.updateRoleUserInProject(data).then((res)=>{
        console.log(res)
      })
+     .catch((err)=>{
+         alert(err.response.data.Msg)
+     })
    }
   return (
     <>

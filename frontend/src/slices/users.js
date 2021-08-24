@@ -91,8 +91,8 @@ export const deleteUser = (id) => async (dispatch) => {
       dispatch(removeUser(id))
     })
     .catch((err) => {
-      console.log(err)
       dispatch(getUsersFailure())
+      alert(err.response.data.Msg)
     })
 }
 
@@ -113,6 +113,6 @@ export const updateUser = (data) => async (dispatch) => {
     })
     .catch((err) => {
       dispatch(getUsersFailure())
-      return err
+      alert(err.response.data.Msg)
     })
 }

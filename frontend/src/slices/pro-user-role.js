@@ -112,23 +112,4 @@ export const deleteUser = (data) => async (dispatch) => {
     })
 }
 
-//update 
-// export const setUserUpdate = (User) => async (dispatch) => {
-//   try {
-//     dispatch(actions.setUserProjectUpdate(User))
-//   } catch (error) {
-//     dispatch(getFailure())
-//   }
-// }
 
-// export const updateUser = (data) => async (dispatch) => {
-//   ProjectUserRoleApi.updateRoleUserInProject(data)
-//     .then((res) => {
-//       dispatch(actions.updateUserProject(data))
-//       return res
-//     })
-//     .catch((err) => {
-//       dispatch(getFailure())
-//       return err
-//     })
-// }

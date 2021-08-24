@@ -19,13 +19,16 @@ func (u *ProjectsRoute) Init(router *gin.Engine) {
 	{
 
 		u.RouterGroup.GET("/projectkey", u.GetProjectKey())
+		//admin can view all project
+		// trusted, member only can view their project 
 		u.RouterGroup.GET("/", auth.CheckUserLoged, u.Get())
 		// u.RouterGroup.GET("/:key",auth.CheckUserLoged, u.GetByKey())
-		//Trusted create project
+		//Trusted or admin can create project
 		u.RouterGroup.POST("/", auth.CheckUserLoged, auth.CheckTrusted, u.CreateProject())
-		// Check admin
+		// Admin global or project lead can update project 
 		u.RouterGroup.PUT("/:key", auth.CheckUserLoged, u.UpdateProject())
-		//project lead delete project
+		//Admin global can delete all project
+		// or project lead 
 		u.RouterGroup.DELETE("/:key", auth.CheckUserLoged, auth.CheckTrusted, u.DeleteProject())
 
 	}

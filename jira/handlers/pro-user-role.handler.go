@@ -35,7 +35,7 @@ func (pr *ProjectUserRoleHandler) GetUserRoleInProject() gin.HandlerFunc {
 	}
 }
 
-//update
+//project lead or user have permission admin can update a user to project
 func (pr *ProjectUserRoleHandler) UpdateRoleForUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var project_key, user_id, role_id_new string
@@ -96,13 +96,14 @@ func (pr *ProjectUserRoleHandler) UpdateRoleForUser() gin.HandlerFunc {
 
 			}
 		} else {
-			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "You do not have permission"})
+			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "You do not have permissions"})
 		}
 
 	}
 }
 
-//add user and role to project
+
+//project lead or user have permission admin can add a user to project
 func (pr *ProjectUserRoleHandler) AddUserRoleToProject() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var project_key, new_user_id, new_role_id string
@@ -147,7 +148,8 @@ func (pr *ProjectUserRoleHandler) AddUserRoleToProject() gin.HandlerFunc {
 	}
 }
 
-//delete user
+//add user and role to project
+//project lead or user have permission admin can delete a user to project
 func (pr *ProjectUserRoleHandler) DeleteUserForProject() gin.HandlerFunc {
 	return func(c *gin.Context) {
 

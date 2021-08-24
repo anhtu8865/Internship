@@ -26,7 +26,7 @@ func (u *UserRoute) Init(router *gin.Engine) {
 		u.RouterGroup.POST("/",u.Singin())
 		u.RouterGroup.POST("/logout",auth.CheckUserLoged,auth.Logout)
 		u.RouterGroup.POST("/refresh",auth.RefreshToken)
-		u.RouterGroup.GET("/info-user",auth.CheckUserLoged,u.GetUserbyId())
+		u.RouterGroup.GET("/info-user",u.GetUserbyId())
 	}
 }
 

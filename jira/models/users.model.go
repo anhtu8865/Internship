@@ -1,8 +1,8 @@
 package models
 
 import (
-	"fmt"
 	"database/sql"
+	"fmt"
 	. "jira/common/db"
 	//_ "github.com/alexbrainman/odbc"
 	_ "github.com/godror/godror"
@@ -83,6 +83,7 @@ func (ue *UserModel) Check_User_Exist_By_Id(id string) ([]User, error) {
 	var temp_exist []User
 	query := fmt.Sprintf("SELECT * FROM NEW_JIRA_USER WHERE USER_ID = '%v'", id)
 	rows, err := DbOracle.Db.Query(query)
+	fmt.Println(rows)
 	if err == nil {
 		for rows.Next() {
 			user := User{}
@@ -91,17 +92,18 @@ func (ue *UserModel) Check_User_Exist_By_Id(id string) ([]User, error) {
 				&user.UserName,
 				&user.UserFullName,
 				&user.UserEmail,
-				&user.UserPassword, 
+				&user.UserPassword,
 				&user.IsAdmin,
 			)
 
-			temp_exist = append(temp_exist,user)
+			temp_exist = append(temp_exist, user)
 		}
 		return temp_exist, nil
 	} else {
 		return nil, err
 	}
 }
+
 //Update thông tin User
 func (sm *UserModel) UpdateUser(id int, strFullName string, strPassword string, isAdmin string) (sql.Result, error) {
 	var UserQuery, PasswordQuery, AdminQuery string

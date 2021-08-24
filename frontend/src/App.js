@@ -149,7 +149,7 @@ function App() {
           <Route path="/detail-permission">
             <DetailPermission></DetailPermission>
           </Route>
-          <Route path="/project-user/:keyProject">
+          <Route path="/project-user/:keyProject-:nameProject">
             <ProjectUserRole></ProjectUserRole>
           </Route>
           <Route exact path="/">

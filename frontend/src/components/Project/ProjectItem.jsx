@@ -131,7 +131,7 @@ const ProjectItem = ({ project }) => {
               className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
             />
             <Link
-              to={`/project-user/${project.ProjectKey}`}
+              to={`/project-user/${project.ProjectKey}-${project.ProjectName}`}
               className="relative cursor-pointer"
             >
               Access

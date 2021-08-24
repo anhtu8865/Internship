@@ -242,7 +242,7 @@ func CheckTrusted(c *gin.Context) {
 		c.Next()
 	}
 	if tokenAuth.GlobalRole == 2 {
-		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
+		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin or leader, can't access"})
 		c.Abort()
 	}
 	c.Abort()
