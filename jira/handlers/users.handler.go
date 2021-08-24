@@ -307,3 +307,21 @@ func (u *UserHandler) GetUserbyId() gin.HandlerFunc {
 		}
 	}
 }
+//get user by token
+func (u *UserHandler) GetUserbyTokenUser() gin.HandlerFunc {
+	//Do everything here, call model etc...
+	return func(c *gin.Context) {
+		//call model
+		tokenAuth, error := ExtractTokenMetadata(c.Request)
+		if error != nil {
+			c.JSON(http.StatusUnauthorized, "unauthorized")
+		}
+		user_id:= strconv.FormatInt(tokenAuth.UserId,10)
+		users, err := models.UserModels.Check_User_Exist_By_Id(user_id)
+		if err == nil {
+			c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Get data Success", Data: users[0]})
+		} else {
+			c.JSON(http.StatusFound, helpers.MessageResponse{Msg: "User null"})
+		}
+	}
+}

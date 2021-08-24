@@ -10,7 +10,7 @@ function Navbar() {
   useEffect(() => {
     setIsLogged(!!localStorage.getItem('accessToken'))
   })
-
+if (isLogged){
   return (
     <>
       <header
@@ -40,7 +40,7 @@ function Navbar() {
                 </a>
               </Link>
             </li>
-          
+
             <li>
               <Link to="/issues">
                 <a
@@ -82,9 +82,7 @@ function Navbar() {
             {!isLogged && (
               <div>
                 <Link to="/login">
-                  <button
-                    className="text-white mx-4 text-sm hover:text-yellow-300 focus:outline-none bg-yellow-500 border px-4 py-1.5 rounded-md cursor-pointer"
-                  >
+                  <button className="text-white mx-4 text-sm hover:text-yellow-300 focus:outline-none bg-yellow-500 border px-4 py-1.5 rounded-md cursor-pointer">
                     LOGIN
                   </button>
                 </Link>
@@ -127,7 +125,7 @@ function Navbar() {
                 </svg>
               }
             />
-            <NavbarButtonRight 
+            <NavbarButtonRight
               svg={
                 <svg
                   className="w-7 h-7"
@@ -159,6 +157,9 @@ function Navbar() {
       </header>
     </>
   )
+}else{
+  return <></>
+}
 }
 
 export default Navbar

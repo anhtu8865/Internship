@@ -71,7 +71,7 @@ export const fetchUsers = () => async (dispatch) => {
     .catch((err) => {
       // console.log(err)
       dispatch(getUsersFailure())
-      return err
+      alert(err.response.data.Msg)
     })
 }
 
@@ -116,3 +116,4 @@ export const updateUser = (data) => async (dispatch) => {
       alert(err.response.data.Msg)
     })
 }
+

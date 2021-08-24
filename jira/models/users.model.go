@@ -83,7 +83,6 @@ func (ue *UserModel) Check_User_Exist_By_Id(id string) ([]User, error) {
 	var temp_exist []User
 	query := fmt.Sprintf("SELECT * FROM NEW_JIRA_USER WHERE USER_ID = '%v'", id)
 	rows, err := DbOracle.Db.Query(query)
-	fmt.Println(rows)
 	if err == nil {
 		for rows.Next() {
 			user := User{}

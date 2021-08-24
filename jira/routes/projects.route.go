@@ -30,7 +30,7 @@ func (u *ProjectsRoute) Init(router *gin.Engine) {
 		//Admin global can delete all project
 		// or project lead 
 		u.RouterGroup.DELETE("/:key", auth.CheckUserLoged, auth.CheckTrusted, u.DeleteProject())
-
+        
 	}
 }
 
