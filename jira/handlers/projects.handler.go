@@ -184,22 +184,20 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 				scr := models.Project{ProjectKey: project_key, ProjectName: project_name, ProjectDescription: project_description, ProjectLead: int(tokenAuth.UserId)}
 
 				if _, err := models.ProjectsModels.InsertProject(scr); err != nil {
-					fmt.Println(err)
 					c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
 				} else {
-					projects, err := models.ProjectsModels.GetProjectLeadByKeyProject(project_key)
-					if err != nil {
+					scr1 := models.Project{ProjectKey: project_key}
+					if _, err := models.ProjectsModels.InsertProjectInProjectWorkflow(scr1); err != nil {
 						c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
-					} else {
-						fmt.Println(err)
-						scr1 := models.Project{ProjectKey: project_key}
-						if _, err := models.ProjectsModels.InsertProjectInProjectWorkflow(scr1); err != nil {
-							fmt.Println(err)
-							c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
+					} else {
+						projects, err := models.ProjectsModels.GetProjectLeadByKeyProject(project_key)
+						if err != nil {
+							c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
+						} else {
+							c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: projects[0]})
 						}
-						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: projects[0]})
 					}
 
 					// err != nil {
