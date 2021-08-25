@@ -15,9 +15,13 @@ export const UpdateIssueForm = ({ match }) => {
   const [key, setKey] = useState(issue.Key)
   const [projectName, setProjectName] = useState(issue.Project_Name)
   const [issueTypeName, setIssueTypeName] = useState(issue.Issue_Type_Name)
+  const [status, setStatus] = useState(issue.Status)
   const [editRequestStatus, setEditRequestStatus] = useState('idle')
   useEffect(() => {}, [dispatch])
   const onNameChanged = (e) => setName(e.target.value)
+  const onStatusChanged = (e) => {
+    console.log(e.target.value)
+    setStatus(e.target.value)}
   const canSave = [name, key].every(Boolean) && editRequestStatus === 'idle'
   const history = useHistory()
   const onSaveIssueClicked = async (data) => {
@@ -39,6 +43,11 @@ export const UpdateIssueForm = ({ match }) => {
       }
     }
   }
+  const transitionOptions = issue.Transitions.map((item) => (
+    <option key={item.Id_Transition} value={item.Name_Status2}>
+      {`${item.Name_Transition} -> ${item.Name_Status2}`}
+    </option>
+  ))
   let inputFields
   if (issue.Fields.length !== 0) {
     inputFields = issue.Fields.map((item) => {
@@ -173,6 +182,24 @@ export const UpdateIssueForm = ({ match }) => {
                         disabled={true}
                         style={{ transition: 'all .15s ease' }}
                       />
+                    </div>
+                    <div className="relative w-full mb-3">
+                      <label
+                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                        htmlFor="status"
+                      >
+                        {`Status:                                                            ${status}`}
+                      </label>
+                      
+                      <select
+                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
+                        value=""
+                        onChange={onStatusChanged}
+                        style={{ transition: 'all .15s ease' }}
+                      >
+                        <option value=""></option>
+                        {transitionOptions}
+                      </select>
                     </div>
                     {inputFields}
                     <div className="text-center mt-6">
