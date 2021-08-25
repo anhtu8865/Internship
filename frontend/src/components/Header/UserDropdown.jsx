@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import userApi from '../../api/userApi'
 import { useSelector } from 'react-redux'
-import { getMe, logout, inforUserSelector } from '../../slices/infouser'
+import {logout, inforUserSelector } from '../../slices/infouser'
 import { useAppDispatch } from '../../store'
 import Avatar from '@material-ui/core/Avatar'
 import {
@@ -70,6 +70,9 @@ function SettingDropdown({ isLogged}) {
       <div className="rounded-full">
         {setting ? (
           <ul className="p-2 w-full min-w-max border-r bg-white absolute rounded -top-1 right-0 shadow mt-12 sm:mt-16 ">
+            <li className="flex w-full justify-between text-gray-600 hover:text-indigo-700 cursor-pointer items-center">
+              <div className="flex items-center">{inforUser.User_Name}</div>
+            </li>
             <li className="flex w-full justify-between text-gray-600 hover:text-indigo-700 cursor-pointer items-center">
               <div className="flex items-center">
                 <svg
@@ -247,7 +250,7 @@ function SettingDropdown({ isLogged}) {
               </div>
             </li>
 
-            <li className="flex w-full justify-between text-gray-600 hover:text-indigo-700 cursor-pointer items-center mt-2">
+            <li className="flex w-full justify-between text-gray-600 hover:text-indigo-700 cursor-pointer items-center ">
               <div className="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -265,7 +268,9 @@ function SettingDropdown({ isLogged}) {
                   <circle cx={12} cy={7} r={4} />
                   <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
                 </svg>
-                <span className="text-sm ml-2">My Profile</span>
+                <Link to="/profile">
+                  <span className="text-sm ml-2">My Profile</span>
+                </Link>
               </div>
             </li>
             <li className="flex w-full justify-between text-gray-600 hover:text-indigo-700 cursor-pointer items-center mt-2">

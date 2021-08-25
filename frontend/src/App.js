@@ -36,7 +36,7 @@ import Statuss from './pages/StatusManager';
 import Transition from './pages/TransitionManager';
 import AddTransition from './pages/AddTransition';
 import UpdateWorkflowModal from './pages/UpdateWorkflow';
-
+import Profile from './pages/Profile'
 function App() {
   return (
     <Router>
@@ -153,6 +153,9 @@ function App() {
           </Route>
           <Route exact path="/">
             <Home />
+          </Route>
+          <Route path="/profile">
+            <Profile></Profile>
           </Route>
         </Layout>
       </Switch>
