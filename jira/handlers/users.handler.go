@@ -272,10 +272,10 @@ func (u *UserHandler) UpdateUser() gin.HandlerFunc {
 		//req body from client
 		json.NewDecoder(c.Request.Body).Decode(&myMap)
 		//username
-		fullname = fmt.Sprintf("%v", myMap["fullname"])
+		fullname = fmt.Sprintf("%v", myMap["User_Full_Name"])
 
 		//password
-		password = fmt.Sprintf("%v", myMap["password"])
+		password = fmt.Sprintf("%v", myMap["User_Password"])
 
 		//permission role
 		isAdmin = fmt.Sprintf("%v", myMap["globalrole"])

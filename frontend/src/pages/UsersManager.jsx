@@ -26,12 +26,6 @@ const Users = () => {
   }
   if (hasErrors) return <p>Unable to get Users.</p>
   return (
-    // <main className="mx-auto max-w-2xl">
-    //     <h1>Users List</h1>
-    //     <button onClick={(e) => addPost(e)}>Add User</button>
-    //     <br />
-    //     {renderUsers()}
-    // </main>
     <div className="container mx-auto px-4 mb-16 sm:px-8">
       <div className="py-8">
         <div>

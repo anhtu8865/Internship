@@ -20,7 +20,7 @@ func (u *UserRoute) Init(router *gin.Engine) {
 	{
 	
 		u.RouterGroup.POST("/sign-up",auth.CheckUserLoged, auth.CheckAdmin, u.Signup())
-		u.RouterGroup.GET("/",auth.CheckUserLoged, auth.CheckTrusted,u.Index())
+		u.RouterGroup.GET("/",auth.CheckUserLoged,u.Index())
 		u.RouterGroup.DELETE("/delete-user",auth.CheckUserLoged, auth.CheckAdmin, u.DeleteUser())
 		u.RouterGroup.PUT("/admin/update-user",auth.CheckUserLoged, auth.CheckAdmin,u.UpdateUserByAdmin())
 		u.RouterGroup.POST("/",u.Singin())

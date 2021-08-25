@@ -16,14 +16,7 @@ export default function CreateRole() {
             history.push('/roles-manager')
         }).catch(err => alert(err))
     }
-    // const history = useHistory()
-    //  const dispatch = useAppDispatch()
-    //  const{register,handleSubmit} = useForm();
-    //  const onSubmit = data => {
-    //     console.log(data)
-    //     dispatch(createRole(data))
-    //     history.push('/roles-manager')
-    // }
+  
 
 
     return (

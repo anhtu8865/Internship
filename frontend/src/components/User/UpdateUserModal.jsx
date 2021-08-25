@@ -28,29 +28,10 @@ function UpdateUserModal({ modalDialog }) {
       >
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogContent dividers className="mx-12">
-            {/* <div className="mb-5 w-full relative z-0">
-              <input
-                className="pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-0 
-    border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-green-800 border-gray-200"
-                type="text"
-                defaultValue={userUpdate.User_Full_Name}
-                placeholder=" "
-                name="fullname"
-                {...register("fullname")}
-                required
-              />
-              <label
-                htmlFor="name"
-                className="absolute duration-300 
-    top-3 origin-0 text-gray-500 -z-1"
-              >
-                Name
-              </label>
-            </div> */}
             <FormInput
               type="text"
               r={register}
-              name="fullname"
+              name="User_Full_Name"
               label={'Name'}
               value={userUpdate.User_Full_Name}
               required
@@ -58,7 +39,7 @@ function UpdateUserModal({ modalDialog }) {
             <FormInput
               readOnly={true}
               r={register}
-              name="Username"
+              name="User_Name"
               label={'Username'}
               value={userUpdate.User_Name}
               required
@@ -72,15 +53,9 @@ function UpdateUserModal({ modalDialog }) {
             />
             <FormInput
               r={register}
-              name="password"
+              name="User_Password"
               label={'Password (Để trống nếu không thay đổi)'}
             />
-            {/* <FormSelect
-              r={register}
-              name="globalrole"
-              label={'Is Admin'}
-              value={userUpdate.Is_Admin}
-            /> */}
             <div className="grid grid-cols-1 my-4">
               <label className="uppercase md:text-sm text-xs text-gray-500 text-light">
                 Global Role

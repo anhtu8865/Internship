@@ -1,19 +1,65 @@
 import { AlternateEmail } from '@material-ui/icons'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import userApi from '../../api/userApi'
-function SettingDropdown({ isLogged }) {
+import { useSelector } from 'react-redux'
+import { getMe, logout, inforUserSelector } from '../../slices/infouser'
+import { useAppDispatch } from '../../store'
+import Avatar from '@material-ui/core/Avatar'
+import {
+  orange,
+  purple,
+  red,
+  blue,
+  lime,
+  blueGrey,
+} from '@material-ui/core/colors'
+import { makeStyles } from '@material-ui/core/styles'
+//list colour
+const colours = [
+  blue[800],
+  orange[500],
+  purple[800],
+  red[800],
+  lime[500],
+  blueGrey[800],
+]
+//random color
+const getColour = () => colours[Math.floor(Math.random() * colours.length)]
+
+const useStyles = makeStyles((theme) => ({
+  backgroundColor: {
+    color: '#fff',
+    backgroundColor: getColour(),
+  },
+}))
+
+function SettingDropdown({ isLogged}) {
   const [setting, setProfile] = useState(false)
   const history = useHistory()
-
-  function SigOut() {
-    userApi
-      .logout()
-      .then(() => {
-        localStorage.removeItem('accessToken')
-        localStorage.removeItem('refreshToken')  
+  //logout 
+  function Logout() {
+    userApi.logout().then(() => {
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
+      dispatch(logout())
+    })
+    history.push('/login')
+  }
+  //get user login
+  const dispatch = useAppDispatch()
+  const { inforUser, success } = useSelector(inforUserSelector)
+ 
+  //get avatar user
+  const classes = useStyles()
+  const Ava = () => {
+    if (success) {
+      let result = []
+      inforUser.User_Name.split('').forEach((letter) => {
+        result.push(letter)
       })
-      history.push('/login')
+      return <Avatar className={classes.backgroundColor}>{result[0]}</Avatar>
+    }
   }
 
   return (
@@ -37,6 +83,7 @@ function SettingDropdown({ isLogged }) {
                 >
                   <path d="M16.5 13c-1.2 0-3.07.34-4.5 1-1.43-.67-3.3-1-4.5-1C5.33 13 1 14.08 1 16.25V19h22v-2.75c0-2.17-4.33-3.25-6.5-3.25zm-4 4.5h-10v-1.25c0-.54 2.56-1.75 5-1.75s5 1.21 5 1.75v1.25zm9 0H14v-1.25c0-.46-.2-.86-.52-1.22.88-.3 1.96-.53 3.02-.53 2.44 0 5 1.21 5 1.75v1.25zM7.5 12c1.93 0 3.5-1.57 3.5-3.5S9.43 5 7.5 5 4 6.57 4 8.5 5.57 12 7.5 12zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 5.5c1.93 0 3.5-1.57 3.5-3.5S18.43 5 16.5 5 13 6.57 13 8.5s1.57 3.5 3.5 3.5zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"></path>
                 </svg>
+
                 <Link to="/user-manager">
                   <span className="text-sm ml-2">User Management</span>
                 </Link>
@@ -239,7 +286,7 @@ function SettingDropdown({ isLogged }) {
                   <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
                   <path d="M7 12h14l-3 -3m0 6l3 -3" />
                 </svg>
-                <span className="text-sm ml-2" onClick={SigOut}>
+                <span className="text-sm ml-2" onClick={Logout}>
                   Sign out
                 </span>
               </div>
@@ -248,15 +295,7 @@ function SettingDropdown({ isLogged }) {
         ) : (
           ''
         )}
-        {isLogged && (
-          <button className="p-px border-2 border-green-100 rounded-full w-10 h-10">
-            <img
-              className="block object-cover rounded-full"
-              src="https://avatars0.githubusercontent.com/u/57622665?s=460&u=8f581f4c4acd4c18c33a87b3e6476112325e8b38&v=4"
-              alt="Ahmed Kamel"
-            />
-          </button>
-        )}
+        {isLogged && <button>{Ava()}</button>}
       </div>
     </div>
   )

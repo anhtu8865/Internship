@@ -2,14 +2,24 @@ import NavbarButtonRight from './NavbarButtonRight'
 import UserDropdown from './UserDropdown'
 import { Link } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
-
+import { useSelector } from 'react-redux'
+import { getMe,logout, inforUserSelector } from '../../slices/infouser'
+import { useAppDispatch } from '../../store'
 function Navbar() {
-
   const [isLogged, setIsLogged] = useState(false)
-
+  const dispatch = useAppDispatch()
+  const {inforUser, success, errorMessage, loading, hasErrors } =
+      useSelector(inforUserSelector)
   useEffect(() => {
     setIsLogged(!!localStorage.getItem('accessToken'))
   })
+useEffect(() => {
+  if (isLogged) {
+    dispatch(getMe())
+  }
+}, [isLogged])
+ 
+
 
   return (
     <>
