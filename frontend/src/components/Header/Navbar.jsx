@@ -10,7 +10,7 @@ function Navbar() {
   useEffect(() => {
     setIsLogged(!!localStorage.getItem('accessToken'))
   })
-if (isLogged){
+
   return (
     <>
       <header
@@ -157,9 +157,7 @@ if (isLogged){
       </header>
     </>
   )
-}else{
-  return <></>
 }
-}
+
 
 export default Navbar

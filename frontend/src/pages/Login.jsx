@@ -1,25 +1,24 @@
 import FormInput from "../components/Form/FormInput";
-import React from "react";
+import React, { useEffect } from 'react'
 import { useForm } from "react-hook-form";
 import userApi from "../api/userApi";
-import Cookies from "universal-cookie";
-const cookies = new Cookies()
-function Login(props) {
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data) => {
-    userApi.login(data).then(async (response) => {
-      if(response.Msg == "Login Success")
-      {
-      localStorage.setItem("accessToken", response.Data.access_token)
-      localStorage.setItem('refreshToken', response.Data.refresh_token)
-      props.history.push('/')
-      }
-      else{
-        alert(response.Msg)
-      }
-    }).catch(err => alert(err))
-  };
+import { useSelector } from 'react-redux'
+import { loginUser, inforUserSelector } from '../slices/infouser'
+import { useAppDispatch } from '../store'
 
+function Login(props) {
+  const dispatch = useAppDispatch()
+  const { register, handleSubmit } = useForm();
+  const {  success, loading, hasErrors } =
+    useSelector(inforUserSelector)
+  const onSubmit = (data) => {
+        dispatch(loginUser(data))
+  };
+  useEffect(() => {
+    if (success) {
+      props.history.push('/')
+    }
+  }, [success])
   return (
     <div className="w-full h-full pt-32">
       <div className="max-w-xl px-8 py-8 border-0 shadow-lg rounded-xl h-auto bg-white mx-auto">

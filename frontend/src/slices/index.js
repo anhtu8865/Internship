@@ -20,7 +20,7 @@ import workflowProjectsReducer from './wor-pro'
 
 import statusReducer from './statuss'
 import transitionStatussReducer from './tra-sta'
-
+import inforuserReducer from './infouser'
 const rootReducer = combineReducers({
   users: userReducer,
   projects: projectReducer,
@@ -39,6 +39,7 @@ const rootReducer = combineReducers({
   workflowprojects: workflowProjectsReducer, 
   statuss: statusReducer,
   transitionstatuss: transitionStatussReducer,
+  inforuser:inforuserReducer
 
 })
 export default rootReducer

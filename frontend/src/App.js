@@ -55,7 +55,7 @@ function App() {
           <Route path="/update-workflows">
             <UpdateWorkflowModal></UpdateWorkflowModal>
           </Route>
-         
+
           <Route path="/create-workflows">
             <CreateWorkflow />
           </Route>
@@ -65,12 +65,11 @@ function App() {
           <Route path="/add-workflows">
             <AddWorkflow></AddWorkflow>
           </Route>
-        
+
           <Route path="/add-transitions">
             <AddTransition></AddTransition>
           </Route>
-          
-          
+
           <Route path="/statuss-manager">
             <Statuss></Statuss>
           </Route>

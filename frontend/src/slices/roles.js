@@ -85,8 +85,9 @@ export const createRole = (Role) => async (dispatch) => {
       return res
     })
     .catch((err) => {
-      alert(err.response.data.Msg)
       dispatch(getRoleFailure())
+      alert(err.response.data.Msg)
+     
     })
 }
 export const deleteRole = (id) => async (dispatch) => {
@@ -98,7 +99,7 @@ export const deleteRole = (id) => async (dispatch) => {
     })
     .catch((err) => {
       dispatch(getRoleFailure())
-      return err
+      alert(err.response.data.Msg)
     })
 }
 
@@ -119,6 +120,6 @@ export const updateRole = (role) => async (dispatch) => {
     })
     .catch((err) => {
       dispatch(getRoleFailure())
-      return err
+       alert(err.response.data.Msg)
     })
 }
