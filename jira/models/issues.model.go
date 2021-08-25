@@ -30,6 +30,17 @@ type Issue struct {
 	Issue_Type_Name string
 	Project_Avatar  string
 	Status          string
+	Transitions     []Transition2
+}
+
+type Transition2 struct {
+	Id_Workflow     int
+	Id_Transition   int
+	Name_Transition string
+	Id_Status1      int
+	Name_Status1    string
+	Id_Status2      int
+	Name_Status2    string
 }
 
 type CustomField2 struct {
@@ -115,6 +126,17 @@ func (pm *IssuesModel) Get() ([]Issue, error) {
 			} else {
 				return nil, err
 			}
+			query = fmt.Sprintf("select A.id_workflow, B.id_transition, B.name_transition, B.id_status1, B.name_status1, B.id_status2, B.name_status2 from new_jira_workflowproject A, new_jira_transition B where A.project_key = '%v' and B.id_workflow = A.id_workflow", issue.Project)
+			rows, err = DbOracle.Db.Query(query)
+			if err == nil {
+				for rows.Next() {
+					transition2 := Transition2{}
+					rows.Scan(&transition2.Id_Workflow, &transition2.Id_Transition, &transition2.Name_Transition, &transition2.Id_Status1, &transition2.Name_Status1, &transition2.Id_Status2, &transition2.Name_Status2)
+					issue.Transitions = append(issue.Transitions, transition2)
+				}
+			} else {
+				return nil, err
+			}
 			ListIssues = append(ListIssues, issue)
 		}
 	} else {
@@ -150,6 +172,17 @@ func (pm *IssuesModel) GetById(id string) ([]Issue, error) {
 			if err == nil {
 				for rows.Next() {
 					rows.Scan(&issue.Issue_Type_Name)
+				}
+			} else {
+				return nil, err
+			}
+			query = fmt.Sprintf("select A.id_workflow, B.id_transition, B.name_transition, B.id_status1, B.name_status1, B.id_status2, B.name_status2 from new_jira_workflowproject A, new_jira_transition B where A.project_key = '%v' and B.id_workflow = A.id_workflow", issue.Project)
+			rows, err = DbOracle.Db.Query(query)
+			if err == nil {
+				for rows.Next() {
+					transition2 := Transition2{}
+					rows.Scan(&transition2.Id_Workflow, &transition2.Id_Transition, &transition2.Name_Transition, &transition2.Id_Status1, &transition2.Name_Status1, &transition2.Id_Status2, &transition2.Name_Status2)
+					issue.Transitions = append(issue.Transitions, transition2)
 				}
 			} else {
 				return nil, err
