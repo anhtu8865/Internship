@@ -19,15 +19,13 @@ export const UpdateIssueForm = ({ match }) => {
   const [editRequestStatus, setEditRequestStatus] = useState('idle')
   useEffect(() => {}, [dispatch])
   const onNameChanged = (e) => setName(e.target.value)
-  const onStatusChanged = (e) => {
-    console.log(e.target.value)
-    setStatus(e.target.value)}
-  const canSave = [name, key].every(Boolean) && editRequestStatus === 'idle'
+  const onStatusChanged = (e) => setStatus(e.target.value)
+  const canSave = [name, key, status].every(Boolean) && editRequestStatus === 'idle'
   const history = useHistory()
   const onSaveIssueClicked = async (data) => {
     if (canSave) {
       try {
-        const newIssue = { ...issue, Key: key, Name: name }
+        const newIssue = { ...issue, Key: key, Name: name, Status: status}
         newIssue.Fields = newIssue.Fields.map((item) => ({
           ...item,
           Value: data[item.Name],
@@ -190,7 +188,7 @@ export const UpdateIssueForm = ({ match }) => {
                       >
                         {`Status:                                                            ${status}`}
                       </label>
-                      
+
                       <select
                         className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
                         value=""

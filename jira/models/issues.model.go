@@ -126,7 +126,7 @@ func (pm *IssuesModel) Get() ([]Issue, error) {
 			} else {
 				return nil, err
 			}
-			query = fmt.Sprintf("select A.id_workflow, B.id_transition, B.name_transition, B.id_status1, B.name_status1, B.id_status2, B.name_status2 from new_jira_workflowproject A, new_jira_transition B where A.project_key = '%v' and B.id_workflow = A.id_workflow", issue.Project)
+			query = fmt.Sprintf("select A.id_workflow, B.id_transition, B.name_transition, B.id_status1, B.name_status1, B.id_status2, B.name_status2 from new_jira_workflowproject A, new_jira_transition B where A.project_key = '%v' and B.id_workflow = A.id_workflow and B.name_status1 = '%v'", issue.Project, issue.Status)
 			rows, err = DbOracle.Db.Query(query)
 			if err == nil {
 				for rows.Next() {
@@ -176,7 +176,7 @@ func (pm *IssuesModel) GetById(id string) ([]Issue, error) {
 			} else {
 				return nil, err
 			}
-			query = fmt.Sprintf("select A.id_workflow, B.id_transition, B.name_transition, B.id_status1, B.name_status1, B.id_status2, B.name_status2 from new_jira_workflowproject A, new_jira_transition B where A.project_key = '%v' and B.id_workflow = A.id_workflow", issue.Project)
+			query = fmt.Sprintf("select A.id_workflow, B.id_transition, B.name_transition, B.id_status1, B.name_status1, B.id_status2, B.name_status2 from new_jira_workflowproject A, new_jira_transition B where A.project_key = '%v' and B.id_workflow = A.id_workflow and B.name_status1 = '%v'", issue.Project, issue.Status)
 			rows, err = DbOracle.Db.Query(query)
 			if err == nil {
 				for rows.Next() {
@@ -277,7 +277,7 @@ func (pm *IssuesModel) Update(r io.ReadCloser, id string, userId int64) ([]Issue
 			return nil, nil
 		}
 	}
-	query = fmt.Sprintf(`UPDATE new_jira_issue SET name = '%v' WHERE id = '%v'`, issue.Name, id)
+	query = fmt.Sprintf(`UPDATE new_jira_issue SET name = '%v', status = '%v' WHERE id = '%v'`, issue.Name, issue.Status, id)
 	_, err = DbOracle.Db.Exec(query)
 	if err == nil {
 		query := fmt.Sprintf("delete from new_jira_field where issue = '%v'", issue.Key)
