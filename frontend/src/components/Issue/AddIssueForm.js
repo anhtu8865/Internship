@@ -4,7 +4,9 @@ import { unwrapResult } from '@reduxjs/toolkit'
 import { addNewIssue, fetchCustomFields } from '../../slices/issues'
 import {
   selectAllProjectIssueTypeScreens,
+  selectUserList,
   fetchProjectIssueTypeScreens,
+  fetchUserList,
 } from '../../slices/issues'
 import { useForm } from 'react-hook-form'
 
@@ -18,6 +20,7 @@ export const AddIssueForm = () => {
 
   const dispatch = useDispatch()
   const projectIssueTypeScreens = useSelector(selectAllProjectIssueTypeScreens)
+  const userList = useSelector(selectUserList)
 
   const filteredProjects = projectIssueTypeScreens
     .map((item) => item.Project_Name)
@@ -30,6 +33,11 @@ export const AddIssueForm = () => {
   const projectsOptions = filteredProjects.map((item) => (
     <option key={item} value={item}>
       {item}
+    </option>
+  ))
+  const userOptions = userList.map((item) => (
+    <option key={item.User_Id} value={item.User_Full_Name}>
+      {item.User_Full_Name}
     </option>
   ))
   const issueTypesOptions = filteredIssueTypes.map((item) => (
@@ -52,6 +60,12 @@ export const AddIssueForm = () => {
       )
       if (Screen) {
         dispatch(fetchCustomFields({ Id: Screen }))
+      }
+      const { Project } = projectIssueTypeScreens.find(
+        (element) => element.Project_Name === projectName
+      )
+      if (Project) {
+        dispatch(fetchUserList({ project: Project }))
       }
     }
   }, [issueStatus, dispatch, projectName, issueTypeName])
@@ -102,7 +116,7 @@ export const AddIssueForm = () => {
     }
   }
   let inputFields
-  if (customFields.length !== 0) {
+  if (customFields && customFields.length !== 0) {
     inputFields = customFields.map((item) => {
       switch (item.Field_Type) {
         case 'Text':
@@ -153,6 +167,25 @@ export const AddIssueForm = () => {
                 {...register(item.Name)}
                 style={{ transition: 'all .15s ease' }}
               />
+            </div>
+          )
+        case 'People':
+          return (
+            <div key={item.Custom_Field} className="relative w-full mb-3">
+              <label
+                className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                htmlFor={item.Name}
+              >
+                {item.Name}
+              </label>
+              <select
+                className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
+                {...register(item.Name)}
+                style={{ transition: 'all .15s ease' }}
+              >
+                <option value=""></option>
+                {userOptions}
+              </select>
             </div>
           )
       }

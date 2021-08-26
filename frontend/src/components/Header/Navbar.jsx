@@ -51,7 +51,7 @@ useEffect(() => {
               </Link>
             </li>
 
-            <li>
+            {/* <li>
               <Link to="/issues">
                 <a
                   href
@@ -59,6 +59,14 @@ useEffect(() => {
                 >
                   Issues
                 </a>
+              </Link>
+            </li> */}
+            <li>
+              <Link
+                to="/addIssue"
+                className="bg-white border shadow-sm ml-4 px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700"
+              >
+                Create Issue
               </Link>
             </li>
             <div className="relative ml-5 text-gray-600 mr-4 lg:block hidden">

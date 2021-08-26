@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
 import { updateIssue } from '../../slices/issues'
-import { selectIssueById } from '../../slices/issues'
+import { selectIssueById, selectUserList, fetchUserList } from '../../slices/issues'
 import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 
@@ -13,25 +13,33 @@ export const UpdateIssueForm = ({ match }) => {
   const { register, handleSubmit, reset } = useForm()
   const [name, setName] = useState(issue.Name)
   const [key, setKey] = useState(issue.Key)
+  const [project, setProject] = useState(issue.Project)
   const [projectName, setProjectName] = useState(issue.Project_Name)
   const [issueTypeName, setIssueTypeName] = useState(issue.Issue_Type_Name)
+
   const [status, setStatus] = useState(issue.Status)
   const [editRequestStatus, setEditRequestStatus] = useState('idle')
-  useEffect(() => {}, [dispatch])
+  const userList = useSelector(selectUserList)
+  useEffect(() => {
+    if (project) {
+      dispatch(fetchUserList({ project: project }))
+    }
+  }, [dispatch])
   const onNameChanged = (e) => setName(e.target.value)
   const onStatusChanged = (e) => setStatus(e.target.value)
-  const canSave = [name, key, status].every(Boolean) && editRequestStatus === 'idle'
+  const canSave =
+    [name, key, status].every(Boolean) && editRequestStatus === 'idle'
   const history = useHistory()
   const onSaveIssueClicked = async (data) => {
     if (canSave) {
       try {
-        const newIssue = { ...issue, Key: key, Name: name, Status: status}
-        newIssue.Fields = newIssue.Fields.map((item) => ({
+        const newIssue = { ...issue, Key: key, Name: name, Status: status }
+        newIssue.Fields = newIssue.Fields ? newIssue.Fields.map((item) => ({
           ...item,
           Value: data[item.Name],
-        }))
+        })) : []
         setEditRequestStatus('pending')
-        history.push(`/issues`)
+        history.push(`/IssuesByProject/${project}`)
         const resultAction = await dispatch(updateIssue(newIssue))
         unwrapResult(resultAction)
       } catch (err) {
@@ -41,13 +49,18 @@ export const UpdateIssueForm = ({ match }) => {
       }
     }
   }
-  const transitionOptions = issue.Transitions.map((item) => (
+  const userOptions = userList.map((item) => (
+    <option key={item.User_Id} value={item.User_Full_Name}>
+      {item.User_Full_Name}
+    </option>
+  ))
+  const transitionOptions = issue.Transitions?.map((item) => (
     <option key={item.Id_Transition} value={item.Name_Status2}>
       {`${item.Name_Transition} -> ${item.Name_Status2}`}
     </option>
   ))
   let inputFields
-  if (issue.Fields.length !== 0) {
+  if (issue.Fields && issue.Fields.length !== 0) {
     inputFields = issue.Fields.map((item) => {
       switch (item.Field_Type) {
         case 'Text':
@@ -101,6 +114,26 @@ export const UpdateIssueForm = ({ match }) => {
                 defaultValue={item.Value}
                 style={{ transition: 'all .15s ease' }}
               />
+            </div>
+          )
+        case 'People':
+          return (
+            <div key={item.Name} className="relative w-full mb-3">
+              <label
+                className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                htmlFor={item.Name}
+              >
+                {item.Name}
+              </label>
+              <select
+                className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
+                {...register(item.Name)}
+                defaultValue={item.Value}
+                style={{ transition: 'all .15s ease' }}
+              >
+                <option value=""></option>
+                {userOptions}
+              </select>
             </div>
           )
       }

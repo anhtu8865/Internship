@@ -8,6 +8,7 @@ const fieldTypes = [
   { Id: '0', Name: 'Text' },
   { Id: '1', Name: 'Date' },
   { Id: '2', Name: 'Text area' },
+  { Id: '3', Name: 'People' },
 ]
 
 export const AddCustomFieldForm = () => {

@@ -2,9 +2,8 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
 import { deleteProject, setProjectUpdate } from '../../slices/projects'
-import UpdateProjectModal from './UpdateProjectModal';
-import ViewProject from './ViewProject';
-
+import UpdateProjectModal from './UpdateProjectModal'
+import ViewProject from './ViewProject'
 
 const ProjectItem = ({ project }) => {
   const dispatch = useAppDispatch()
@@ -13,8 +12,7 @@ const ProjectItem = ({ project }) => {
     e.preventDefault()
     if (confirm('Delete?')) {
       dispatch(deleteProject(project_key))
-      alert("Delete Success!")
-
+      alert('Delete Success!')
     }
   }
 
@@ -34,7 +32,6 @@ const ProjectItem = ({ project }) => {
     handleClose: handleCloseUpdate,
   }
 
-  
   const [openView, setOpenView] = React.useState(false)
 
   const handleOpenView = (e, project) => {
@@ -51,13 +48,11 @@ const ProjectItem = ({ project }) => {
     handleCloseViewProject: handleCloseView,
   }
 
-
   return (
     <>
       <UpdateProjectModal modalDialog={modalUpdate} />
       <ViewProject modalDialog={modalView} />
       <tr key={project.ProjectKey}>
-
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
             <div className="flex-shrink-0 w-10 h-10">
@@ -69,10 +64,11 @@ const ProjectItem = ({ project }) => {
             </div>
             <div className="ml-3">
               <p className="text-gray-900 whitespace-no-wrap">
-                <Link to="#">
-                  <a className="text-blue-400 whitespace-no-wrap">
-                    {project.ProjectName}
-                  </a>
+                <Link
+                  to={`/IssuesByProject/${project.ProjectKey}`}
+                  className="relative cursor-pointer text-blue-400 whitespace-no-wrap"
+                >
+                  {project.ProjectName}
                 </Link>
               </p>
             </div>
@@ -151,7 +147,6 @@ const ProjectItem = ({ project }) => {
           </span>
         </td>
       </tr>
-
     </>
   )
 }

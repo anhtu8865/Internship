@@ -16,26 +16,32 @@ const IssueExcerpt = ({ issue }) => {
           <div className="ml-3">
             <p className="text-gray-900 whitespace-no-wrap">
               <Link to="#">
-                <a className="text-blue-400 whitespace-no-wrap">{issue.Key}</a>
+                <a className="text-blue-400 whitespace-no-wrap">{`${issue.Name}(${issue.Key})`}</a>
               </Link>
             </p>
           </div>
         </div>
       </td>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <p className="text-gray-900 whitespace-no-wrap">{issue.Name}</p>
+        <p className="text-gray-900 whitespace-no-wrap">{`${issue.Project_Name}(${issue.Project})`}</p>
       </td>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <p className="text-gray-900 whitespace-no-wrap">{issue.Project}</p>
+        <p className="text-gray-900 whitespace-no-wrap">
+          {issue.Issue_Type_Name}
+        </p>
       </td>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <p className="text-gray-900 whitespace-no-wrap">{issue.Project_Name}</p>
+        <p className="text-gray-900 whitespace-no-wrap">{issue.Status}</p>
       </td>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <p className="text-gray-900 whitespace-no-wrap">{issue.Issue_Type_Name}</p>
+        <p className="text-gray-900 whitespace-no-wrap">
+          {issue.Fields?.find((item) => item.Name === 'Assignee')?.Value}
+        </p>
       </td>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <p className="text-gray-900 whitespace-no-wrap">{issue.Icon}</p>
+        <p className="text-gray-900 whitespace-no-wrap">
+          {issue.Fields?.find((item) => item.Name === 'Due Date')?.Value}
+        </p>
       </td>
       <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
         <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
@@ -62,45 +68,33 @@ const IssueExcerpt = ({ issue }) => {
             Delete
           </a>
         </span>
-        {/* <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
-          <span
-            aria-hidden
-            className="absolute inset-0 bg-blue-400 opacity-50 rounded-full"
-          />
-          <Link
-            to={{
-              pathname: `/projectIssueScreens/${issue.Id}`,
-              state: { issue, projectIssueScreensHaveName },
-            }}
-            className="relative cursor-pointer text-blue-900"
-          >
-            Configure
-          </Link>
-        </span> */}
       </td>
     </tr>
   )
 }
 
-export const Issues = () => {
+export const IssuesByProject = ({ match }) => {
+  const { project } = match.params
   const dispatch = useDispatch()
   const issues = useSelector(selectAllIssues)
 
-  const issueStatus = useSelector((state) => state.issues.status)
-
+  const status = useSelector((state) => state.issues.status)
   const error = useSelector((state) => state.issues.error)
 
   useEffect(() => {
-    if (issueStatus === 'idle') {
+    if (status === 'idle' ) {
       dispatch(fetchIssues())
     }
-  }, [issueStatus, dispatch])
+  }, [status, dispatch])
   let content
 
-  if (issueStatus === 'loading') {
+  if (status === 'loading') {
     content = <div className="loader">Loading...</div>
-  } else if (issueStatus === 'succeeded') {
-    let tbody = issues.map((issue) => {
+  } else if (status === 'succeeded') {
+    const filteredIssues = issues.filter(
+      (issue) => issue.Project === project
+    )
+    let tbody = filteredIssues.map((issue) => {
       return <IssueExcerpt key={issue.Id} issue={issue} />
     })
     content = (
@@ -165,15 +159,6 @@ export const Issues = () => {
                 />
               </div>
             </div>
-
-            <div className="flex">
-              <Link
-                to="/addIssue"
-                className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700"
-              >
-                Create Issue
-              </Link>
-            </div>
           </div>
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
             <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
@@ -181,22 +166,22 @@ export const Issues = () => {
                 <thead>
                   <tr>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Key
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Name
                     </th>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Project Key
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Project Name
+                      Project
                     </th>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Issue Type
                     </th>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Icon
+                      Status
+                    </th>
+                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Assignee
+                    </th>
+                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Due Date
                     </th>
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Action
@@ -223,13 +208,9 @@ export const Issues = () => {
         </div>
       </div>
     )
-  } else if (issueStatus === 'error') {
+  } else if (status === 'error') {
     content = <div>{error}</div>
   }
 
-  return (
-    <section className="issues-list">
-      {content}
-    </section>
-  )
+  return <section className="issues-list">{content}</section>
 }

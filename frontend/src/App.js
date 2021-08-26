@@ -15,7 +15,8 @@ import { UpdateScreenForm } from './components/Screen/UpdateScreenForm'
 import { AddScreenForm } from './components/Screen/AddScreenForm'
 import { CustomFields } from './pages/CustomFields'
 import { IssueTypes } from './pages/IssueTypes'
-import { Issues } from './pages/Issues'
+//import { Issues } from './pages/Issues'
+import { IssuesByProject } from './pages/IssuesByProject'
 import { UpdateCustomFieldForm } from './components/CustomField/UpdateCustomFieldForm'
 import { AddCustomFieldForm } from './components/CustomField/AddCustomFieldForm'
 import { AddIssueTypeForm } from './components/IssueType/AddIssueTypeForm'
@@ -120,9 +121,9 @@ function App() {
           <Route path="/issueTypes">
             <IssueTypes />
           </Route>
-          <Route path="/issues">
+          {/* <Route path="/issues">
             <Issues />
-          </Route>
+          </Route> */}
           <Route path="/addIssueType">
             <AddIssueTypeForm />
           </Route>
@@ -136,6 +137,7 @@ function App() {
           />
 
           <Route exact path="/editIssue/:issueId" component={UpdateIssueForm} />
+          <Route exact path="/IssuesByProject/:project" component={IssuesByProject} />
           <Route path="/user-manager">
             <Users></Users>
           </Route>
