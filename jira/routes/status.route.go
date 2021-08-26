@@ -18,7 +18,6 @@ func (u *StatussRoute) Init(router *gin.Engine) {
 	{
 
 		u.RouterGroup.GET("/", u.Get())
-
 		u.RouterGroup.POST("", u.CreateStatus())
 		u.RouterGroup.PUT("", u.UpdateStatus())
 		u.RouterGroup.DELETE("", u.DeleteStatus())

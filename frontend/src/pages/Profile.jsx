@@ -18,14 +18,15 @@ import {
 } from '@material-ui/core'
 import FormInput from '../components/Form/FormInput'
 import { useForm } from 'react-hook-form'
+import { usersSelector, updateUser } from '../slices/users'
 
 export default function Profile() {
       const dispatch = useAppDispatch()
       const { inforUser, success } = useSelector(inforUserSelector)
-      console.log(inforUser)
-        const { register, handleSubmit } = useForm()
-     const onSubmit = (formData) => {
      
+        const { register, handleSubmit } = useForm()
+     const onSubmit = (data) => {
+        dispatch(updateUser({ id: inforUser.User_Id, data }))
      }
     return (
       <div>
@@ -62,18 +63,14 @@ export default function Profile() {
                       <Typography color="textSecondary" variant="body1">
                         Việt Nam
                       </Typography>
-                      <Typography
-                        color="textSecondary"
-                        variant="body1"
-                      ></Typography>
                     </Box>
                   </CardContent>
                   <Divider />
-                  <CardActions>
+                  {/* <CardActions>
                     <Button color="primary" fullWidth variant="text">
                       Upload picture
                     </Button>
-                  </CardActions>
+                  </CardActions> */}
                 </Card>
               </Grid>
               <Grid item lg={12} md={12} xs={12}>
@@ -91,7 +88,7 @@ export default function Profile() {
                             r={register}
                             fullWidth
                             label="Full name"
-                            name="firstName"
+                            name="User_Full_Name"
                             required
                             value={inforUser.User_Full_Name}
                             variant="outlined"
@@ -155,9 +152,14 @@ export default function Profile() {
                         p: 2,
                       }}
                     >
-                      <Button color="primary" variant="contained">
-                        Save details
-                      </Button>
+                      <div className=" mt-10 mb-5 px-10">
+                        <input
+                          type="submit"
+                          value="Update User"
+                          className="bg-green-600 rounded-md py-2 
+            text-white text-xl "
+                        />
+                      </div>
                     </Box>
                   </Card>
                 </form>
