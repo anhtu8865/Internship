@@ -51,7 +51,7 @@ useEffect(() => {
               </Link>
             </li>
 
-            {/* <li>
+            <li>
               <Link to="/issues">
                 <a
                   href
@@ -60,7 +60,7 @@ useEffect(() => {
                   Issues
                 </a>
               </Link>
-            </li> */}
+            </li>
             <li>
               <Link
                 to="/addIssue"
