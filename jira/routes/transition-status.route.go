@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"jira/common/middleware/auth"
 	. "jira/handlers"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,7 @@ type TransitionStatusRoute struct {
 func (pr *TransitionStatusRoute) Init(router *gin.Engine) {
 	pr.RouterGroup = router.Group(pr.GroupName)
 	{
-
+		pr.RouterGroup.Use(auth.CheckUserLoged)
 		pr.RouterGroup.GET("/transition-status", pr.GetStatusTransitionRouter())
 		pr.RouterGroup.POST("update", pr.UpdateStatusToTransition())
 		pr.RouterGroup.DELETE("delete-status", pr.DeleteTransitionStatus())

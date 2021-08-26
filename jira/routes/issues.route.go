@@ -1,7 +1,7 @@
 package routes
 
 import (
-	// "jira/common/middleware/auth"
+	"jira/common/middleware/auth"
 	. "jira/handlers"
 
 	"github.com/gin-gonic/gin"
@@ -17,7 +17,7 @@ type IssuesRoute struct {
 func (u *IssuesRoute) Init(router *gin.Engine) {
 	u.RouterGroup = router.Group(u.GroupName)
 	{
-		// u.RouterGroup.Use(auth.CheckUserLoged)
+		u.RouterGroup.Use(auth.CheckUserLoged)
 		u.RouterGroup.GET("/", u.Get())
 		u.RouterGroup.GET("/:id", u.GetById())
 		u.RouterGroup.GET("/init", u.CreateInit())

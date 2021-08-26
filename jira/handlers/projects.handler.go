@@ -186,7 +186,7 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 					c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
 				} else {
-					scr1 := models.Project{ProjectKey: project_key, WorkflowId: 121}
+					scr1 := models.Project{ProjectKey: project_key}
 					if _, err := models.ProjectsModels.InsertProjectInProjectWorkflow(scr1); err != nil {
 						c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 

@@ -122,7 +122,7 @@ export const IssueTypes = () => {
     }
   }, [issueTypeStatus, projectIssueTypeScreenStatus, screenStatus, dispatch])
   let content
-
+  //console.log(issueTypeStatus, projectIssueTypeScreenStatus, screenStatus, projectStatus, "lllllllllllllllll")
   if (
     issueTypeStatus === 'loading' ||
     projectIssueTypeScreenStatus === 'loading' ||

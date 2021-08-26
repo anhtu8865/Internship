@@ -7,13 +7,13 @@ import (
 	"os"
 	"strconv"
 	"strings"
-    "time"
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v7"
 	"github.com/twinj/uuid"
 	// "encoding/json"
-
 )
 
 var client *redis.Client
@@ -43,17 +43,17 @@ type TokenDetails struct {
 }
 type AccessDetails struct {
 	AccessUuid string
-	UserId   int64
+	UserId     int64
 	GlobalRole int64
 }
 
 //create token
 func CreateToken(userid int64, globalrole int64) (*TokenDetails, error) {
 	td := &TokenDetails{}
-	td.AtExpires = time.Now().Add(time.Minute * 30).Unix()
+	td.AtExpires = time.Now().Add(time.Minute * 60).Unix()
 	td.AccessUuid = uuid.NewV4().String()
 
-	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
+	td.RtExpires = time.Now().Add(time.Minute * 60 * 24).Unix()
 	td.RefreshUuid = td.AccessUuid + "++" + strconv.Itoa(int(userid))
 
 	var err error
@@ -101,66 +101,65 @@ func CreateAuth(userid int64, td *TokenDetails) error {
 }
 
 func ExtractToken(r *http.Request) string {
-  bearToken := r.Header.Get("Authorization")
-  //normally Authorization the_token_xxx
-  strArr := strings.Split(bearToken, " ")
-  if len(strArr) == 2 {
-     return strArr[1]
-  }
-  return ""
+	bearToken := r.Header.Get("Authorization")
+	//normally Authorization the_token_xxx
+	strArr := strings.Split(bearToken, " ")
+	if len(strArr) == 2 {
+		return strArr[1]
+	}
+	return ""
 }
 func VerifyToken(r *http.Request) (*jwt.Token, error) {
-  tokenString := ExtractToken(r)
-  token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-     //Make sure that the token method conform to "SigningMethodHMAC"
-     if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-        return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-     }
-     return []byte(os.Getenv("ACCESS_SECRET")), nil
-  })
-  if err != nil {
-     return nil, err
-  }
-  return token, nil
+	tokenString := ExtractToken(r)
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		//Make sure that the token method conform to "SigningMethodHMAC"
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(os.Getenv("ACCESS_SECRET")), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
 }
+
 //get data from token
 func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
-  token, err := VerifyToken(r)
-  if err != nil {
-     return nil, err
-  }
-  claims, ok := token.Claims.(jwt.MapClaims)
-  if ok && token.Valid {
-     accessUuid, ok := claims["access_uuid"].(string)
-     if !ok {
-        return nil, err
-     }
-	userid,err := strconv.ParseInt(fmt.Sprintf("%.f", claims["userid"]), 10, 64)
-	  if err != nil {
-        return nil, err
-    }
-     globalrole, err := strconv.ParseInt(fmt.Sprintf("%.f", claims["globalrole"]), 10, 64)
-     if err != nil {
-        return nil, err
-     }
-	 
-     return &AccessDetails{
-        AccessUuid: accessUuid,
-        UserId:   userid,
-		GlobalRole :   globalrole,
-     }, nil
-  }
-  return nil, err
+	token, err := VerifyToken(r)
+	if err != nil {
+		return nil, err
+	}
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+		accessUuid, ok := claims["access_uuid"].(string)
+		if !ok {
+			return nil, err
+		}
+		userid, err := strconv.ParseInt(fmt.Sprintf("%.f", claims["userid"]), 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		globalrole, err := strconv.ParseInt(fmt.Sprintf("%.f", claims["globalrole"]), 10, 64)
+		if err != nil {
+			return nil, err
+		}
+
+		return &AccessDetails{
+			AccessUuid: accessUuid,
+			UserId:     userid,
+			GlobalRole: globalrole,
+		}, nil
+	}
+	return nil, err
 }
-
-
 
 //////////////
 func CheckUserLoged(c *gin.Context) {
 	var tknStr string
 	var tknStr1 string
 	var rule bool
-	
+
 	auth := c.Request.Header["Authorization"]
 	if len(auth) > 0 {
 		tknStr = strings.Trim(auth[0], "Bearer")
@@ -211,7 +210,7 @@ func CheckUserLoged(c *gin.Context) {
 }
 
 func CheckAdmin(c *gin.Context) {
-    tokenAuth, err := ExtractTokenMetadata(c.Request)
+	tokenAuth, err := ExtractTokenMetadata(c.Request)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
 		c.Abort()
@@ -230,7 +229,7 @@ func CheckAdmin(c *gin.Context) {
 	c.Abort()
 }
 func CheckTrusted(c *gin.Context) {
-    tokenAuth, err := ExtractTokenMetadata(c.Request)
+	tokenAuth, err := ExtractTokenMetadata(c.Request)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, helpers.MessageResponse{Msg: "You are not admin, can't access"})
 		c.Abort()
@@ -282,7 +281,6 @@ func Logout(c *gin.Context) {
 	}
 }
 
-
 //refresh token
 func RefreshToken(c *gin.Context) {
 	mapToken := map[string]string{}
@@ -321,17 +319,17 @@ func RefreshToken(c *gin.Context) {
 		}
 		// username, ok := claims["username"].(string)
 		userid, err := strconv.ParseInt(fmt.Sprintf("%.f", claims["userid"]), 10, 64)
-		if err!=nil {
+		if err != nil {
 			c.JSON(http.StatusUnprocessableEntity, "Error occurred")
 			c.Abort()
 		}
 		globalrole, err := strconv.ParseInt(fmt.Sprintf("%.f", claims["globalrole"]), 10, 64)
 		fmt.Println(globalrole)
-	    if err!=nil {
+		if err != nil {
 			c.JSON(http.StatusUnprocessableEntity, "Error occurred")
 			c.Abort()
 		}
-        fmt.Println(globalrole)
+		fmt.Println(globalrole)
 		//Delete the previous Refresh Token
 		deleted, delErr := DeleteAuth(refreshUuid)
 		if delErr != nil || deleted == 0 { //if any goes wrong

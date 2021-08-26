@@ -128,7 +128,7 @@ const WorkflowItem = ({ workflow }) => {
               onClick={(e) => handleOpenTransition(e, workflow)}
               className="relative cursor-pointer"
             >
-              View
+              Transition
             </a>
           </span>
           <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">

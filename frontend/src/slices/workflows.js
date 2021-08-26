@@ -71,8 +71,7 @@ export const fetchWorkflows = () => async(dispatch) =>{
     .then((res)=>{
         if(res.Data) {
             dispatch(getWorkflowSuccess(res.Data))
-        }
-        return(res)
+        } else dispatch(getWorkflowSuccess([]))
 
     })
     .catch((err)=>{

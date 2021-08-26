@@ -45,9 +45,8 @@ function UpdateProjectModal({ modalDialog }) {
             />
             <FormInput r={register} name="Is_Admin" label={'Is Admin'} value={projectUpdate.Is_Admin} required /> */}
             
-            <FormInput r={register} name="ProjectName" label={'Name'} value={projectUpdate.ProjectName} required />
-            <FormInput r={register} name="ProjectUrl" label={'URL'} value={projectUpdate.ProjectUrl} required />
-            <FormInput r={register} name="ProjectLead" label={'Project Lead'} value={projectUpdate.ProjectLead} required/>
+            <FormInput r={register} name="ProjectName" label={'Name'} value={projectUpdate.ProjectName} required/>
+            <FormInput r={register} name="ProjectUrl" label={'URL'} value={projectUpdate.ProjectUrl}/>
             {/* <FormSelect label={'Project Type'}>
               <option>Software</option>
               <option>Option 2</option>
@@ -56,7 +55,7 @@ function UpdateProjectModal({ modalDialog }) {
             <div className="mb-5 w-full relative z-0">
               <textarea className="pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-0 
               border-b-2 h-36 resize-none appearance-none focus:outline-none focus:ring-0 focus:border-green-800 border-gray-200" 
-              name="name" placeholder=" " defaultValue={projectUpdate.ProjectDescription} required/>
+              name="name" placeholder=" " defaultValue={projectUpdate.ProjectDescription} />
               <label htmlFor="name" className="absolute duration-300 
               top-3 origin-0 text-gray-500 -z-1">Description</label>
             </div>

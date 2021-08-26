@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"jira/common/middleware/auth"
 	. "jira/handlers"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ type StatussRoute struct {
 func (u *StatussRoute) Init(router *gin.Engine) {
 	u.RouterGroup = router.Group(u.GroupName)
 	{
+		u.RouterGroup.Use(auth.CheckUserLoged)
 
 		u.RouterGroup.GET("/", u.Get())
 		u.RouterGroup.POST("", u.CreateStatus())

@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"jira/common/middleware/auth"
 	. "jira/handlers"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,7 @@ type TransitionsRoute struct {
 func (u *TransitionsRoute) Init(router *gin.Engine) {
 	u.RouterGroup = router.Group(u.GroupName)
 	{
-
+		u.RouterGroup.Use(auth.CheckUserLoged)
 		u.RouterGroup.GET("/", u.GetAllTransition())
 		u.RouterGroup.POST("", u.CreateTransition())
 		u.RouterGroup.PUT("", u.UpdateTransition())

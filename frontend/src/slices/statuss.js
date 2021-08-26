@@ -71,9 +71,7 @@ export const fetchStatuss = () => async(dispatch) =>{
     .then((res)=>{
         if(res.Data) {
             dispatch(getStatusSuccess(res.Data))
-        }
-        return(res)
-
+        } else dispatch(getStatusSuccess([]))
     })
     .catch((err)=>{
       dispatch(getStatusFailure())

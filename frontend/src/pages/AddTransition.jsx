@@ -93,7 +93,7 @@ export default function CreateTransition(modalDialog) {
         <hr className="mb-5"/>
         <div className="px-6">
           <form onSubmit={handleSubmit(onSubmit)}>
-          <FormInput r={register} name="WorkflowId" label='Workflow ID' required value= {temp1.WorkflowId}/>
+          <FormInput r={register} name="WorkflowId" label='Workflow ID'  required  value= {temp1.WorkflowId} />
           <FormInput r={register} name="TransitionName" label='Transition Name' required />
           {/* <FormInput r={register} name="Status1Id" label='Status'  />  */}
           {/* <Select option= {temp}/>  */}

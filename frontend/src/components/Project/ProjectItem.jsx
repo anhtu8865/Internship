@@ -105,18 +105,6 @@ const ProjectItem = ({ project }) => {
           </p>
         </td>
         <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
-          <span className="relative inline-block px-3 py-1 font-semibold text-blue-900 leading-tight">
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-blue-200 opacity-100 rounded-full"
-            />
-            <a
-              onClick={(e) => handleOpenUpdate(e, project)}
-              className="relative cursor-pointer"
-            >
-              View
-            </a>
-          </span>
           <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden

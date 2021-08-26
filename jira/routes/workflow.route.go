@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"jira/common/middleware/auth"
 	. "jira/handlers"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,7 @@ type WorkflowsRoute struct {
 func (u *WorkflowsRoute) Init(router *gin.Engine) {
 	u.RouterGroup = router.Group(u.GroupName)
 	{
-
+		u.RouterGroup.Use(auth.CheckUserLoged)
 		u.RouterGroup.GET("/", u.GetAllWorkflow())
 		u.RouterGroup.GET("", u.GetByIdWorkflow())
 		// u.RouterGroup.POST("update", u.UpdateWorkflowProject())

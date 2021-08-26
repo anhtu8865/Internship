@@ -64,23 +64,23 @@ export default function UpdateProjectWorkflow({ modalDialog }) {
   projects.map((temp) => {
     id_project.push(temp.ProjectKey)
   })
-  fullData.map((temp) => {
+  fullData?.map((temp) => {
     id_project.push(temp.ProjectKey)
   })
-  console.log(projects)
-  console.log("kkkk")
-  console.log(fullData)
+  //console.log(projects)
+  //console.log("kkkk")
+  //console.log(fullData)
   const temp = projects.filter(
-    (item1) => !fullData.some((item2) => item1.ProjectKey === item2.ProjectKey)
+    (item1) => !fullData?.some((item2) => item1.ProjectKey === item2.ProjectKey)
   )
 
-  var options = temp.map((option) => {
+  var options = temp ? temp.map((option) => {
     return (
       <option key={option.ProjectKey} value={option.ProjectKey}>
         {option.ProjectName}
       </option>
     )
-  })
+  }) : ''
 
   return (
     <>

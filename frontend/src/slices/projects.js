@@ -72,6 +72,7 @@ export const fetchProjects = () => async (dispatch) => {
     .then((res) => {
       console.log(res)
       if (res.Data) dispatch(getProjectsSuccess(res.Data))
+      else dispatch(getProjectsSuccess([]))
     })
     .catch((err) => {
       console.log(err)

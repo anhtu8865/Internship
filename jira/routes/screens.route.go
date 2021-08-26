@@ -17,7 +17,7 @@ type ScreensRoute struct {
 func (u *ScreensRoute) Init(router *gin.Engine) {
 	u.RouterGroup = router.Group(u.GroupName)
 	{
-		u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
+		u.RouterGroup.Use(auth.CheckUserLoged)
 		u.RouterGroup.GET("/", u.Get())
 		//u.RouterGroup.GET("/:id", u.GetById())
 		u.RouterGroup.POST("/", u.Create())
