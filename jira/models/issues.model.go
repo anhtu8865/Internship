@@ -60,6 +60,11 @@ type ProjectIssueTypeScreen2 struct {
 	Issue_Type_Icon string
 }
 
+type User2 struct {
+	User_Id        int
+	User_Full_Name string
+}
+
 type IssuesModel struct {
 	Issues []Issue
 }
@@ -75,6 +80,22 @@ func (pm *IssuesModel) GetAllCustomFieldsOfScreen(id string) ([]CustomField2, er
 			ListCustomFields = append(ListCustomFields, customField)
 		}
 		return ListCustomFields, nil
+	} else {
+		return nil, err
+	}
+}
+
+func (pm *IssuesModel) GetUserList(project string) ([]User2, error) {
+	query := fmt.Sprintf("select A.user_id, B.user_full_name from new_jira_user_project_role A, new_jira_user B where A.project_key = '%v' and B.user_id = A.user_id", project)
+	rows, err := DbOracle.Db.Query(query)
+	if err == nil {
+		var userList []User2
+		for rows.Next() {
+			user := User2{}
+			rows.Scan(&user.User_Id, &user.User_Full_Name)
+			userList = append(userList, user)
+		}
+		return userList, nil
 	} else {
 		return nil, err
 	}

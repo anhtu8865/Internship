@@ -25,6 +25,7 @@ func (u *IssuesRoute) Init(router *gin.Engine) {
 		u.RouterGroup.PUT("/:id", u.Update())
 		u.RouterGroup.DELETE("/:id", u.Delete())
 		u.RouterGroup.GET("/getCustomFields/:id", u.GetAllCustomFieldsOfScreen())
+		u.RouterGroup.GET("/getUserList/:project", u.GetUserList())
 
 	}
 
@@ -44,6 +45,10 @@ func (u *IssuesRoute) GetById() gin.HandlerFunc {
 
 func (u *IssuesRoute) GetAllCustomFieldsOfScreen() gin.HandlerFunc {
 	return IssuesHandlers.GetAllCustomFieldsOfScreen()
+}
+
+func (u *IssuesRoute) GetUserList() gin.HandlerFunc {
+	return IssuesHandlers.GetUserList()
 }
 
 func (u *IssuesRoute) Create() gin.HandlerFunc {

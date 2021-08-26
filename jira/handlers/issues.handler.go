@@ -125,6 +125,33 @@ func (u *IssuesHandler) GetAllCustomFieldsOfScreen() gin.HandlerFunc {
 	}
 }
 
+func (u *IssuesHandler) GetUserList() gin.HandlerFunc {
+	//Do everything here, call model etc...
+	return func(c *gin.Context) {
+		project := c.Param("project")
+		UserList, err := models.IssuesModels.GetUserList(project)
+		if err != nil {
+			loggers.Logger.Errorln(err.Error())
+			response := MessageResponse{
+				Msg:  err.Error(),
+				Data: UserList,
+			}
+			c.JSON(http.StatusNotFound,
+				response,
+			)
+		} else {
+			response := MessageResponse{
+				Msg:  "Successful",
+				Data: UserList,
+			}
+			c.JSON(http.StatusOK,
+				response,
+			)
+		}
+
+	}
+}
+
 func (u *IssuesHandler) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenAuth, err := ExtractTokenMetadata(c.Request)

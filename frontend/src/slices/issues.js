@@ -5,6 +5,7 @@ const initialState = {
   issues: [],
   projectIssueTypeScreens: [],
   customFields: [],
+  userList: [],
   status: 'idle',
   statusAddIssue: 'idle',
   error: null,
@@ -48,6 +49,24 @@ export const fetchCustomFields = createAsyncThunk(
     const { Id } = initialIssue
     const response = await issueApi
       .getCustomFields(Id)
+      .then(function (response) {
+        console.log(response)
+        return response
+      })
+      .catch(function (error) {
+        throw rejectWithValue(error.response.data)
+      })
+    return response
+  }
+)
+
+
+export const fetchUserList = createAsyncThunk(
+  'issues/fetchUserList',
+  async (initial, { rejectWithValue }) => {
+    const { project } = initial
+    const response = await issueApi
+      .getUserList(project)
       .then(function (response) {
         console.log(response)
         return response
@@ -175,12 +194,22 @@ const issuesSlice = createSlice({
         state.customFields = action.payload.Data
       }
     },
+    [fetchUserList.rejected]: (state, action) => {
+      console.log(action.payload.Msg)
+    },
+    [fetchUserList.fulfilled]: (state, action) => {
+      if (action.payload.Data) {
+        state.userList = action.payload.Data
+      }
+    },
   },
 })
 
 export default issuesSlice.reducer
 
 export const selectAllIssues = (state) => state.issues.issues
+
+export const selectUserList = (state) => state.issues.userList
 
 export const selectAllProjectIssueTypeScreens = (state) => state.issues.projectIssueTypeScreens
 

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 
 function Navbar() {
-
   const [isLogged, setIsLogged] = useState(false)
 
   useEffect(() => {
@@ -40,7 +39,7 @@ function Navbar() {
                 </a>
               </Link>
             </li>
-          
+
             <li>
               <Link to="/issues">
                 <a
@@ -49,6 +48,14 @@ function Navbar() {
                 >
                   Issues
                 </a>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/addIssue"
+                className="bg-white border shadow-sm ml-4 px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700"
+              >
+                Create Issue
               </Link>
             </li>
             <div className="relative ml-5 text-gray-600 mr-4 lg:block hidden">
@@ -82,9 +89,7 @@ function Navbar() {
             {!isLogged && (
               <div>
                 <Link to="/login">
-                  <button
-                    className="text-white mx-4 text-sm hover:text-yellow-300 focus:outline-none bg-yellow-500 border px-4 py-1.5 rounded-md cursor-pointer"
-                  >
+                  <button className="text-white mx-4 text-sm hover:text-yellow-300 focus:outline-none bg-yellow-500 border px-4 py-1.5 rounded-md cursor-pointer">
                     LOGIN
                   </button>
                 </Link>
@@ -127,7 +132,7 @@ function Navbar() {
                 </svg>
               }
             />
-            <NavbarButtonRight 
+            <NavbarButtonRight
               svg={
                 <svg
                   className="w-7 h-7"
