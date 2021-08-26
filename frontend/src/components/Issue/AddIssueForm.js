@@ -116,7 +116,7 @@ export const AddIssueForm = () => {
     }
   }
   let inputFields
-  if (customFields.length !== 0) {
+  if (customFields && customFields.length !== 0) {
     inputFields = customFields.map((item) => {
       switch (item.Field_Type) {
         case 'Text':

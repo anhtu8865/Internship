@@ -39,7 +39,7 @@ export const UpdateIssueForm = ({ match }) => {
           Value: data[item.Name],
         })) : []
         setEditRequestStatus('pending')
-        history.push(`/issues`)
+        history.push(`/IssuesByProject/${project}`)
         const resultAction = await dispatch(updateIssue(newIssue))
         unwrapResult(resultAction)
       } catch (err) {
@@ -54,7 +54,7 @@ export const UpdateIssueForm = ({ match }) => {
       {item.User_Full_Name}
     </option>
   ))
-  const transitionOptions = issue.Transitions.map((item) => (
+  const transitionOptions = issue.Transitions?.map((item) => (
     <option key={item.Id_Transition} value={item.Name_Status2}>
       {`${item.Name_Transition} -> ${item.Name_Status2}`}
     </option>

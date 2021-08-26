@@ -20,7 +20,36 @@ func (u *IssuesHandler) Get() gin.HandlerFunc {
 	//Do everything here, call model etc...
 	return func(c *gin.Context) {
 		// loggers.Logger.Println("get a get request")
-		issues, err := models.IssuesModels.Get()
+		tokenAuth, err := ExtractTokenMetadata(c.Request)
+		issues, err := models.IssuesModels.Get(tokenAuth.UserId, tokenAuth.GlobalRole)
+		if err != nil {
+			loggers.Logger.Errorln(err.Error())
+			response := MessageResponse{
+				Msg:  err.Error(),
+				Data: nil,
+			}
+			c.JSON(http.StatusNotFound,
+				response,
+			)
+		} else {
+			response := MessageResponse{
+				Msg:  "Successful",
+				Data: issues,
+			}
+			c.JSON(http.StatusOK,
+				response,
+			)
+		}
+
+	}
+}
+
+func (u *IssuesHandler) GetByProject() gin.HandlerFunc {
+	//Do everything here, call model etc...
+	return func(c *gin.Context) {
+		// loggers.Logger.Println("get a get request")
+		project := c.Param("project")
+		issues, err := models.IssuesModels.GetByProject(project)
 		if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{

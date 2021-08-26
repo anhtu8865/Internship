@@ -116,8 +116,61 @@ func (pm *IssuesModel) CreateInit() ([]ProjectIssueTypeScreen2, error) {
 	}
 }
 
-func (pm *IssuesModel) Get() ([]Issue, error) {
-	query := fmt.Sprintf("select * from NEW_JIRA_ISSUE")
+func (pm *IssuesModel) Get(userId int64, globalRole int64) ([]Issue, error) {
+	query := fmt.Sprintf("select A.* from new_jira_issue A, new_jira_user_project_role B where B.user_id = '%v' and B.project_key = A.project", userId)
+	if globalRole == 0 {
+		query = fmt.Sprintf("select * from new_jira_issue")
+	}
+	rows, err := DbOracle.Db.Query(query)
+	var ListIssues []Issue
+	if err == nil {
+		for rows.Next() {
+			issue := Issue{}
+			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon, &issue.Status)
+			issue.Fields, err = FieldsModels.GetAllFieldsByIssueKey(issue.Key)
+			if err != nil {
+
+				return nil, err
+			}
+			query = fmt.Sprintf("select project_name, project_avatar from new_jira_project where project_key = '%v'", issue.Project)
+			rows, err := DbOracle.Db.Query(query)
+			if err == nil {
+				for rows.Next() {
+					rows.Scan(&issue.Project_Name, &issue.Project_Avatar)
+				}
+			} else {
+				return nil, err
+			}
+			query = fmt.Sprintf("select name from new_jira_issue_type where ID = '%v'", issue.Issue_Type)
+			rows, err = DbOracle.Db.Query(query)
+			if err == nil {
+				for rows.Next() {
+					rows.Scan(&issue.Issue_Type_Name)
+				}
+			} else {
+				return nil, err
+			}
+			query = fmt.Sprintf("select A.id_workflow, B.id_transition, B.name_transition, B.id_status1, B.name_status1, B.id_status2, B.name_status2 from new_jira_workflowproject A, new_jira_transition B where A.project_key = '%v' and B.id_workflow = A.id_workflow and B.name_status1 = '%v'", issue.Project, issue.Status)
+			rows, err = DbOracle.Db.Query(query)
+			if err == nil {
+				for rows.Next() {
+					transition2 := Transition2{}
+					rows.Scan(&transition2.Id_Workflow, &transition2.Id_Transition, &transition2.Name_Transition, &transition2.Id_Status1, &transition2.Name_Status1, &transition2.Id_Status2, &transition2.Name_Status2)
+					issue.Transitions = append(issue.Transitions, transition2)
+				}
+			} else {
+				return nil, err
+			}
+			ListIssues = append(ListIssues, issue)
+		}
+	} else {
+		return nil, err
+	}
+	return ListIssues, nil
+}
+
+func (pm *IssuesModel) GetByProject(project string) ([]Issue, error) {
+	query := fmt.Sprintf("select * from new_jira_issue A where A.project = '%v'", project)
 	rows, err := DbOracle.Db.Query(query)
 	var ListIssues []Issue
 	if err == nil {

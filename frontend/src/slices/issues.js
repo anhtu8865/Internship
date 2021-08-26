@@ -192,6 +192,8 @@ const issuesSlice = createSlice({
     [fetchCustomFields.fulfilled]: (state, action) => {
       if (action.payload.Data) {
         state.customFields = action.payload.Data
+      } else {
+        state.customFields = []
       }
     },
     [fetchUserList.rejected]: (state, action) => {

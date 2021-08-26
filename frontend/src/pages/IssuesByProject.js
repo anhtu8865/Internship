@@ -68,45 +68,33 @@ const IssueExcerpt = ({ issue }) => {
             Delete
           </a>
         </span>
-        {/* <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
-          <span
-            aria-hidden
-            className="absolute inset-0 bg-blue-400 opacity-50 rounded-full"
-          />
-          <Link
-            to={{
-              pathname: `/projectIssueScreens/${issue.Id}`,
-              state: { issue, projectIssueScreensHaveName },
-            }}
-            className="relative cursor-pointer text-blue-900"
-          >
-            Configure
-          </Link>
-        </span> */}
       </td>
     </tr>
   )
 }
 
-export const Issues = () => {
+export const IssuesByProject = ({ match }) => {
+  const { project } = match.params
   const dispatch = useDispatch()
   const issues = useSelector(selectAllIssues)
 
-  const issueStatus = useSelector((state) => state.issues.status)
-
+  const status = useSelector((state) => state.issues.status)
   const error = useSelector((state) => state.issues.error)
 
   useEffect(() => {
-    if (issueStatus === 'idle') {
+    if (status === 'idle' ) {
       dispatch(fetchIssues())
     }
-  }, [issueStatus, dispatch])
+  }, [status, dispatch])
   let content
 
-  if (issueStatus === 'loading') {
+  if (status === 'loading') {
     content = <div className="loader">Loading...</div>
-  } else if (issueStatus === 'succeeded') {
-    let tbody = issues.map((issue) => {
+  } else if (status === 'succeeded') {
+    const filteredIssues = issues.filter(
+      (issue) => issue.Project === project
+    )
+    let tbody = filteredIssues.map((issue) => {
       return <IssueExcerpt key={issue.Id} issue={issue} />
     })
     content = (
@@ -220,7 +208,7 @@ export const Issues = () => {
         </div>
       </div>
     )
-  } else if (issueStatus === 'error') {
+  } else if (status === 'error') {
     content = <div>{error}</div>
   }
 
