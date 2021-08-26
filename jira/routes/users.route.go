@@ -20,13 +20,15 @@ func (u *UserRoute) Init(router *gin.Engine) {
 	{
 	
 		u.RouterGroup.POST("/sign-up",auth.CheckUserLoged, auth.CheckAdmin, u.Signup())
-		u.RouterGroup.GET("/",auth.CheckUserLoged, auth.CheckTrusted,u.Index())
+		u.RouterGroup.GET("/",auth.CheckUserLoged,u.Index())
 		u.RouterGroup.DELETE("/delete-user",auth.CheckUserLoged, auth.CheckAdmin, u.DeleteUser())
 		u.RouterGroup.PUT("/admin/update-user",auth.CheckUserLoged, auth.CheckAdmin,u.UpdateUserByAdmin())
 		u.RouterGroup.POST("/",u.Singin())
 		u.RouterGroup.POST("/logout",auth.CheckUserLoged,auth.Logout)
 		u.RouterGroup.POST("/refresh",auth.RefreshToken)
-		u.RouterGroup.GET("/info-user",auth.CheckUserLoged,u.GetUserbyId())
+		u.RouterGroup.GET("/info-user-id",auth.CheckUserLoged,u.GetUserbyId())
+		u.RouterGroup.GET("/info-user",auth.CheckUserLoged,u.GetInfoUserByToken())
+
 	}
 }
 
@@ -58,11 +60,8 @@ func (u *UserRoute) GetUserbyId() gin.HandlerFunc{
 	return UserHandlers.GetUserbyId()
 }
 
-// func (u *UserRoute) UpdateUser() gin.HandlerFunc {
-// 	//u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
-// 	return UserHandlers.UpdateUser()
-// }
-// func (u *UserRoute) DeleteUser() gin.HandlerFunc {
-// 	//u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
-// 	return UserHandlers.DeleteUser()
-// }
+func (u *UserRoute) GetInfoUserByToken() gin.HandlerFunc {
+	//u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
+	return UserHandlers.GetUserbyTokenUser()
+}
+

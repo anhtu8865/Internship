@@ -36,7 +36,7 @@ import Statuss from './pages/StatusManager';
 import Transition from './pages/TransitionManager';
 import AddTransition from './pages/AddTransition';
 import UpdateWorkflowModal from './pages/UpdateWorkflow';
-
+import Profile from './pages/Profile'
 function App() {
   return (
     <Router>
@@ -55,7 +55,7 @@ function App() {
           <Route path="/update-workflows">
             <UpdateWorkflowModal></UpdateWorkflowModal>
           </Route>
-         
+
           <Route path="/create-workflows">
             <CreateWorkflow />
           </Route>
@@ -65,12 +65,11 @@ function App() {
           <Route path="/add-workflows">
             <AddWorkflow></AddWorkflow>
           </Route>
-        
+
           <Route path="/add-transitions">
             <AddTransition></AddTransition>
           </Route>
-          
-          
+
           <Route path="/statuss-manager">
             <Statuss></Statuss>
           </Route>
@@ -149,11 +148,14 @@ function App() {
           <Route path="/detail-permission">
             <DetailPermission></DetailPermission>
           </Route>
-          <Route path="/project-user/:keyProject">
+          <Route path="/project-user/:keyProject-:nameProject">
             <ProjectUserRole></ProjectUserRole>
           </Route>
           <Route exact path="/">
             <Home />
+          </Route>
+          <Route path="/profile">
+            <Profile></Profile>
           </Route>
         </Layout>
       </Switch>

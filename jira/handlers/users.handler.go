@@ -272,10 +272,10 @@ func (u *UserHandler) UpdateUser() gin.HandlerFunc {
 		//req body from client
 		json.NewDecoder(c.Request.Body).Decode(&myMap)
 		//username
-		fullname = fmt.Sprintf("%v", myMap["fullname"])
+		fullname = fmt.Sprintf("%v", myMap["User_Full_Name"])
 
 		//password
-		password = fmt.Sprintf("%v", myMap["password"])
+		password = fmt.Sprintf("%v", myMap["User_Password"])
 
 		//permission role
 		isAdmin = fmt.Sprintf("%v", myMap["globalrole"])
@@ -304,6 +304,24 @@ func (u *UserHandler) GetUserbyId() gin.HandlerFunc {
 			c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Get data Success", Data: users[0]})
 		} else {
 			fmt.Println(err)
+		}
+	}
+}
+//get user by token
+func (u *UserHandler) GetUserbyTokenUser() gin.HandlerFunc {
+	//Do everything here, call model etc...
+	return func(c *gin.Context) {
+		//call model
+		tokenAuth, error := ExtractTokenMetadata(c.Request)
+		if error != nil {
+			c.JSON(http.StatusUnauthorized, "unauthorized")
+		}
+		user_id:= strconv.FormatInt(tokenAuth.UserId,10)
+		users, err := models.UserModels.Check_User_Exist_By_Id(user_id)
+		if err == nil {
+			c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Get data Success", Data: users[0]})
+		} else {
+			c.JSON(http.StatusFound, helpers.MessageResponse{Msg: "User null"})
 		}
 	}
 }

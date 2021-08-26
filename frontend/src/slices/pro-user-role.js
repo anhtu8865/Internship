@@ -71,32 +71,31 @@ export const fetchProjectUserRole = (key) => async (dispatch) => {
     })
     .catch((err) => {
       dispatch(getFailure())
-      return err
+       alert(err.response.data.Msg)
     })
 }
 //add user role to project
 export const AddUserToProject = (data) => async (dispatch) => {
   ProjectUserRoleApi.addUserRoleToProject(data)
     .then(async (res) => {
-    console.log(res.Msg)
-    if (res.Msg == "Add User Success") {
-      await UserApi.infoUser(data.userId).then((user) => {
-        console.log(user.Data)
-        let newuser = {
-          UserId: user.Data.User_Id,
-          UserName: user.Data.User_Name,
-          UserMail: user.Data.User_Email,
-          RoleName: data.RoleName,
-        }
-        dispatch(addUserToProject(newuser))
-      })
-    }
+      console.log(res.Msg)
+      if (res.Msg == 'Add User Success') {
+        await UserApi.infoUser(data.userId).then((user) => {
+          console.log(user.Data)
+          let newuser = {
+            UserId: user.Data.User_Id,
+            UserName: user.Data.User_Name,
+            UserMail: user.Data.User_Email,
+            RoleName: data.RoleName,
+          }
+          dispatch(addUserToProject(newuser))
+        })
+      }
       return res
-
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch(getFailure())
-      return error
+      alert(err.response.data.Msg)
     })
 }
 
@@ -108,28 +107,9 @@ export const deleteUser = (data) => async (dispatch) => {
       console.log(res)
     })
     .catch((err) => {
-      console.log(err)
       dispatch(getFailure())
+      alert(err.response.data.Msg)
     })
 }
 
-//update 
-// export const setUserUpdate = (User) => async (dispatch) => {
-//   try {
-//     dispatch(actions.setUserProjectUpdate(User))
-//   } catch (error) {
-//     dispatch(getFailure())
-//   }
-// }
 
-// export const updateUser = (data) => async (dispatch) => {
-//   ProjectUserRoleApi.updateRoleUserInProject(data)
-//     .then((res) => {
-//       dispatch(actions.updateUserProject(data))
-//       return res
-//     })
-//     .catch((err) => {
-//       dispatch(getFailure())
-//       return err
-//     })
-// }

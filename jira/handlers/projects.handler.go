@@ -9,7 +9,7 @@ import (
 	"jira/loggers"
 	"jira/models"
 	"net/http"
-
+    "strconv"
 	"github.com/gin-gonic/gin"
 
 	//"github.com/godror/godror/odpi/src"
@@ -32,7 +32,7 @@ func (u *ProjectsHandler) Get() gin.HandlerFunc {
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, "unauthorized")
 		}
-		if tokenAuth.GlobalRole == 0 || tokenAuth.GlobalRole == 1 {
+		if tokenAuth.GlobalRole == 0 {
 			projects, err := models.ProjectsModels.Get()
 			if err != nil {
 				loggers.Logger.Errorln(err.Error())
@@ -53,7 +53,7 @@ func (u *ProjectsHandler) Get() gin.HandlerFunc {
 				)
 			}
 		}
-		if tokenAuth.GlobalRole == 2 {
+		if tokenAuth.GlobalRole == 2 || tokenAuth.GlobalRole == 1  {
 			projects, err := models.ProjectsModels.GetProjectUser(int(tokenAuth.UserId))
 			fmt.Println(projects)
 			if err != nil {
@@ -144,12 +144,10 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 			return
 		}
 		var project_key, project_name, project_description string
-
 		var myMapNew map[string]string
 		json.NewDecoder(c.Request.Body).Decode(&myMapNew)
 		project_key = fmt.Sprintf("%v", myMapNew["ProjectKey"])
 		project_name = fmt.Sprintf("%v", myMapNew["ProjectName"])
-
 		project_description = fmt.Sprintf("%v", myMapNew["ProjectDescription"])
 		// project_lead = fmt.Sprintf("%v", myMapNew["ProjectLead"])
 
@@ -184,23 +182,30 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 				scr := models.Project{ProjectKey: project_key, ProjectName: project_name, ProjectDescription: project_description, ProjectLead: int(tokenAuth.UserId)}
 
 				if _, err := models.ProjectsModels.InsertProject(scr); err != nil {
-					fmt.Println(err)
 					c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
 				} else {
-
-					projects, err := models.PermissionModels.GetProjectLeadByKeyProject(project_key)
-					if err != nil {
+					scr1 := models.Project{ProjectKey: project_key}
+					if _, err := models.ProjectsModels.InsertProjectInProjectWorkflow(scr1); err != nil {
 						c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
-					} else {
-						fmt.Println(err)
-						scr1 := models.Project{ProjectKey: project_key}
-						if _, err := models.ProjectsModels.InsertProjectInProjectWorkflow(scr1); err != nil {
-							fmt.Println(err)
-							c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
+					} else {
+						//insert project lead to role admin
+						
+						user_id:= strconv.FormatInt(tokenAuth.UserId,10)
+						sm := models.ProjectUserRoleModel{}
+						if _, err := sm.AddUserRoleToProject(project_key,user_id, "241"); err != nil {
+							c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
+						} else {
+							//get new project
+							projects, err := models.ProjectsModels.GetProjectLeadByKeyProject(project_key)
+							if err != nil {
+								c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
+							} else {
+								c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: projects[0]})
+							}
 						}
-						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: projects[0]})
+
 					}
 
 					// err != nil {
@@ -221,7 +226,8 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 
 	}
 }
-
+//	//Admin global can delete all project
+// or project lead can update project
 func (u *ProjectsHandler) UpdateProject() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		key := c.Param("key")
@@ -252,12 +258,13 @@ func (u *ProjectsHandler) UpdateProject() gin.HandlerFunc {
 				)
 			}
 		} else {
-			c.JSON(http.StatusBadRequest, "you do not own this project")
+			c.JSON(http.StatusBadRequest,helpers.MessageResponse{Msg:  "you do not own this project"})
 		}
 	}
 }
 
-//delete project
+//Admin global can delete all project
+// or project lead 
 func (u *ProjectsHandler) DeleteProject() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		key := c.Param("key")
@@ -301,8 +308,7 @@ func (u *ProjectsHandler) DeleteProject() gin.HandlerFunc {
 			}
 
 		} else {
-
-			c.JSON(http.StatusBadRequest, "you do not own this project")
+			c.JSON(http.StatusBadRequest,helpers.MessageResponse{Msg:  "you must Admin global or project lead"})
 		}
 	}
 
@@ -310,7 +316,7 @@ func (u *ProjectsHandler) DeleteProject() gin.HandlerFunc {
 
 //check project lead
 func CheckProjectLead(project_key string, id_user int) bool {
-	projects, err := models.PermissionModels.GetProjectLeadByKeyProject(project_key)
+	projects, err := models.ProjectsModels.GetProjectLeadByKeyProject(project_key)
 	if err != nil {
 		return false
 	} else {
