@@ -2,6 +2,7 @@ import axiosClient from './axiosClient'
 
 const workflowApi = {
   getAllWorkflow: () => axiosClient.get("/workflows/"),
+  getById: (id) => axiosClient.get("/workflows?id=" + id),
   delete: (id) => axiosClient.delete("/workflow?id=" + id),
   createWorkflow: (data) => axiosClient.post("/workflow",data),
   updateWorkflow:({id,data}) => axiosClient.put("/workflow?id="+id,data),

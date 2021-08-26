@@ -9,7 +9,8 @@ import (
 	"jira/loggers"
 	"jira/models"
 	"net/http"
-    "strconv"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 
 	//"github.com/godror/godror/odpi/src"
@@ -53,7 +54,7 @@ func (u *ProjectsHandler) Get() gin.HandlerFunc {
 				)
 			}
 		}
-		if tokenAuth.GlobalRole == 2 || tokenAuth.GlobalRole == 1  {
+		if tokenAuth.GlobalRole == 2 || tokenAuth.GlobalRole == 1 {
 			projects, err := models.ProjectsModels.GetProjectUser(int(tokenAuth.UserId))
 			fmt.Println(projects)
 			if err != nil {
@@ -185,16 +186,16 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 					c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
 				} else {
-					scr1 := models.Project{ProjectKey: project_key}
+					scr1 := models.Project{ProjectKey: project_key, WorkflowId: 121}
 					if _, err := models.ProjectsModels.InsertProjectInProjectWorkflow(scr1); err != nil {
 						c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
 					} else {
 						//insert project lead to role admin
-						
-						user_id:= strconv.FormatInt(tokenAuth.UserId,10)
+
+						user_id := strconv.FormatInt(tokenAuth.UserId, 10)
 						sm := models.ProjectUserRoleModel{}
-						if _, err := sm.AddUserRoleToProject(project_key,user_id, "241"); err != nil {
+						if _, err := sm.AddUserRoleToProject(project_key, user_id, "241"); err != nil {
 							c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 						} else {
 							//get new project
@@ -226,6 +227,7 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 
 	}
 }
+
 //	//Admin global can delete all project
 // or project lead can update project
 func (u *ProjectsHandler) UpdateProject() gin.HandlerFunc {
@@ -258,13 +260,13 @@ func (u *ProjectsHandler) UpdateProject() gin.HandlerFunc {
 				)
 			}
 		} else {
-			c.JSON(http.StatusBadRequest,helpers.MessageResponse{Msg:  "you do not own this project"})
+			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "you do not own this project"})
 		}
 	}
 }
 
 //Admin global can delete all project
-// or project lead 
+// or project lead
 func (u *ProjectsHandler) DeleteProject() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		key := c.Param("key")
@@ -308,7 +310,7 @@ func (u *ProjectsHandler) DeleteProject() gin.HandlerFunc {
 			}
 
 		} else {
-			c.JSON(http.StatusBadRequest,helpers.MessageResponse{Msg:  "you must Admin global or project lead"})
+			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "you must Admin global or project lead"})
 		}
 	}
 

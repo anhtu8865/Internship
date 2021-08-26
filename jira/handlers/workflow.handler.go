@@ -46,6 +46,34 @@ func (u *WorkflowsHandler) GetAllWorkflow() gin.HandlerFunc {
 
 	}
 }
+func (u *WorkflowsHandler) GetByIdWorkflow() gin.HandlerFunc {
+	//Do everything here, call model etc...
+
+	return func(c *gin.Context) {
+		id := c.Query("id")
+		// loggers.Logger.Println("get a get request")
+		workflows, err := models.WorkflowsModels.GetById(id)
+		if err != nil {
+			loggers.Logger.Errorln(err.Error())
+			response := MessageResponse{
+				Msg:  err.Error(),
+				Data: workflows,
+			}
+			c.JSON(http.StatusNotFound,
+				response,
+			)
+		} else {
+			response := MessageResponse{
+				Msg:  "Successful",
+				Data: workflows,
+			}
+			c.JSON(http.StatusOK,
+				response,
+			)
+		}
+
+	}
+}
 
 // TAO Workflow
 func (u *WorkflowsHandler) CreateWorkflow() gin.HandlerFunc {

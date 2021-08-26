@@ -38,6 +38,7 @@ import Transition from './pages/TransitionManager';
 import AddTransition from './pages/AddTransition';
 import UpdateWorkflowModal from './pages/UpdateWorkflow';
 import Profile from './pages/Profile'
+import TransitionItemForProject from './pages/TransitionManagerForProject'
 function App() {
   return (
     <Router>
@@ -66,7 +67,9 @@ function App() {
           <Route path="/add-workflows">
             <AddWorkflow></AddWorkflow>
           </Route>
-
+          <Route path="/transitionsforproject-manager">
+            <TransitionItemForProject></TransitionItemForProject>
+          </Route>
           <Route path="/add-transitions">
             <AddTransition></AddTransition>
           </Route>
