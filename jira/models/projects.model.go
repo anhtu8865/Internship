@@ -31,6 +31,7 @@ type Project struct {
 
 	WorkflowId      int    `json:"WorkflowId"` // New addition
 	ProjectLeadName string `json:"ProjectLeadName"`
+	// WorkflowName    string `json:"WorkflowName"`
 }
 
 type ProjectsModel struct {
@@ -245,7 +246,7 @@ func UpdateQuery(project map[string]interface{}, key string) string {
 }
 
 //Lấy project mới được thêm vào bằng projectkey
-func (pr *ProjectsModel) GetProjectLeadByKeyProject(projectkey string)  ([]Project, error) {
+func (pr *ProjectsModel) GetProjectLeadByKeyProject(projectkey string) ([]Project, error) {
 	var ListProjects []Project
 	query := fmt.Sprintf("SELECT P.*,B.ID_WORKFLOW, U.USER_NAME FROM NEW_JIRA_PROJECT P, NEW_JIRA_USER U, NEW_JIRA_WORKFLOWPROJECT B WHERE P.PROJECT_LEAD = U.USER_ID AND P.PROJECT_KEY = '%v' AND P.PROJECT_KEY = B.PROJECT_KEY", projectkey)
 	rows, err := DbOracle.Db.Query(query)

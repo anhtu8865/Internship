@@ -18,6 +18,7 @@ func (u *WorkflowsRoute) Init(router *gin.Engine) {
 	{
 
 		u.RouterGroup.GET("/", u.GetAllWorkflow())
+		u.RouterGroup.GET("", u.GetByIdWorkflow())
 		// u.RouterGroup.POST("update", u.UpdateWorkflowProject())
 		u.RouterGroup.DELETE("delete-project", u.DeleteWorkflowProject())
 		u.RouterGroup.POST("", u.AddProjectToWorkflow())
@@ -28,6 +29,10 @@ func (u *WorkflowsRoute) Init(router *gin.Engine) {
 func (u *WorkflowsRoute) GetAllWorkflow() gin.HandlerFunc {
 
 	return WorkflowsHandlers.GetAllWorkflow()
+}
+func (u *WorkflowsRoute) GetByIdWorkflow() gin.HandlerFunc {
+
+	return WorkflowsHandlers.GetByIdWorkflow()
 }
 
 // func (u *WorkflowsRoute) UpdateWorkflowProject() gin.HandlerFunc {

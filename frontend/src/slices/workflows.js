@@ -131,3 +131,17 @@ export const updateWorkflow = (workflow) => async(dispatch) =>{
     return err
   })
 }
+export const getDataByIdWorkflow = (id) => async(dispatch) =>{
+  console.log(id)  
+  workflowApi
+    .getById(id)
+    .then((res)=>{
+      console.log(res)
+      dispatch(getTransitionSuccess(res.Data))
+      console.log(res)
+    })
+    .catch((err)=>{
+      dispatch(getTransitionFailure())
+      return(err)
+    })
+  }

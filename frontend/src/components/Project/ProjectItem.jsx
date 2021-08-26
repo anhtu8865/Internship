@@ -4,11 +4,11 @@ import { useAppDispatch } from '../../store'
 import { deleteProject, setProjectUpdate } from '../../slices/projects'
 import UpdateProjectModal from './UpdateProjectModal';
 import ViewProject from './ViewProject';
-
-
+import { setWorkflowUpdate } from '../../slices/workflows'
+import { useHistory } from 'react-router-dom'
 const ProjectItem = ({ project }) => {
   const dispatch = useAppDispatch()
-
+  const history = useHistory()
   function deleteConfirm(e, project_key) {
     e.preventDefault()
     if (confirm('Delete?')) {
@@ -49,6 +49,11 @@ const ProjectItem = ({ project }) => {
     open: openView,
     handleOpenViewProject: handleOpenView,
     handleCloseViewProject: handleCloseView,
+  }
+  const handleOpenTransition = (e, workflow) => {
+    e.preventDefault()
+    dispatch(setWorkflowUpdate(workflow))
+    history.push('/transitionsforproject-manager')
   }
 
 
@@ -137,6 +142,18 @@ const ProjectItem = ({ project }) => {
               Access
             </Link>
           </span>
+          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+            <span
+              aria-hidden
+              className="absolute inset-0 bg-blue-200 opacity-50 rounded-full"
+            />
+            <a
+              onClick={(e) => handleOpenTransition(e, project)}
+              className="relative cursor-pointer"
+            >
+              View Workflow
+            </a>
+          </span>
           <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden
@@ -149,6 +166,7 @@ const ProjectItem = ({ project }) => {
               Delete
             </a>
           </span>
+          
         </td>
       </tr>
 

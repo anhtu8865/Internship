@@ -16,7 +16,11 @@ export default function CreateTransition(modalDialog) {
     const history = useHistory()
     const onSubmit = data => {
         console.log(data)
-        
+        if(data.Status1Id == data.Status2Id){
+          alert("Not Success")
+          alert("STATUS1 must be different from STATUS2")
+        }
+        else{
         let statusname1
         let statusname2
         temp.map((temp) => {
@@ -46,6 +50,7 @@ export default function CreateTransition(modalDialog) {
             alert('Create Transition Success')
             history.push('/transitions-manager')
         }).catch(err => alert(err))
+      }
     }
 
     var option1s = temp.map((option) => {
