@@ -37,21 +37,6 @@ function UpdateUserModal({ modalDialog }) {
               required
             />
             <FormInput
-              readOnly={true}
-              r={register}
-              name="User_Name"
-              label={'Username'}
-              value={userUpdate.User_Name}
-              required
-            />
-            <FormInput
-              r={register}
-              name="User_Email"
-              label={'Email'}
-              value={userUpdate.User_Email}
-              required
-            />
-            <FormInput
               r={register}
               name="User_Password"
               label={'Password (Để trống nếu không thay đổi)'}

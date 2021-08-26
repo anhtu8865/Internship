@@ -6,6 +6,8 @@ export const initialState = {
   hasErrors: false,
   users: [],
   userUpdate: {},
+  updateMess:'',
+  updateSuccess:true
 }
 // A slice
 const usersSlice = createSlice({
@@ -108,7 +110,11 @@ export const updateUser = (data) => async (dispatch) => {
   userApi
     .update(data)
     .then((res) => {
-      dispatch(actions.updateUser(data))
+      const newdata = {
+        id: data.id,
+        data: res.Data,
+      }
+      dispatch(actions.updateUser(newdata))
       return res
     })
     .catch((err) => {

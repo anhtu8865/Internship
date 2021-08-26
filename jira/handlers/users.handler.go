@@ -267,19 +267,15 @@ func (u *UserHandler) UpdateUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var fullname, password, isAdmin string
 		id := c.Query("id")
-
 		var myMap map[string]string
 		//req body from client
 		json.NewDecoder(c.Request.Body).Decode(&myMap)
 		//username
 		fullname = fmt.Sprintf("%v", myMap["User_Full_Name"])
-
 		//password
 		password = fmt.Sprintf("%v", myMap["User_Password"])
-
 		//permission role
 		isAdmin = fmt.Sprintf("%v", myMap["globalrole"])
-
 		//convert id string -> id int
 		user_id, _ := strconv.Atoi(id)
 		//hash password
@@ -288,8 +284,12 @@ func (u *UserHandler) UpdateUser() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
 		} else {
-			c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Update user success"})
-		}
+			Check_user_exists, err := models.UserModels.Check_User_Exist_By_Id(id)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
+			} else{
+			c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Update user success",Data:Check_user_exists[0]})
+		}}
 	}
 }
 
