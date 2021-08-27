@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import {
@@ -9,6 +9,7 @@ import {
   setSuccessNull,
 } from '../slices/customFields'
 import { useToasts } from 'react-toast-notifications'
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from '@windmill/react-ui'
 
 const CustomFieldExcerpt = ({ customField }) => {
   const dispatch = useDispatch()
@@ -79,6 +80,7 @@ export const CustomFields = () => {
   const customFieldStatus = useSelector((state) => state.customFields.status)
   const error = useSelector((state) => state.customFields.error)
   const success = useSelector((state) => state.customFields.success)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   useEffect(() => {
     if (customFieldStatus === 'idle') {
       dispatch(fetchCustomFields())
@@ -88,16 +90,22 @@ export const CustomFields = () => {
         appearance: 'error',
         autoDismiss: true,
       })
-      dispatch(setErrorNull({error: null}))
+      dispatch(setErrorNull({ error: null }))
     }
     if (success) {
       addToast(success, {
         appearance: 'success',
         autoDismiss: true,
       })
-      dispatch(setSuccessNull({success: null}))
+      dispatch(setSuccessNull({ success: null }))
     }
   }, [customFieldStatus, dispatch, error, success])
+  function openModal() {
+    setIsModalOpen(true)
+  }
+  function closeModal() {
+    setIsModalOpen(false)
+  }
   let content
 
   if (customFieldStatus === 'loading') {
@@ -109,6 +117,41 @@ export const CustomFields = () => {
     content = (
       <div className="container mx-auto px-4 mb-16 sm:px-8">
         <div className="py-8">
+        <div>
+          <Button onClick={openModal}>Open modal</Button>
+        </div>
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <ModalHeader>Modal header</ModalHeader>
+        <ModalBody>
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nostrum et eligendi repudiandae
+          voluptatem tempore!
+        </ModalBody>
+        <ModalFooter>
+          {/* I don't like this approach. Consider passing a prop to ModalFooter
+           * that if present, would duplicate the buttons in a way similar to this.
+           * Or, maybe find some way to pass something like size="large md:regular"
+           * to Button
+           */}
+          <div className="hidden sm:block">
+            <Button layout="outline" onClick={closeModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="hidden sm:block">
+            <Button>Accept</Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large" layout="outline" onClick={closeModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large">
+              Accept
+            </Button>
+          </div>
+        </ModalFooter>
+      </Modal>
           <div>
             <h2 className="text-2xl font-semibold leading-tight">
               CustomFields
@@ -219,14 +262,9 @@ export const CustomFields = () => {
         </div>
       </div>
     )
-  } 
-  else if (customFieldStatus === 'failed') {
+  } else if (customFieldStatus === 'failed') {
     content = <div>{error}</div>
   }
 
-  return (
-    <section className="customFields-list">
-      {content}
-    </section>
-  )
+  return <section className="customFields-list">{content}</section>
 }
