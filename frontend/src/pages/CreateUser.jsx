@@ -3,10 +3,12 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import userApi from '../api/userApi'
 import { useHistory } from 'react-router-dom'
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { useToasts } from 'react-toast-notifications'
+
 function CreateUser() {
   const { register, handleSubmit } = useForm()
+   const { addToast } = useToasts()
+
   const history = useHistory()
   const onSubmit = (data) => {
     userApi
@@ -16,20 +18,15 @@ function CreateUser() {
         history.push('/user-manager')
       })
       .catch((err) =>
-       toast.error(err.response.data.Msg, {
-            position: 'top-right',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          }))
+      addToast(err.response.data.Msg, {
+             appearance: 'error',
+             autoDismiss: true,
+           })
+      )
   }
 
   return (
     <div className="w-full h-full pt-16">
-      <ToastContainer />
       <div className="max-w-xl px-8 py-8 border-0 shadow-lg rounded-xl h-auto bg-white mx-auto">
         <h1 className="text-2xl font-bold pb-8">Create New User</h1>
         <hr className="mb-5" />

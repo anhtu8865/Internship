@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { fetchUsers, usersSelector } from '../slices/users'
+import { fetchUsers, usersSelector, setState } from '../slices/users'
 import { Link } from 'react-router-dom'
 import UserItem from '../components/User/UserItem';
 import { useAppDispatch } from '../store'
@@ -16,10 +16,14 @@ import {
   Button,
   Pagination,
 } from '@windmill/react-ui'
+import { useToasts } from 'react-toast-notifications'
 
 const Users = () => {
   const dispatch = useAppDispatch()
-  const { users, loading, hasErrors } = useSelector(usersSelector)
+  const { addToast } = useToasts()
+
+  const { users, loading, hasErrors, updateMess, updateSuccess } =
+    useSelector(usersSelector)
 
   // // setup pages control for every table
   // const [pageTable, setPageTable] = useState(1)
@@ -38,6 +42,17 @@ const Users = () => {
   useEffect(() => {
     dispatch(fetchUsers())
   }, [dispatch])
+
+  //notification delete,update
+  useEffect(() => {
+    if (updateSuccess) {
+      addToast(updateMess, {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+      dispatch(setState())
+    }
+  }, [updateSuccess])
   // // on page change, load new sliced data
   // // here you would make another server request for new data
   // useEffect(() => {

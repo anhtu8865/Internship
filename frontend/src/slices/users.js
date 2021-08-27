@@ -7,7 +7,8 @@ export const initialState = {
   users: [],
   userUpdate: {},
   updateMess:'',
-  updateSuccess:true
+  updateSuccess:false
+  
 }
 // A slice
 const usersSlice = createSlice({
@@ -22,6 +23,7 @@ const usersSlice = createSlice({
         (user) => user.User_Id !== action.payload
       )
       state.users = filteredUser
+      state.updateSuccess = true
     },
     startLoading: (state) => {
       state.loading = true
@@ -33,7 +35,6 @@ const usersSlice = createSlice({
     },
     getUsersFailure: (state) => {
       state.loading = false
-      //handling Errors
       state.hasErrors = true
     },
     setUserUpdate: (state, action) => {
@@ -46,12 +47,27 @@ const usersSlice = createSlice({
       )
       state.users = newUsers
     },
+    removeUpdateSuccess: (state, action) => {
+      state.updateMess = action.payload
+      state.updateSuccess = true
+    },
+    deleteState: (state) => {
+      state.updateSuccess = false
+      state.updateMess = {}
+    },
   },
 })
 
 // Actions generated from the slice
-const { addUser, removeUser, startLoading, getUsersFailure, getUsersSuccess } =
-  usersSlice.actions
+const {
+  deleteState,
+  removeUpdateSuccess,
+  addUser,
+  removeUser,
+  startLoading,
+  getUsersFailure,
+  getUsersSuccess,
+} = usersSlice.actions
 
 const { actions } = usersSlice
 
@@ -88,7 +104,11 @@ export const deleteUser = (id) => async (dispatch) => {
   userApi
     .delete(id)
     .then((res) => {
-      dispatch(removeUser(id))
+     console.log(res.Msg)
+     dispatch(removeUpdateSuccess(res.Msg))
+     dispatch(removeUser(id))
+     return res
+      
     })
     .catch((err) => {
       dispatch(getUsersFailure())
@@ -103,7 +123,9 @@ export const setUserUpdate = (User) => async (dispatch) => {
     dispatch(getUsersFailure())
   }
 }
-
+export const setState = () => async (dispatch) => {
+  dispatch(deleteState())
+}
 export const updateUser = (data) => async (dispatch) => {
   userApi
     .update(data)
@@ -113,7 +135,7 @@ export const updateUser = (data) => async (dispatch) => {
         data: res.Data,
       }
       dispatch(actions.updateUser(newdata))
-      return res
+      dispatch(removeUpdateSuccess(res.Msg))
     })
     .catch((err) => {
       dispatch(getUsersFailure())

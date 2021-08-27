@@ -6,6 +6,8 @@ export const initialState = {
   hasErrors: false,
   roles: [],
   roleUpdate: {},
+  updateMess: '',
+  updateSuccess: false,
 }
 
 //slice
@@ -21,6 +23,7 @@ const rolesSlice = createSlice({
         (role) => role.Role_Id !== action.payload
       )
       state.roles = filteredRole
+      state.updateSuccess = true
     },
     startLoading: (state) => {
       state.loading = true
@@ -44,11 +47,26 @@ const rolesSlice = createSlice({
       )
       state.roles = newRoles
     },
+    removeUpdateSuccess: (state, action) => {
+      state.updateMess = action.payload
+      state.updateSuccess = true
+    },
+    deleteState: (state) => {
+      state.updateSuccess = false
+      state.updateMess = {}
+    },
   },
 })
 
-const { addRole, getRoleSuccess, startLoading, getRoleFailure, removeRole } =
-  rolesSlice.actions
+const {
+  deleteState,
+  removeUpdateSuccess,
+  addRole,
+  getRoleSuccess,
+  startLoading,
+  getRoleFailure,
+  removeRole,
+} = rolesSlice.actions
 
 const { actions } = rolesSlice
 
@@ -77,7 +95,6 @@ export const fetchRoles = () => async (dispatch) => {
 }
 //create role
 export const createRole = (Role) => async (dispatch) => {
-  console.log(Role)
   roleApi
     .createRole(Role)
     .then((res) => {
@@ -87,22 +104,24 @@ export const createRole = (Role) => async (dispatch) => {
     .catch((err) => {
       dispatch(getRoleFailure())
       alert(err.response.data.Msg)
-     
     })
 }
-export const deleteRole = (id) => async (dispatch) => {
+export const deleteRole = (id) => (dispatch) => {
   roleApi
     .delete(id)
     .then((res) => {
+      dispatch(removeUpdateSuccess(res.Msg))
       dispatch(removeRole(id))
-      console.log(res)
+      return res
     })
     .catch((err) => {
       dispatch(getRoleFailure())
-      alert(err.response.data.Msg)
+      alert(err)
     })
 }
-
+export const setState = () => async (dispatch) => {
+  dispatch(deleteState())
+}
 export const setRoleUpdate = (role) => async (dispatch) => {
   try {
     dispatch(actions.setRoleUpdate(role))
@@ -116,10 +135,10 @@ export const updateRole = (role) => async (dispatch) => {
     .updateRole(role)
     .then((res) => {
       dispatch(actions.updateRole(role))
-      return res
+      dispatch(actions.removeUpdateSuccess(res.Msg))
     })
     .catch((err) => {
       dispatch(getRoleFailure())
-       alert(err.response.data.Msg)
+      alert(err.response.data.Msg)
     })
 }

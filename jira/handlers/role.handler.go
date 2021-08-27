@@ -132,7 +132,7 @@ func (rl *RoleHandler) DeleteRole() gin.HandlerFunc {
 					if _, err := models.RoleModels.DeleteRole(id); err != nil {
 						c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 					} else {
-						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Delete user success"})
+						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Delete role success"})
 					}
 				}
 			}

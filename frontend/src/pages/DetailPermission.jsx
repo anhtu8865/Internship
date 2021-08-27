@@ -4,28 +4,52 @@ import { permissionsSelector } from '../slices/permission'
 import {
   fetchPermissionRoles,
   permissionRolesSelector,
+  setState
 } from '../slices/per-role'
 import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../store'
 import PermissionRoleItem from '../components/Permission/PermissionRoleItem'
 import UpdateRolePermission from '../components/Permission/UpdateRolePermission'
+import {
+  Table,
+  TableHeader,
+  TableCell,
+  TableBody,
+  TableRow,
+  TableFooter,
+  TableContainer,
+  Button,
+  Pagination,
+} from '@windmill/react-ui'
+import { useToasts } from 'react-toast-notifications'
 
 export default function DetailPermission() {
   const { permissionUpdate } = useSelector(permissionsSelector)
+  const { addToast } = useToasts()
+
   //lưu vào localStorage
   if (permissionUpdate.Permission_Id) {
     localStorage.setItem('Permission', JSON.stringify(permissionUpdate))
   }
   let temp = JSON.parse(localStorage.getItem('Permission') || '[]')
   const dispatch = useAppDispatch()
-  const { permissionroles, loading, hasErrors } = useSelector(
-    permissionRolesSelector
-  )
+  //permissionroles
+  const { permissionroles, loading, hasErrors, updateMess, updateSuccess } =
+    useSelector(permissionRolesSelector)
   useEffect(() => {
     dispatch(fetchPermissionRoles(temp.Permission_Id))
   }, [dispatch])
- 
-  
+  //notification delete,update
+  useEffect(() => {
+    if (updateSuccess) {
+      addToast(updateMess, {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+      dispatch(setState())
+    }
+  }, [updateSuccess])
+  //render permission role
   const renderPermissionRole = () => {
     return permissionroles.map((temp_role) => (
       <PermissionRoleItem
@@ -34,7 +58,7 @@ export default function DetailPermission() {
       ></PermissionRoleItem>
     ))
   }
-  
+  //open modalUpdate
   const [openUpdate, setOpenUpdate] = React.useState(false)
   const handleOpenUpdate = (e) => {
     e.preventDefault()
@@ -49,7 +73,7 @@ export default function DetailPermission() {
     handleOpen: handleOpenUpdate,
     handleClose: handleCloseUpdate,
     data_permission: temp,
-    fulldata:permissionroles
+    fulldata: permissionroles,
   }
   return (
     <>
@@ -66,42 +90,30 @@ export default function DetailPermission() {
           </div>
           <div className="my-2 flex justify-between sm:flex-row flex-col">
             <div className="flex">
-              <a onClick={(e) => handleOpenUpdate(e)} >
+              <a onClick={(e) => handleOpenUpdate(e)}>
                 <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700">
                   Add role
                 </button>
               </a>
-              {/* <Link to="/invite-user">
-              <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700 ml-1">
-                Invite Users
-              </button>
-            </Link> */}
             </div>
           </div>
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
             <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-              <table className="min-w-full leading-normal">
-                <thead>
-                  <tr>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Role Name
-                    </th>
-                    {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Description
-                  </th> */}
-                    {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Email
-                  </th> */}
-                    {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Group name
-                  </th> */}
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>{renderPermissionRole()}</tbody>
-              </table>
+              <TableContainer className="mb-8">
+                <Table className="min-w-full leading-normal">
+                  <TableHeader>
+                    <tr>
+                      <TableCell className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Role Name
+                      </TableCell>
+                      <TableCell className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Action
+                      </TableCell>
+                    </tr>
+                  </TableHeader>
+                  <TableBody>{renderPermissionRole()}</TableBody>
+                </Table>
+              </TableContainer>
             </div>
           </div>
         </div>

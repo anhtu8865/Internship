@@ -6,6 +6,8 @@ export const initialState = {
   hasErrors: false,
   permissionroles: [],
   permissionUpdate: {},
+  updateMess: '',
+  updateSuccess: false,
 }
 const permissionrolesSlice = createSlice({
   name: 'permissionroles',
@@ -32,11 +34,22 @@ const permissionrolesSlice = createSlice({
         (permissionroles) => permissionroles.RoleId !== action.payload
       )
       state.permissionroles = filteredRole
+      state.updateSuccess = true
+    },
+    removeUpdateSuccess: (state, action) => {
+      state.updateMess = action.payload
+      state.updateSuccess = true
+    },
+    deleteState: (state) => {
+      state.updateSuccess = false
+      state.updateMess = {}
     },
   },
 })
 
 const {
+  deleteState,
+  removeUpdateSuccess,
   addRoleToPermission,
   startLoading,
   removeRole,
@@ -69,7 +82,7 @@ export const AddRoleToPermission = (data) => async (dispatch) => {
     .addRoleToPermission(data)
     .then((res) => {
       dispatch(addRoleToPermission(data))
-      return res
+      dispatch(removeUpdateSuccess(res.Msg))
     })
     .catch((err) => {
       alert(err.response.data.Msg)
@@ -81,10 +94,14 @@ export const deleteRoleInPermission =
     permissionApi
       .deleteRoleInPermission(idpermission, idrole)
       .then((res) => {
-        console.log(res)
+        dispatch(removeUpdateSuccess(res.Msg))
         dispatch(removeRole(idrole))
+        
       })
       .catch((err) => {
-        console.log(err)
+        alert(err)
       })
   }
+export const setState = () => async (dispatch) => {
+  dispatch(deleteState())
+}

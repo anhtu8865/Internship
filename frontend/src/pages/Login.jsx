@@ -7,11 +7,13 @@ import ImageDark from '../assets/img/login-office-dark.jpeg'
 import { Label, Input, Button } from '@windmill/react-ui'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useToasts } from 'react-toast-notifications'
 
 
 function Login(props) {
   const { register, handleSubmit } = useForm()
-  
+    const { addToast } = useToasts()
+
   const onSubmit = (data) => {
     userApi
       .login(data)
@@ -22,15 +24,10 @@ function Login(props) {
           props.history.push('/')
           window.location.reload()
         } else {
-          toast.error(response.Msg, {
-            position: 'top-right',
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          }) 
+           addToast(response.Msg, {
+             appearance: 'error',
+             autoDismiss: true,
+           })
         }
       })
       .catch((err) => alert(err))

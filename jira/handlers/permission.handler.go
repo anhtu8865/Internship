@@ -102,7 +102,7 @@ func (pr *PermissionHandler) AddRoleToPermission() gin.HandlerFunc{
 				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 
 			  }else{
-				c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Sign Up Success"})
+				c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Add Role Success"})
 
 			  }
 			}

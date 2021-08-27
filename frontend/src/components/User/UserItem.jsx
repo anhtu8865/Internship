@@ -1,19 +1,18 @@
 import React from 'react'
 // import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
-import { deleteUser, setUserUpdate } from '../../slices/users'
-import UpdateUserModal from './UpdateUserModal';
 import {
-  Table,
-  TableHeader,
+  usersSelector,
+  deleteUser,
+  setUserUpdate,
+  
+} from '../../slices/users'
+import UpdateUserModal from './UpdateUserModal';
+import { useSelector } from 'react-redux'
+import {
   TableCell,
-  TableBody,
   TableRow,
-  TableFooter,
-  TableContainer,
-  Badge,
   Button,
-  Pagination,
 } from '@windmill/react-ui'
 import Avatar from '@material-ui/core/Avatar'
 import {
@@ -26,6 +25,7 @@ import {
 } from '@material-ui/core/colors'
 import { makeStyles } from '@material-ui/core/styles'
 import { EditIcon, TrashIcon } from '../../icons'
+import { useToasts } from 'react-toast-notifications'
 
 //list colour
 const colours = [
@@ -48,6 +48,9 @@ const useStyles = makeStyles(() => ({
 
 const UserItem = ({ user }) => {
   const dispatch = useAppDispatch()
+  const {  updateMess, updateSuccess } = useSelector(usersSelector)
+  const { addToast } = useToasts()
+
   //delete user from list user
   function deleteConfirm(e, userId) {
     e.preventDefault()
@@ -116,24 +119,20 @@ const UserItem = ({ user }) => {
         <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">{globalrole}</p>
         </TableCell>
-        <TableCell className="px-5 py-5 border-b text-center border-gray-200 bg-white text-sm">
-          <div className="flex items-center space-x-4">
-            <Button layout="link" size="icon" aria-label="Edit">
-              <EditIcon
-                className="w-5 h-5"
-                onClick={(e) => handleOpenUpdate(e, user)}
-                aria-hidden="true"
-              />
-            </Button>
-            <Button layout="link" size="icon" aria-label="Edit">
-              <TrashIcon
-                className="w-5 h-5"
-                onClick={(e) => deleteConfirm(e, user.User_Id)}
-                aria-hidden="true"
-              />
-            </Button>
-          </div>
-          {/* <span className="relative inline-block px-3 py-1 ml-1.5 font-semibold text-green-900 leading-tight">
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+            <span
+              aria-hidden
+              className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
+            />
+            <a
+              onClick={(e) => handleOpenUpdate(e, user)}
+              className="relative cursor-pointer"
+            >
+              Edit
+            </a>
+          </span>
+          <span className="relative inline-block px-3 py-1 ml-1.5 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden
               className="absolute inset-0 bg-red-400 opacity-50 rounded-full"
@@ -144,7 +143,7 @@ const UserItem = ({ user }) => {
             >
               Delete
             </a>
-          </span> */}
+          </span>
         </TableCell>
       </TableRow>
     </>
