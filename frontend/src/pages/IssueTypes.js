@@ -5,6 +5,8 @@ import {
   selectAllIssueTypes,
   fetchIssueTypes,
   deleteIssueType,
+  setErrorNull,
+  setSuccessNull,
 } from '../slices/issueTypes'
 import {
   selectAllProjectIssueTypeScreens,
@@ -12,6 +14,7 @@ import {
 } from '../slices/projectIssueTypeScreens'
 import { selectAllScreens, fetchScreens } from '../slices/screens'
 import { fetchProjects, selectAllProjects } from '../slices/projects'
+import { useToasts } from 'react-toast-notifications'
 
 const IssueTypeExcerpt = ({ issueType, projectIssueTypeScreensHaveName }) => {
   const dispatch = useDispatch()
@@ -88,6 +91,7 @@ const IssueTypeExcerpt = ({ issueType, projectIssueTypeScreensHaveName }) => {
 }
 
 export const IssueTypes = () => {
+  const { addToast } = useToasts()
   const dispatch = useDispatch()
   const issueTypes = useSelector(selectAllIssueTypes)
   const projectIssueTypeScreens = useSelector(selectAllProjectIssueTypeScreens)
@@ -102,6 +106,7 @@ export const IssueTypes = () => {
   const projectStatus = useSelector((state) => state.projects.loading)
 
   const error = useSelector((state) => state.issueTypes.error)
+  const success = useSelector((state) => state.issueTypes.success)
   const errorProjectIssueTypeScreen = useSelector(
     (state) => state.projectIssueTypeScreens.error
   )
@@ -120,7 +125,21 @@ export const IssueTypes = () => {
     if (projects.length === 0 && projectStatus === false) {
       dispatch(fetchProjects())
     }
-  }, [issueTypeStatus, projectIssueTypeScreenStatus, screenStatus, dispatch])
+    if (error) {
+      addToast(error, {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+      dispatch(setErrorNull({error: null}))
+    }
+    if (success) {
+      addToast(success, {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+      dispatch(setSuccessNull({success: null}))
+    }
+  }, [issueTypeStatus, projectIssueTypeScreenStatus, screenStatus, dispatch, error, success])
   let content
   //console.log(issueTypeStatus, projectIssueTypeScreenStatus, screenStatus, projectStatus, "lllllllllllllllll")
   if (
@@ -276,7 +295,7 @@ export const IssueTypes = () => {
         </div>
       </div>
     )
-  } else if (issueTypeStatus === 'error') {
+  } else if (issueTypeStatus === 'failed') {
     content = <div>{error}</div>
   }
 

@@ -187,7 +187,7 @@ func (u *IssuesHandler) Create() gin.HandlerFunc {
 		body := c.Request.Body
 		issues, err := models.IssuesModels.Create(body, tokenAuth.UserId)
 		if issues == nil && err == nil {
-			c.JSON(http.StatusForbidden, MessageResponse{Msg: "You cannot have a permission"})
+			c.JSON(http.StatusForbidden, MessageResponse{Msg: "You don't have a permission"})
 		} else if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
@@ -216,7 +216,7 @@ func (u *IssuesHandler) Update() gin.HandlerFunc {
 		body := c.Request.Body
 		issues, err := models.IssuesModels.Update(body, id, tokenAuth.UserId)
 		if issues == nil && err == nil {
-			c.JSON(http.StatusForbidden, MessageResponse{Msg: "You cannot have a permission"})
+			c.JSON(http.StatusForbidden, MessageResponse{Msg: "You don't have a permission"})
 		} else if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{
@@ -245,7 +245,7 @@ func (u *IssuesHandler) Delete() gin.HandlerFunc {
 		tokenAuth, err := ExtractTokenMetadata(c.Request)
 		issues, err := models.IssuesModels.Delete(id, tokenAuth.UserId)
 		if issues == nil && err == nil {
-			c.JSON(http.StatusForbidden, MessageResponse{Msg: "You cannot have a permission"})
+			c.JSON(http.StatusForbidden, MessageResponse{Msg: "You don't have a permission"})
 		} else if err != nil {
 			loggers.Logger.Errorln(err.Error())
 			response := MessageResponse{

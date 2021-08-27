@@ -39,8 +39,16 @@ import AddTransition from './pages/AddTransition';
 import UpdateWorkflowModal from './pages/UpdateWorkflow';
 import Profile from './pages/Profile'
 import TransitionItemForProject from './pages/TransitionManagerForProject'
+import { ToastProvider } from 'react-toast-notifications';
+
 function App() {
   return (
+    <ToastProvider
+    //autoDismiss
+    autoDismissTimeout={3000}
+    // components={{ Toast: Snack }}
+    // placement="bottom-center"
+  >
     <Router>
       <Switch>
         <Layout>
@@ -165,6 +173,7 @@ function App() {
         </Layout>
       </Switch>
     </Router>
+    </ToastProvider>
   )
 }
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { selectAllScreens, fetchScreens, deleteScreen } from '../slices/screens'
+import { selectAllScreens, fetchScreens, deleteScreen, setErrorNull, setSuccessNull } from '../slices/screens'
 import {
   selectAllScreenCustomFields,
   fetchScreenCustomFields,
@@ -10,6 +10,8 @@ import {
   selectAllCustomFields,
   fetchCustomFields,
 } from '../slices/customFields'
+import { useToasts } from 'react-toast-notifications'
+
 
 const ScreenExcerpt = ({ screen, listCustomFields }) => {
   //console.log(listCustomFields, "************************")
@@ -89,6 +91,7 @@ const ScreenExcerpt = ({ screen, listCustomFields }) => {
 }
 
 export const Screens = () => {
+  const { addToast } = useToasts()
   const dispatch = useDispatch()
   const screens = useSelector(selectAllScreens)
   const screenCustomFields = useSelector(selectAllScreenCustomFields)
@@ -101,6 +104,7 @@ export const Screens = () => {
   )
 
   const error = useSelector((state) => state.screens.error)
+  const success = useSelector((state) => state.screens.success)
   const errorScreenCustomField = useSelector(
     (state) => state.screenCustomFields.error
   )
@@ -116,7 +120,21 @@ export const Screens = () => {
     if (customFieldStatus === 'idle') {
       dispatch(fetchCustomFields())
     }
-  }, [screenStatus, screenCustomFieldStatus, customFieldStatus, dispatch])
+    if (error) {
+      addToast(error, {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+      dispatch(setErrorNull({error: null}))
+    }
+    if (success) {
+      addToast(success, {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+      dispatch(setSuccessNull({success: null}))
+    }
+  }, [screenStatus, screenCustomFieldStatus, customFieldStatus, dispatch, error, success])
   let content
 
   if (
@@ -265,9 +283,9 @@ export const Screens = () => {
       </div>
     )
   } else if (
-    screenStatus === 'error' ||
-    screenCustomFieldStatus === 'error' ||
-    customFieldStatus === 'error'
+    screenStatus === 'failed' ||
+    screenCustomFieldStatus === 'failed' ||
+    customFieldStatus === 'failed'
   ) {
     content = (
       <div>{(error, errorScreenCustomField, errorCustomFields)}</div>

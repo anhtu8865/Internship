@@ -5,6 +5,7 @@ const initialState = {
   issueTypes: [],
   status: 'idle',
   error: null,
+  success: null,
 }
 
 export const fetchIssueTypes = createAsyncThunk(
@@ -78,7 +79,14 @@ export const deleteIssueType = createAsyncThunk(
 const issueTypesSlice = createSlice({
   name: 'issueTypes',
   initialState,
-  reducers: {},
+  reducers: {
+    setErrorNull(state, action) {
+      state.error = action.payload.error
+    },
+    setSuccessNull(state, action) {
+      state.success = action.payload.success
+    },
+  },
   extraReducers: {
     [fetchIssueTypes.pending]: (state) => {
       state.status = 'loading'
@@ -95,32 +103,44 @@ const issueTypesSlice = createSlice({
       state.error = action.payload.Msg
     },
     [addNewIssueType.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      //console.log(action.payload.Msg)
+      state.error = action.payload.Msg
+
     },
     [addNewIssueType.fulfilled]: (state, action) => {
       state.issueTypes.push(action.payload.Data)
+      state.success = action.payload.Msg
+
     },
     [updateIssueType.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      //console.log(action.payload.Msg)
+      state.error = action.payload.Msg
+
     },
     [updateIssueType.fulfilled]: (state, action) => {
       const newIssueType = action.payload.Data
       state.issueTypes = state.issueTypes.map((issueType) =>
         issueType.Id === newIssueType.Id ? newIssueType : issueType
       )
+      state.success = action.payload.Msg
+
     },
     [deleteIssueType.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      //console.log(action.payload.Msg)
+      state.error = action.payload.Msg
+
     },
     [deleteIssueType.fulfilled]: (state, action) => {
       const returnedIssueType = action.payload.Data
       state.issueTypes = state.issueTypes.filter(
         (issueType) => issueType.Id !== returnedIssueType.Id
       )
+      state.success = action.payload.Msg
+
     },
   },
 })
-
+export const { setErrorNull, setSuccessNull } = issueTypesSlice.actions
 export default issueTypesSlice.reducer
 
 export const selectAllIssueTypes = (state) => state.issueTypes.issueTypes

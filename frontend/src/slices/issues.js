@@ -9,6 +9,7 @@ const initialState = {
   status: 'idle',
   statusAddIssue: 'idle',
   error: null,
+  success: null,
 }
 
 export const fetchIssues = createAsyncThunk(
@@ -134,7 +135,14 @@ export const deleteIssue = createAsyncThunk(
 const issuesSlice = createSlice({
   name: 'issues',
   initialState,
-  reducers: {},
+  reducers: {
+    setErrorNull(state, action) {
+      state.error = action.payload.error
+    },
+    setSuccessNull(state, action) {
+      state.success = action.payload.success
+    },
+  },
   extraReducers: {
     [fetchIssues.pending]: (state) => {
       state.status = 'loading'
@@ -161,13 +169,17 @@ const issuesSlice = createSlice({
       state.error = action.payload.Msg
     },
     [addNewIssue.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      state.error = action.payload.Msg
+      //console.log(action.payload.Msg)
     },
     [addNewIssue.fulfilled]: (state, action) => {
       state.issues.push(action.payload.Data)
+      state.success = action.payload.Msg
+
     },
     [updateIssue.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      state.error = action.payload.Msg
+      //console.log(action.payload.Msg)
     },
     [updateIssue.fulfilled]: (state, action) => {
       // state.issues = []
@@ -176,15 +188,20 @@ const issuesSlice = createSlice({
       state.issues = state.issues.map((issue) =>
         issue.Id === newIssue.Id ? newIssue : issue
       )
+      state.success = action.payload.Msg
+
     },
     [deleteIssue.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      state.error = action.payload.Msg
+      //console.log(action.payload.Msg)
     },
     [deleteIssue.fulfilled]: (state, action) => {
       const returnedIssue = action.payload.Data
       state.issues = state.issues.filter(
         (issue) => issue.Id !== returnedIssue.Id
       )
+      state.success = action.payload.Msg
+
     },
     [fetchCustomFields.rejected]: (state, action) => {
       console.log(action.payload.Msg)
@@ -206,6 +223,7 @@ const issuesSlice = createSlice({
     },
   },
 })
+export const { setErrorNull, setSuccessNull } = issuesSlice.actions
 
 export default issuesSlice.reducer
 

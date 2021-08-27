@@ -1,7 +1,15 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { selectAllIssues, fetchIssues, deleteIssue } from '../slices/issues'
+import {
+  selectAllIssues,
+  fetchIssues,
+  deleteIssue,
+  setErrorNull,
+  setSuccessNull,
+} from '../slices/issues'
+import { useToasts } from 'react-toast-notifications'
+
 
 const IssueExcerpt = ({ issue }) => {
   const dispatch = useDispatch()
@@ -74,26 +82,40 @@ const IssueExcerpt = ({ issue }) => {
 }
 
 export const IssuesByProject = ({ match }) => {
+  const { addToast } = useToasts()
   const { project } = match.params
   const dispatch = useDispatch()
   const issues = useSelector(selectAllIssues)
 
   const status = useSelector((state) => state.issues.status)
   const error = useSelector((state) => state.issues.error)
+  const success = useSelector((state) => state.issues.success)
 
   useEffect(() => {
-    if (status === 'idle' ) {
+    if (status === 'idle') {
       dispatch(fetchIssues())
     }
-  }, [status, dispatch])
+    if (error) {
+      addToast(error, {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+      dispatch(setErrorNull({error: null}))
+    }
+    if (success) {
+      addToast(success, {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+      dispatch(setSuccessNull({success: null}))
+    }
+  }, [status, dispatch, error, success])
   let content
 
   if (status === 'loading') {
     content = <div className="loader">Loading...</div>
   } else if (status === 'succeeded') {
-    const filteredIssues = issues.filter(
-      (issue) => issue.Project === project
-    )
+    const filteredIssues = issues.filter((issue) => issue.Project === project)
     let tbody = filteredIssues.map((issue) => {
       return <IssueExcerpt key={issue.Id} issue={issue} />
     })
@@ -208,7 +230,7 @@ export const IssuesByProject = ({ match }) => {
         </div>
       </div>
     )
-  } else if (status === 'error') {
+  } else if (status === 'failed') {
     content = <div>{error}</div>
   }
 

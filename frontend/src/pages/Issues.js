@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { selectAllIssues, fetchIssues, deleteIssue } from '../slices/issues'
+import {
+  selectAllIssues,
+  fetchIssues,
+  deleteIssue,
+} from '../slices/issues'
 
 const IssueExcerpt = ({ issue }) => {
   const dispatch = useDispatch()
@@ -43,7 +47,7 @@ const IssueExcerpt = ({ issue }) => {
           {issue.Fields?.find((item) => item.Name === 'Due Date')?.Value}
         </p>
       </td>
-      <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
+      {/* <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
         <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
           <span
             aria-hidden
@@ -68,22 +72,8 @@ const IssueExcerpt = ({ issue }) => {
             Delete
           </a>
         </span>
-        {/* <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
-          <span
-            aria-hidden
-            className="absolute inset-0 bg-blue-400 opacity-50 rounded-full"
-          />
-          <Link
-            to={{
-              pathname: `/projectIssueScreens/${issue.Id}`,
-              state: { issue, projectIssueScreensHaveName },
-            }}
-            className="relative cursor-pointer text-blue-900"
-          >
-            Configure
-          </Link>
-        </span> */}
-      </td>
+        
+      </td> */}
     </tr>
   )
 }
@@ -195,9 +185,9 @@ export const Issues = () => {
                     <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Due Date
                     </th>
-                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    {/* <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Action
-                    </th>
+                    </th> */}
                   </tr>
                 </thead>
                 <tbody>{tbody}</tbody>
@@ -220,7 +210,7 @@ export const Issues = () => {
         </div>
       </div>
     )
-  } else if (issueStatus === 'error') {
+  } else if (issueStatus === 'failed') {
     content = <div>{error}</div>
   }
 

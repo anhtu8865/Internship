@@ -5,6 +5,7 @@ const initialState = {
   screens: [],
   status: 'idle',
   error: null,
+  success: null,
 }
 
 export const fetchScreens = createAsyncThunk(
@@ -82,7 +83,14 @@ export const deleteScreen = createAsyncThunk(
 const screensSlice = createSlice({
   name: 'screens',
   initialState,
-  reducers: {},
+  reducers: {
+    setErrorNull(state, action) {
+      state.error = action.payload.error
+    },
+    setSuccessNull(state, action) {
+      state.success = action.payload.success
+    },
+  },
   extraReducers: {
     [fetchScreens.pending]: (state) => {
       state.status = 'loading'
@@ -98,31 +106,38 @@ const screensSlice = createSlice({
       state.error = action.payload.Msg
     },
     [addNewScreen.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      //console.log(action.payload.Msg)
+      state.error = action.payload.Msg
     },
     [addNewScreen.fulfilled]: (state, action) => {
       state.screens.push(action.payload.Data)
+      state.success = action.payload.Msg
     },
     [updateScreen.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      //console.log(action.payload.Msg)
+      state.error = action.payload.Msg
     },
     [updateScreen.fulfilled]: (state, action) => {
       const newScreen = action.payload.Data
       state.screens = state.screens.map((screen) =>
         screen.Id === newScreen.Id ? newScreen : screen
       )
+      state.success = action.payload.Msg
     },
     [deleteScreen.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      //console.log(action.payload.Msg)
+      state.error = action.payload.Msg
     },
     [deleteScreen.fulfilled]: (state, action) => {
       const returnedScreen = action.payload.Data
       state.screens = state.screens.filter(
         (screen) => screen.Id !== returnedScreen.Id
       )
+      state.success = action.payload.Msg
     },
   },
 })
+export const { setErrorNull, setSuccessNull } = screensSlice.actions
 
 export default screensSlice.reducer
 

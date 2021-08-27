@@ -5,7 +5,10 @@ import {
   selectAllCustomFields,
   fetchCustomFields,
   deleteCustomField,
+  setErrorNull,
+  setSuccessNull,
 } from '../slices/customFields'
+import { useToasts } from 'react-toast-notifications'
 
 const CustomFieldExcerpt = ({ customField }) => {
   const dispatch = useDispatch()
@@ -69,16 +72,32 @@ const CustomFieldExcerpt = ({ customField }) => {
 }
 
 export const CustomFields = () => {
+  const { addToast } = useToasts()
   const dispatch = useDispatch()
   const customFields = useSelector(selectAllCustomFields)
 
   const customFieldStatus = useSelector((state) => state.customFields.status)
   const error = useSelector((state) => state.customFields.error)
+  const success = useSelector((state) => state.customFields.success)
   useEffect(() => {
     if (customFieldStatus === 'idle') {
       dispatch(fetchCustomFields())
     }
-  }, [customFieldStatus, dispatch])
+    if (error) {
+      addToast(error, {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+      dispatch(setErrorNull({error: null}))
+    }
+    if (success) {
+      addToast(success, {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+      dispatch(setSuccessNull({success: null}))
+    }
+  }, [customFieldStatus, dispatch, error, success])
   let content
 
   if (customFieldStatus === 'loading') {
@@ -200,7 +219,8 @@ export const CustomFields = () => {
         </div>
       </div>
     )
-  } else if (customFieldStatus === 'error') {
+  } 
+  else if (customFieldStatus === 'failed') {
     content = <div>{error}</div>
   }
 

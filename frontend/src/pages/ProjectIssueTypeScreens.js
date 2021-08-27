@@ -5,9 +5,12 @@ import { Link, useLocation } from 'react-router-dom'
 import {
   addNewProjectIssueTypeScreen,
   deleteProjectIssueTypeScreen,
+  setErrorNull,
+  setSuccessNull,
 } from '../slices/projectIssueTypeScreens'
 import { selectAllScreens } from '../slices/screens'
 import { selectAllProjects } from '../slices/projects'
+import { useToasts } from 'react-toast-notifications'
 
 const ProjectIssueTypeScreenExcerpt = ({
   projectIssueTypeScreen,
@@ -64,6 +67,7 @@ const ProjectIssueTypeScreenExcerpt = ({
 }
 
 export const ProjectIssueTypeScreens = () => {
+  const { addToast } = useToasts()
   const location = useLocation()
   const issueType = location.state?.issueType
   const [rows, setRows] = useState(
@@ -146,7 +150,23 @@ export const ProjectIssueTypeScreens = () => {
     (state) => state.projectIssueTypeScreens.status
   )
   const error = useSelector((state) => state.projectIssueTypeScreens.error)
-  useEffect(() => {}, [projectIssueTypeScreenStatus, dispatch])
+  const success = useSelector((state) => state.projectIssueTypeScreens.success)
+  useEffect(() => {
+    if (error) {
+      addToast(error, {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+      dispatch(setErrorNull({error: null}))
+    }
+    if (success) {
+      addToast(success, {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+      dispatch(setSuccessNull({success: null}))
+    }
+  }, [projectIssueTypeScreenStatus, dispatch, error, success])
 
   const deleteRow = (Id) => {
     const result = rows.filter((ele) => ele.Id !== Id)
