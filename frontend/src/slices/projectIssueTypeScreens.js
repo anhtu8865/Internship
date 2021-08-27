@@ -5,6 +5,7 @@ const initialState = {
   projectIssueTypeScreens: [],
   status: 'idle',
   error: null,
+  success: null,
 }
 
 export const fetchProjectIssueTypeScreens = createAsyncThunk(
@@ -78,7 +79,14 @@ export const deleteProjectIssueTypeScreen = createAsyncThunk(
 const projectIssueTypeScreensSlice = createSlice({
   name: 'projectIssueTypeScreens',
   initialState,
-  reducers: {},
+  reducers: {
+    setErrorNull(state, action) {
+      state.error = action.payload.error
+    },
+    setSuccessNull(state, action) {
+      state.success = action.payload.success
+    },
+  },
   extraReducers: {
     [fetchProjectIssueTypeScreens.pending]: (state) => {
       state.status = 'loading'
@@ -94,31 +102,42 @@ const projectIssueTypeScreensSlice = createSlice({
       state.error = action.payload.Msg
     },
     [addNewProjectIssueTypeScreen.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      //console.log(action.payload.Msg)
+      state.error = action.payload.Msg
+
     },
     [addNewProjectIssueTypeScreen.fulfilled]: (state, action) => {
       state.projectIssueTypeScreens.push(action.payload.Data)
+      state.success = action.payload.Msg
+
     },
     [updateProjectIssueTypeScreen.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      state.error = action.payload.Msg
+      //console.log(action.payload.Msg)
     },
     [updateProjectIssueTypeScreen.fulfilled]: (state, action) => {
       const newProjectIssueTypeScreen = action.payload.Data
       state.projectIssueTypeScreens = state.projectIssueTypeScreens.map((projectIssueTypeScreen) =>
         projectIssueTypeScreen.Id === newProjectIssueTypeScreen.Id ? newProjectIssueTypeScreen : projectIssueTypeScreen
       )
+      state.success = action.payload.Msg
+
     },
     [deleteProjectIssueTypeScreen.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      state.error = action.payload.Msg
+      //console.log(action.payload.Msg)
     },
     [deleteProjectIssueTypeScreen.fulfilled]: (state, action) => {
       const returnedProjectIssueTypeScreen = action.payload.Data
       state.projectIssueTypeScreens = state.projectIssueTypeScreens.filter(
         (projectIssueTypeScreen) => projectIssueTypeScreen?.Id !== returnedProjectIssueTypeScreen.Id
       )
+      state.success = action.payload.Msg
+
     },
   },
 })
+export const { setErrorNull, setSuccessNull } = projectIssueTypeScreensSlice.actions
 
 export default projectIssueTypeScreensSlice.reducer
 

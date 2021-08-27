@@ -5,8 +5,11 @@ import { Link, useLocation } from 'react-router-dom'
 import {
   addNewScreenCustomField,
   deleteScreenCustomField,
+  setErrorNull,
+  setSuccessNull,
 } from '../slices/screenCustomFields'
 import { selectAllCustomFields } from '../slices/customFields'
+import { useToasts } from 'react-toast-notifications'
 
 const ScreenCustomFieldExcerpt = ({ screenCustomField, deleteRow }) => {
   const dispatch = useDispatch()
@@ -61,6 +64,7 @@ const ScreenCustomFieldExcerpt = ({ screenCustomField, deleteRow }) => {
 }
 
 export const ScreenCustomFields = () => {
+  const { addToast } = useToasts()
   const location = useLocation()
   const screen = location.state?.screen
   //const listCustomFields = location.state?.listCustomFields
@@ -119,11 +123,26 @@ export const ScreenCustomFields = () => {
     (state) => state.screenCustomFields.status
   )
   const error = useSelector((state) => state.screenCustomFields.error)
+  const success = useSelector((state) => state.screenCustomFields.success)
   useEffect(() => {
     // if (screenCustomFieldStatus === 'idle') {
     //   dispatch(fetchScreenCustomFields())
     // }
-  }, [screenCustomFieldStatus, dispatch])
+    if (error) {
+      addToast(error, {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+      dispatch(setErrorNull({error: null}))
+    }
+    if (success) {
+      addToast(success, {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+      dispatch(setSuccessNull({success: null}))
+    }
+  }, [screenCustomFieldStatus, dispatch, error, success])
   const deleteRow = (Id) => {
     const result = listCustomFields.filter((ele) => ele.Id !== Id)
     setListCustomFields(result)

@@ -5,6 +5,7 @@ const initialState = {
   screenCustomFields: [],
   status: 'idle',
   error: null,
+  success: null,
 }
 
 export const fetchScreenCustomFields = createAsyncThunk(
@@ -78,7 +79,14 @@ export const deleteScreenCustomField = createAsyncThunk(
 const screenCustomFieldsSlice = createSlice({
   name: 'screenCustomFields',
   initialState,
-  reducers: {},
+  reducers: {
+    setErrorNull(state, action) {
+      state.error = action.payload.error
+    },
+    setSuccessNull(state, action) {
+      state.success = action.payload.success
+    },
+  },
   extraReducers: {
     [fetchScreenCustomFields.pending]: (state) => {
       state.status = 'loading'
@@ -94,31 +102,38 @@ const screenCustomFieldsSlice = createSlice({
       state.error = action.payload.Msg
     },
     [addNewScreenCustomField.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      //console.log(action.payload.Msg)
+      state.error = action.payload.Msg
     },
     [addNewScreenCustomField.fulfilled]: (state, action) => {
       state.screenCustomFields.push(action.payload.Data)
+      state.success = action.payload.Msg
     },
     [updateScreenCustomField.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      //console.log(action.payload.Msg)
+      state.error = action.payload.Msg
     },
     [updateScreenCustomField.fulfilled]: (state, action) => {
       const newScreenCustomField = action.payload.Data
       state.screenCustomFields = state.screenCustomFields.map((screenCustomField) =>
         screenCustomField.Id === newScreenCustomField.Id ? newScreenCustomField : screenCustomField
       )
+      state.success = action.payload.Msg
     },
     [deleteScreenCustomField.rejected]: (state, action) => {
-      console.log(action.payload.Msg)
+      //console.log(action.payload.Msg)
+      state.error = action.payload.Msg
     },
     [deleteScreenCustomField.fulfilled]: (state, action) => {
       const returnedScreenCustomField = action.payload.Data
       state.screenCustomFields = state.screenCustomFields.filter(
         (screenCustomField) => screenCustomField?.Id !== returnedScreenCustomField.Id
       )
+      state.success = action.payload.Msg
     },
   },
 })
+export const { setErrorNull, setSuccessNull } = screenCustomFieldsSlice.actions
 
 export default screenCustomFieldsSlice.reducer
 

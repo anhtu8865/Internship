@@ -7,16 +7,23 @@ import {
   selectUserList,
   fetchProjectIssueTypeScreens,
   fetchUserList,
+  setErrorNull,
+  setSuccessNull,
 } from '../../slices/issues'
 import { useForm } from 'react-hook-form'
+import { useToasts } from 'react-toast-notifications'
+
 
 export const AddIssueForm = () => {
+  const { addToast } = useToasts()
   const { register, handleSubmit, reset } = useForm()
   const [name, setName] = useState('')
   const [key, setKey] = useState('')
   const [projectName, setProjectName] = useState('')
   const [issueTypeName, setIssueTypeName] = useState('')
   const [addRequestStatus, setAddRequestStatus] = useState('idle')
+  const success = useSelector((state) => state.issues.success)
+  const error = useSelector((state) => state.issues.error)
 
   const dispatch = useDispatch()
   const projectIssueTypeScreens = useSelector(selectAllProjectIssueTypeScreens)
@@ -68,7 +75,21 @@ export const AddIssueForm = () => {
         dispatch(fetchUserList({ project: Project }))
       }
     }
-  }, [issueStatus, dispatch, projectName, issueTypeName])
+    if (error) {
+      addToast(error, {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+      dispatch(setErrorNull({error: null}))
+    }
+    if (success) {
+      addToast(success, {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+      dispatch(setSuccessNull({success: null}))
+    }
+  }, [issueStatus, dispatch, projectName, issueTypeName, error, success])
 
   const onNameChanged = (e) => setName(e.target.value)
   const onKeyChanged = (e) => setKey(e.target.value)
