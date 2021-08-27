@@ -3,6 +3,18 @@ import React from 'react'
 import { useAppDispatch } from '../../store'
 import { deleteUser, setUserUpdate } from '../../slices/users'
 import UpdateUserModal from './UpdateUserModal';
+import {
+  Table,
+  TableHeader,
+  TableCell,
+  TableBody,
+  TableRow,
+  TableFooter,
+  TableContainer,
+  Badge,
+  Button,
+  Pagination,
+} from '@windmill/react-ui'
 import Avatar from '@material-ui/core/Avatar'
 import {
   orange,
@@ -13,6 +25,8 @@ import {
   blueGrey,
 } from '@material-ui/core/colors'
 import { makeStyles } from '@material-ui/core/styles'
+import { EditIcon, TrashIcon } from '../../icons'
+
 //list colour
 const colours = [
   blue[800],
@@ -82,8 +96,8 @@ const UserItem = ({ user }) => {
   return (
     <>
       <UpdateUserModal modalDialog={modalUpdate} />
-      <tr key={user.User_Id}>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+      <TableRow key={user.User_Id}>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
             <div className="flex-shrink-0 w-10 h-10">{Ava()}</div>
             <div className="ml-3">
@@ -92,32 +106,34 @@ const UserItem = ({ user }) => {
               </p>
             </div>
           </div>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <p className="text-gray-900 whitespace-no-wrap">
-            {user.User_Name}
-          </p>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+          <p className="text-gray-900 whitespace-no-wrap">{user.User_Name}</p>
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">{user.User_Email}</p>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">{globalrole}</p>
-        </td>
-        <td className="px-5 py-5 border-b text-center border-gray-200 bg-white text-sm">
-          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-            />
-            <a
-              onClick={(e) => handleOpenUpdate(e, user)}
-              className="relative cursor-pointer"
-            >
-              Edit
-            </a>
-          </span>
-          <span className="relative inline-block px-3 py-1 ml-1.5 font-semibold text-green-900 leading-tight">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b text-center border-gray-200 bg-white text-sm">
+          <div className="flex items-center space-x-4">
+            <Button layout="link" size="icon" aria-label="Edit">
+              <EditIcon
+                className="w-5 h-5"
+                onClick={(e) => handleOpenUpdate(e, user)}
+                aria-hidden="true"
+              />
+            </Button>
+            <Button layout="link" size="icon" aria-label="Edit">
+              <TrashIcon
+                className="w-5 h-5"
+                onClick={(e) => deleteConfirm(e, user.User_Id)}
+                aria-hidden="true"
+              />
+            </Button>
+          </div>
+          {/* <span className="relative inline-block px-3 py-1 ml-1.5 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden
               className="absolute inset-0 bg-red-400 opacity-50 rounded-full"
@@ -128,9 +144,9 @@ const UserItem = ({ user }) => {
             >
               Delete
             </a>
-          </span>
-        </td>
-      </tr>
+          </span> */}
+        </TableCell>
+      </TableRow>
     </>
   )
 }

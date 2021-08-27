@@ -18,7 +18,6 @@ const usersSlice = createSlice({
       state.users.unshift(action.payload)
     },
     removeUser: (state, action) => {
-      console.log('remove', action)
       let filteredUser = state.users.filter(
         (user) => user.User_Id !== action.payload
       )
@@ -89,7 +88,6 @@ export const deleteUser = (id) => async (dispatch) => {
   userApi
     .delete(id)
     .then((res) => {
-      console.log(res)
       dispatch(removeUser(id))
     })
     .catch((err) => {
