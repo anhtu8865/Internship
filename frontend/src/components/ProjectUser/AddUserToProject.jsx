@@ -10,7 +10,7 @@ import { fetchUsers, usersSelector } from '../../slices/users'
 import { useSelector } from 'react-redux'
 import FormInput from '../Form/FormInput'
 import React_Select from 'react-select'
-import { Input, HelperText, Label, Select, Textarea } from '@windmill/react-ui'
+import {  Select } from '@windmill/react-ui'
 
 export default function AddUserProject({ modalDialog }) {
   const { handleClose, projectkey, listUser } = modalDialog

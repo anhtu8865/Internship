@@ -91,9 +91,7 @@ export default function DetailPermission() {
           <div className="my-2 flex justify-between sm:flex-row flex-col">
             <div className="flex">
               <a onClick={(e) => handleOpenUpdate(e)}>
-                <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700">
-                  Add role
-                </button>
+                <Button size="large">Add role</Button>
               </a>
             </div>
           </div>

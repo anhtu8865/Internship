@@ -86,9 +86,7 @@ export default function ProjectUserRole() {
           <div className="my-2 flex justify-between sm:flex-row flex-col">
             <div className="flex">
               <a onClick={(e) => handleAddUser(e)}>
-                <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700">
-                  Add User
-                </button>
+                <Button size="large">Add User</Button>
               </a>
             </div>
           </div>

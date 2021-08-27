@@ -16,6 +16,7 @@ import {
 import { TableCell, TableRow, Button } from '@windmill/react-ui'
 import { makeStyles } from '@material-ui/core/styles'
 import { useToasts } from 'react-toast-notifications'
+import { Select } from '@windmill/react-ui'
 
 //list colour
 const colours = [
@@ -118,9 +119,13 @@ export default function ProjectUserItems({ dataItem, projectkey }) {
         </TableCell>
         <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">
-            <select value={roleId} onChange={handleChange}>
+            <Select
+              className="py-2 px-3 rounded-md border border-purple-500 mt-1"
+              value={roleId}
+              onChange={handleChange}
+            >
               {options}
-            </select>
+            </Select>
           </p>
         </TableCell>
         <td className="px-5 py-5 border-b text-center border-gray-200 bg-white text-sm">
