@@ -95,20 +95,20 @@ export const IssuesByProject = ({ match }) => {
     if (status === 'idle') {
       dispatch(fetchIssues())
     }
-    if (error) {
-      addToast(error, {
-        appearance: 'error',
-        autoDismiss: true,
-      })
-      dispatch(setErrorNull({error: null}))
-    }
-    if (success) {
-      addToast(success, {
-        appearance: 'success',
-        autoDismiss: true,
-      })
-      dispatch(setSuccessNull({success: null}))
-    }
+    // if (error) {
+    //   addToast(error, {
+    //     appearance: 'error',
+    //     autoDismiss: true,
+    //   })
+    //   dispatch(setErrorNull({error: null}))
+    // }
+    // if (success) {
+    //   addToast(success, {
+    //     appearance: 'success',
+    //     autoDismiss: true,
+    //   })
+    //   dispatch(setSuccessNull({success: null}))
+    // }
   }, [status, dispatch, error, success])
   let content
 
