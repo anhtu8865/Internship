@@ -5,12 +5,15 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
 import store from './store'
+import { Windmill } from '@windmill/react-ui'
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <Windmill>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </Windmill>
   </React.StrictMode>,
   document.getElementById('root')
 )
