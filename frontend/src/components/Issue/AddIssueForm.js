@@ -12,7 +12,17 @@ import {
 } from '../../slices/issues'
 import { useForm } from 'react-hook-form'
 import { useToasts } from 'react-toast-notifications'
-
+import {
+  Input,
+  Label,
+  Select,
+  Textarea,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+} from '@windmill/react-ui'
 
 export const AddIssueForm = () => {
   const { addToast } = useToasts()
@@ -22,6 +32,7 @@ export const AddIssueForm = () => {
   const [projectName, setProjectName] = useState('')
   const [issueTypeName, setIssueTypeName] = useState('')
   const [addRequestStatus, setAddRequestStatus] = useState('idle')
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const success = useSelector((state) => state.issues.success)
   const error = useSelector((state) => state.issues.error)
 
@@ -80,14 +91,14 @@ export const AddIssueForm = () => {
         appearance: 'error',
         autoDismiss: true,
       })
-      dispatch(setErrorNull({error: null}))
+      dispatch(setErrorNull({ error: null }))
     }
     if (success) {
       addToast(success, {
         appearance: 'success',
         autoDismiss: true,
       })
-      dispatch(setSuccessNull({success: null}))
+      dispatch(setSuccessNull({ success: null }))
     }
   }, [issueStatus, dispatch, projectName, issueTypeName, error, success])
 
@@ -105,8 +116,6 @@ export const AddIssueForm = () => {
         setAddRequestStatus('pending')
         setName('')
         setKey('')
-        setProjectName('')
-        setIssueTypeName('')
         const found = projectIssueTypeScreens.find(
           (element) =>
             element.Project_Name === projectName &&
@@ -117,7 +126,6 @@ export const AddIssueForm = () => {
           Value: data[item.Name],
           Issue: key,
         }))
-        reset()
         const resultAction = await dispatch(
           addNewIssue({
             Key: key,
@@ -133,8 +141,15 @@ export const AddIssueForm = () => {
         console.error('Failed to save the issue: ', err)
       } finally {
         setAddRequestStatus('idle')
+        reset()
       }
     }
+  }
+  function openModal() {
+    setIsModalOpen(true)
+  }
+  function closeModal() {
+    setIsModalOpen(false)
   }
   let inputFields
   if (customFields && customFields.length !== 0) {
@@ -142,174 +157,96 @@ export const AddIssueForm = () => {
       switch (item.Field_Type) {
         case 'Text':
           return (
-            <div key={item.Custom_Field} className="relative w-full mb-3">
-              <label
-                className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                htmlFor={item.Name}
-              >
-                {item.Name}
-              </label>
-              <input
-                type="text"
-                className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                {...register(item.Name)}
-                style={{ transition: 'all .15s ease' }}
-              />
-            </div>
+            <Label key={item.Custom_Field} className="m-2">
+              <span>{item.Name}</span>
+              <Input className="mt-1" {...register(item.Name)} />
+            </Label>
           )
         case 'Date':
           return (
-            <div key={item.Custom_Field} className="relative w-full mb-3">
-              <label
-                className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                htmlFor={item.Name}
-              >
-                {item.Name}
-              </label>
-              <input
-                type="date"
-                className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                {...register(item.Name)}
-                style={{ transition: 'all .15s ease' }}
-              />
-            </div>
+            <Label key={item.Custom_Field} className="m-2">
+              <span>{item.Name}</span>
+              <Input type="date" className="mt-1" {...register(item.Name)} />
+            </Label>
           )
         case 'Text area':
           return (
-            <div key={item.Custom_Field} className="relative w-full mb-3">
-              <label
-                className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                htmlFor={item.Name}
-              >
-                {item.Name}
-              </label>
-              <textarea
-                className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                {...register(item.Name)}
-                style={{ transition: 'all .15s ease' }}
-              />
-            </div>
+            <Label key={item.Custom_Field} className="m-2">
+              <span>{item.Name}</span>
+              <Textarea className="mt-1" rows="3" {...register(item.Name)} />
+            </Label>
           )
         case 'People':
           return (
-            <div key={item.Custom_Field} className="relative w-full mb-3">
-              <label
-                className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                htmlFor={item.Name}
-              >
-                {item.Name}
-              </label>
-              <select
-                className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                {...register(item.Name)}
-                style={{ transition: 'all .15s ease' }}
-              >
+            <Label key={item.Custom_Field} className="m-2">
+              <span>{item.Name}</span>
+              <Select className="mt-1" {...register(item.Name)}>
                 <option value=""></option>
                 {userOptions}
-              </select>
-            </div>
+              </Select>
+            </Label>
           )
       }
     })
   }
 
   return (
-    <main>
-      <section className="relative w-full h-full">
-        <div className="container mx-auto px-4 h-full">
-          <div className="flex content-center items-center justify-center h-full">
-            <div className="w-full lg:w-4/12 px-4">
-              <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300 border-0">
-                <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-                  <div className="text-gray-500 text-center mb-3 font-bold">
-                    <h2>Add a New Issue</h2>
-                  </div>
-                  <form>
-                    <div className="relative w-full mb-3">
-                      <label
-                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="issueName"
-                      >
-                        Issue Name:
-                      </label>
-                      <input
-                        type="text"
-                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                        value={name}
-                        onChange={onNameChanged}
-                        style={{ transition: 'all .15s ease' }}
-                      />
-                    </div>
+    <>
+      <div>
+        <Button onClick={openModal}>Create</Button>
+      </div>
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <ModalHeader className="m-2">Add a issue</ModalHeader>
+        <ModalBody class="overflow-auto h-80">
+          <Label className="m-2">
+            <span>Name</span>
+            <Input className="mt-1" value={name} onChange={onNameChanged} />
+          </Label>
+          <Label className="m-2">
+            <span>Key</span>
+            <Input className="mt-1" value={key} onChange={onKeyChanged} />
+          </Label>
 
-                    <div className="relative w-full mb-3">
-                      <label
-                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="issueKey"
-                      >
-                        Issue Key:
-                      </label>
-                      <input
-                        type="text"
-                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                        value={key}
-                        onChange={onKeyChanged}
-                        style={{ transition: 'all .15s ease' }}
-                      />
-                    </div>
-                    <div className="relative w-full mb-3">
-                      <label
-                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="projectName"
-                      >
-                        Project:
-                      </label>
-                      <select
-                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                        value={projectName}
-                        onChange={onProjectChanged}
-                        style={{ transition: 'all .15s ease' }}
-                      >
-                        <option value=""></option>
-                        {projectsOptions}
-                      </select>
-                    </div>
-
-                    <div className="relative w-full mb-3">
-                      <label
-                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="issueTypeName"
-                      >
-                        Issue Type:
-                      </label>
-                      <select
-                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                        value={issueTypeName}
-                        onChange={onIssueTypeChanged}
-                        style={{ transition: 'all .15s ease' }}
-                      >
-                        <option value=""></option>
-                        {issueTypesOptions}
-                      </select>
-                    </div>
-                    {inputFields}
-                    <div className="text-center mt-6">
-                      <button
-                        className="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
-                        type="button"
-                        onClick={handleSubmit(onSaveIssueClicked)}
-                        disabled={!canSave}
-                        style={{ transition: 'all .15s ease' }}
-                      >
-                        Save Issue
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
+          <Label className="m-2">
+            <span>Project</span>
+            <Select
+              className="mt-1"
+              value={projectName}
+              onChange={onProjectChanged}
+            >
+              <option value=""></option>
+              {projectsOptions}
+            </Select>
+          </Label>
+          <Label className="m-2">
+            <span>Issue type</span>
+            <Select
+              className="mt-1"
+              value={issueTypeName}
+              onChange={onIssueTypeChanged}
+            >
+              <option value=""></option>
+              {issueTypesOptions}
+            </Select>
+          </Label>
+          {inputFields}
+        </ModalBody>
+        <ModalFooter>
+          <div className="hidden sm:block">
+            <Button layout="outline" onClick={closeModal}>
+              Cancel
+            </Button>
           </div>
-        </div>
-      </section>
-    </main>
+          <div className="hidden sm:block">
+            <Button
+              onClick={handleSubmit(onSaveIssueClicked)}
+              disabled={!canSave}
+            >
+              Accept
+            </Button>
+          </div>
+        </ModalFooter>
+      </Modal>
+    </>
   )
 }

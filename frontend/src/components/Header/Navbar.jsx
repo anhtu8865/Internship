@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { getMe,logout, inforUserSelector } from '../../slices/infouser'
 import { useAppDispatch } from '../../store'
+import { AddIssueForm } from '../Issue/AddIssueForm'
 function Navbar() {
   const [isLogged, setIsLogged] = useState(false)
   const dispatch = useAppDispatch()
@@ -61,13 +62,8 @@ useEffect(() => {
                 </a>
               </Link>
             </li>
-            <li>
-              <Link
-                to="/addIssue"
-                className="bg-white border shadow-sm ml-4 px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700"
-              >
-                Create Issue
-              </Link>
+            <li className="ml-4"> 
+              {isLogged && <AddIssueForm/> }
             </li>
             <div className="relative ml-5 text-gray-600 mr-4 lg:block hidden">
               <input
