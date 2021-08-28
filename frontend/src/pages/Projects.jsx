@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom'
 import ProjectItem from '../components/Project/ProjectItem'
 import { useAppDispatch } from '../store'
 import CreateProjectModal from '../components/Project/CreateProjectModal';
+import {Button} from '@windmill/react-ui'
 
 const Projects = () => {
   const dispatch = useAppDispatch()
@@ -142,11 +143,11 @@ const Projects = () => {
 
           <div className="flex">
             <CreateProjectModal modalDialog={modalCreate} />
-            <button 
+            <Button 
               onClick={handleOpenCreate}
-              className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700">
+              >
               Create Project
-            </button>
+            </Button>
           </div>
         </div>
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">

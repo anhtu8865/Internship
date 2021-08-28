@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import TransitionItem from '../components/Transition/TransitionItem'
 import { Link } from 'react-router-dom'
 import { workflowsSelector } from '../slices/workflows'
+import { Button } from '@windmill/react-ui'
  const TransitionManager= () => {
     const {workflowUpdate} = useSelector(workflowsSelector)
     if (workflowUpdate.WorkflowId) {
@@ -44,9 +45,9 @@ import { workflowsSelector } from '../slices/workflows'
           <div className="my-2 flex justify-between sm:flex-row flex-col">
           <div className="flex">
             <Link to="/add-transitions">
-              <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700">
+              <Button >
                 Create Transition
-              </button>
+              </Button>
             </Link>
             {/* <Link to="/invite-user">
               <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700 ml-1">

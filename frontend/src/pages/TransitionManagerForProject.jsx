@@ -10,6 +10,7 @@ import { projectsSelector } from '../slices/projects'
 import TransitionItemForProject from '../components/Transition/TransitionItemForProject'
 import workflowApi from '../api/workflowApi' 
 import axios from 'axios'
+import { getDataNameByIdWorkflow } from '../slices/workflows'
 
 const  TransitionManagerForProject= (project) => {
 
@@ -40,8 +41,7 @@ const  TransitionManagerForProject= (project) => {
       
         axiosGet();
   }, [])  
-
-
+    
     const dispatch = useAppDispatch()
     const { transitions,loading, hasErrors } = useSelector(transitionsSelector)
    useEffect(() => {
@@ -56,8 +56,13 @@ const  TransitionManagerForProject= (project) => {
         )
         else return <div>NULL</div>
     }
-    
-  console.log(temp.WorkflowId)
+    const dispatch1 = useAppDispatch()
+    const{worklfows, loading1, hasErrors1} = useSelector(workflowsSelector)
+    useEffect(() => {
+      dispatch1(getDataNameByIdWorkflow(temp.WorkflowId))
+    }, [dispatch1])
+    console.log(worklfows)
+ 
   
   
     if (loading) {
@@ -77,7 +82,7 @@ const  TransitionManagerForProject= (project) => {
             
           </div>
           <div>
-            <h2 className="text-2xl font-semibold leading-tight">DESCRIPTION: {fullData.WorkflowDescription}</h2>
+            <h2 className="text-2xl font-semibold leading-tight"> {fullData.WorkflowDescription}</h2>
             
           </div>
           <div className="my-2 flex justify-between sm:flex-row flex-col">

@@ -7,15 +7,21 @@ import UpdateProjectModal from './UpdateProjectModal';
 import ViewProject from './ViewProject';
 import { setWorkflowUpdate } from '../../slices/workflows'
 import { useHistory } from 'react-router-dom'
-
+import { TableCell, TableRow, Button, Table } from '@material-ui/core';
+import { useToasts } from 'react-toast-notifications'
 const ProjectItem = ({ project }) => {
+  const {addToast} = useToasts()
   const dispatch = useAppDispatch()
   const history = useHistory()
   function deleteConfirm(e, project_key) {
     e.preventDefault()
     if (confirm('Delete?')) {
       dispatch(deleteProject(project_key))
-      alert('Delete Success!')
+      //alert('Delete Success!')
+      addToast("Delete Success!", {
+        appearance: 'success',
+        autoDismiss: true,
+      })
     }
   }
 
@@ -60,13 +66,13 @@ const ProjectItem = ({ project }) => {
     <>
       <UpdateProjectModal modalDialog={modalUpdate} />
       <ViewProject modalDialog={modalView} />
-      <tr key={project.ProjectKey}>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+      <TableRow key={project.ProjectKey}>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
             <div className="flex-shrink-0 w-10 h-10">
               <img
                 className="w-full h-full rounded-full"
-                src="https://w1.pngwing.com/pngs/181/604/png-transparent-project-icon-computer-network-tango-desktop-project-icon-design-share-icon-computer-font-text-line.png"
+                src="https://iconarchive.com/download/i78236/igh0zt/ios7-style-metro-ui/MetroUI-Office-Projects.ico"
                 alt=""
               />
             </div>
@@ -81,30 +87,30 @@ const ProjectItem = ({ project }) => {
               </p>
             </div>
           </div>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">
             {project.ProjectKey}
           </p>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">
             {project.ProjectUrl}
           </p>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <Link to="#">
             <a className="text-blue-400 whitespace-no-wrap">
               {project.ProjectLeadName}
             </a>
           </Link>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">
             {project.WorkflowId}
           </p>
-        </td>
-        <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
           <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden
@@ -154,8 +160,8 @@ const ProjectItem = ({ project }) => {
             </a>
           </span>
           
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     </>
   )
 }

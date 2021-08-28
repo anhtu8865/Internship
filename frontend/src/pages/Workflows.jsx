@@ -1,18 +1,29 @@
 import React, { useEffect } from 'react'
-import { fetchWorkflows,workflowsSelector } from '../slices/workflows'
+import { fetchWorkflows,workflowsSelector,setState } from '../slices/workflows'
 import { fetchWorkflowProjects,workflowProjectsSelector } from '../slices/wor-pro'
 import { useAppDispatch } from '../store'
 import { useSelector } from 'react-redux'
 import WorkflowItem from '../components/Workflow/WorkflowItem'
 import { Link } from 'react-router-dom'
+import { useToasts } from 'react-toast-notifications'
+import {Button} from '@windmill/react-ui'
  const WorkflowManager= () => {
+    const { addToast } = useToasts()
     const dispatch = useAppDispatch()
-    const { workflows,loading, hasErrors } = useSelector(workflowsSelector)
+    const { updateWor, updateSuccess,workflows,loading, hasErrors } = useSelector(workflowsSelector)
    
    useEffect(() => {
         dispatch(fetchWorkflows()) 
     }, [dispatch])
-
+    useEffect(() => {
+           if (updateSuccess) {
+             addToast("Edit Success", {
+               appearance: 'success',
+               autoDismiss: true,
+             })
+             dispatch(setState())
+           }
+         }, [updateSuccess])
     const renderWorkflow = () =>{
       console.log(workflows)
         return workflows.map((workflow)=>
@@ -36,9 +47,7 @@ import { Link } from 'react-router-dom'
           <div className="my-2 flex justify-between sm:flex-row flex-col">
           <div className="flex">
             <Link to="/add-workflows">
-              <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700">
-                Create Workflow
-              </button>
+            <Button size="large">Create Workflow</Button>
             </Link>
             {/* <Link to="/invite-user">
               <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700 ml-1">

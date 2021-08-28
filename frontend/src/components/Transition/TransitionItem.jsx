@@ -11,7 +11,9 @@ import { useHistory } from 'react-router-dom'
 import { setTransitionUpdate } from '../../slices/transition'
 import transitionApi from '../../api/transitionApi'
 import { deleteTransition } from '../../slices/transition'
+import { useToasts } from 'react-toast-notifications'
 const TransitionItem = ({ transition }) => {
+  const {addToast} = useToasts()
   const dispatch = useAppDispatch()
   const history = useHistory()
 
@@ -59,7 +61,12 @@ const TransitionItem = ({ transition }) => {
   function deleteConfirm(e, TransitionId) {
     e.preventDefault()
     if (confirm('Delete?')) {
+
       dispatch(deleteTransition(TransitionId))
+      addToast("Delete Transition Success", {
+        appearance: 'success',
+        autoDismiss: true,
+      })
     }
   }
   return (

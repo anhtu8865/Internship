@@ -5,14 +5,22 @@ import { useForm } from 'react-hook-form'
 import { useAppDispatch } from "../../store";
 import { createProject } from '../../slices/projects'
 import { DialogActions, DialogContent } from '../DialogModal';
-import Button from '@material-ui/core/Button'
+// import Button from '@material-ui/core/Button'
+import { Button } from '@windmill/react-ui';
+import { useToasts } from 'react-toast-notifications'
 
 function CreateProjectModal({ modalDialog }) {
+  const { addToast } = useToasts()
   const dispatch = useAppDispatch()
   const { register, handleSubmit } = useForm()
   const { handleClose } = modalDialog
   const onSubmit = (data) => {
     dispatch(createProject(data))
+    console.log(data)
+    addToast("Create Workflow Success", {
+      appearance: 'success',
+      autoDismiss: true,
+    })
     handleClose()
   }
   return (
@@ -31,10 +39,12 @@ function CreateProjectModal({ modalDialog }) {
           {/*<input {...register('DefaultAssignee')} className="hidden" defaultValue="22" />*/}
         </DialogContent>
         <DialogActions>
-          <div className="my-3 mx-5">
-            <Button onClick={handleClose} color="secondary">
-              Cancel
-            </Button>
+          <div className="hidden sm:block m-2">
+             <Button layout="outline" onClick={handleClose}>
+                 Cancel
+             </Button>
+          </div>
+          <div className="hidden sm:block m-2">
             <Button type="submit" color="primary">
               Submit
             </Button>

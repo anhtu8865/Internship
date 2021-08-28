@@ -1,19 +1,29 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { fetchStatuss, statussSelector } from '../slices/statuss'
+import { fetchStatuss, statussSelector,setState  } from '../slices/statuss'
 import { Link } from 'react-router-dom'
 import StatusItem from '../components/Status/StatusItem'
 import { useAppDispatch } from '../store'
-
+import { useToasts } from 'react-toast-notifications'
+import { Button } from '@windmill/react-ui'
 const Statuss = () => {
   
   
-  
+  const { addToast } = useToasts()
   const dispatch = useAppDispatch()
-  const { statuss, loading, hasErrors } = useSelector(statussSelector)
+  const { updateMess, updateSuccess,statuss, loading, hasErrors } = useSelector(statussSelector)
   useEffect(() => {
     dispatch(fetchStatuss())
   }, [dispatch])
+  useEffect(() => {
+         if (updateSuccess) {
+           addToast(" Success", {
+               appearance: 'success',
+               autoDismiss: true,
+           })
+           dispatch(setState())
+         }
+       }, [updateSuccess])
   localStorage.setItem('Status', JSON.stringify(statuss))
   const renderStatus = () => {
     if(statuss){
@@ -40,9 +50,9 @@ const Statuss = () => {
 <div className="my-2 flex justify-between sm:flex-row flex-col">
           <div className="flex">
             <Link to="/create-statuss">
-              <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700">
+              <Button >
                 Create status
-              </button>
+              </Button>
             </Link>
             {/* <Link to="/invite-user">
               <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700 ml-1">

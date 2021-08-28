@@ -10,9 +10,16 @@ import {
 import { useHistory } from 'react-router-dom'
 import { setWorkflowUpdate, updateWorkflow } from '../../slices/workflows'
 import workflowApi from '../../api/workflowApi'
-import { deleteWorkflow } from '../../slices/workflows'
+import { 
+  deleteWorkflow,
+  
+} from '../../slices/workflows'
 import WorkflowModal from '../../pages/UpdateWorkflow'
+import { useToasts } from 'react-toast-notifications'
+import { TableCell, TableRow, Button } from '@windmill/react-ui'
+
 const WorkflowItem = ({ workflow }) => {
+  const {addToast} = useToasts()
   const dispatch = useAppDispatch()
   const history = useHistory()
 
@@ -29,11 +36,19 @@ const WorkflowItem = ({ workflow }) => {
   const handleOpenUpdate = (e, workflow) => {
     e.preventDefault()
     dispatch(setWorkflowUpdate(workflow))
+    addToast("Create Workflow Success", {
+      appearance: 'success',
+      autoDismiss: true,
+    })
     history.push('/create-workflows')
   }
   const handleOpenTransition = (e, workflow) => {
     e.preventDefault()
     dispatch(setWorkflowUpdate(workflow))
+    addToast("Open Success", {
+      appearance: 'success',
+      autoDismiss: true,
+    })
     history.push('/transitions-manager')
   }
   const [openUpdate, setOpenUpdate] = React.useState(false)
@@ -41,6 +56,7 @@ const WorkflowItem = ({ workflow }) => {
   const handleOpenUpdateWorkflow = (e, workflow) => {
     e.preventDefault()
     dispatch(setWorkflowUpdate(workflow))
+    
     setOpenUpdate(true)
   }
   const handleCloseUpdate = () => {
@@ -64,13 +80,17 @@ const WorkflowItem = ({ workflow }) => {
     e.preventDefault()
     if (confirm('Delete?')) {
       dispatch(deleteWorkflow(WorkflowId))
+      addToast("Delete Workflow Success", {
+        appearance: 'success',
+        autoDismiss: true,
+      })
     }
   }
   return (
     <>
       <WorkflowModal modalDialog={modalUpdate} />
-      <tr key={workflow.WorkflowId}>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+      <TableRow key={workflow.WorkflowId}>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
             <div className="ml-3">
               <p className="text-gray-900 whitespace-no-wrap">
@@ -83,30 +103,30 @@ const WorkflowItem = ({ workflow }) => {
               </p>
             </div>
           </div>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <Link to="#">
             <a className="text-red-400 whitespace-no-wrap">
               {workflow.WorkflowId}
             </a>
           </Link>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <Link to="#">
             <a className="text-black-400 whitespace-no-wrap">
               {workflow.WorkflowDescription}
             </a>
           </Link>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <Link to="#">
             <ul className="text-blue-400 whitespace-no-wrap">
               {renderWorkflowProject()}
             </ul>
           </Link>
-        </td>
+        </TableCell>
 
-        <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
+        <TableCell className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
           <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden
@@ -167,8 +187,8 @@ const WorkflowItem = ({ workflow }) => {
                   Delete
                 </a>
               </span> */}
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     </>
   )
 }
