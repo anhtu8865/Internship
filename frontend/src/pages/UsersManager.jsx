@@ -1,21 +1,69 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { fetchUsers, usersSelector } from '../slices/users'
+import { fetchUsers, usersSelector, setState } from '../slices/users'
 import { Link } from 'react-router-dom'
 import UserItem from '../components/User/UserItem';
 import { useAppDispatch } from '../store'
+import {
+  Table,
+  TableHeader,
+  TableCell,
+  TableBody,
+  TableRow,
+  TableFooter,
+  TableContainer,
+  Button,
+  Pagination,
+} from '@windmill/react-ui'
+import { useToasts } from 'react-toast-notifications'
 
 const Users = () => {
   const dispatch = useAppDispatch()
-  const { users, loading, hasErrors } = useSelector(usersSelector)
+  const { addToast } = useToasts()
+
+  const { users, loading, hasErrors, updateMess, updateSuccess } =
+    useSelector(usersSelector)
+
+  // // setup pages control for every table
+  // const [pageTable, setPageTable] = useState(1)
+
+  // // // setup data for every table
+  // const [dataTable, setDataTable] = useState([])
+
+  // // // pagination setup
+  // const resultsPerPage = 10
+  // const totalResults = users.length
+  // // // pagination change control
+  // function onPageChangeTable(p) {
+  //   setPageTable(p)
+  // }
+  //get data user
   useEffect(() => {
     dispatch(fetchUsers())
   }, [dispatch])
+
+  //notification delete,update
+  useEffect(() => {
+    if (updateSuccess) {
+      addToast(updateMess, {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+      dispatch(setState())
+    }
+  }, [updateSuccess])
+  // // on page change, load new sliced data
+  // // here you would make another server request for new data
+  // useEffect(() => {
+  //   setDataTable(
+  //     users.slice((pageTable - 1) * resultsPerPage, pageTable * resultsPerPage)
+  //   )
+  // }, [pageTable])
+
+  //render usr
   const renderUsers = () => {
-    return users.map((user) => (
-        <UserItem key={user.User_Id} user={user} />
-    ))
+    return users.map((user) => <UserItem key={user.User_Id} user={user} />)
   }
   if (loading) {
     return (
@@ -25,71 +73,17 @@ const Users = () => {
     )
   }
   if (hasErrors) return <p>Unable to get Users.</p>
+
   return (
     <div className="container mx-auto px-4 mb-16 sm:px-8">
       <div className="py-8">
         <div>
-          <h2 className="text-2xl font-semibold leading-tight">Users</h2>
+          <h1 className="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+            Users Manager
+          </h1>
         </div>
         <div className="my-2 flex justify-between sm:flex-row flex-col">
           <div className="flex flex-row mb-1 sm:mb-0">
-            <div className="relative">
-              <select className="appearance-none h-full rounded-l border block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                <option selected disabled>
-                  User per page
-                </option>
-                <option>5</option>
-                <option>10</option>
-                <option>20</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
-            </div>
-            <div className="relative">
-              <select className="appearance-none h-full rounded-r border-t sm:rounded-r-none border-r border-b block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
-                <option selected disabled>
-                  Status
-                </option>
-                <option>All</option>
-                <option>Active</option>
-                <option>Inactive</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
-            </div>
-            <div className="relative">
-              <select className="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
-                <option selected disabled>
-                  In Role
-                </option>
-                <option>Admin</option>
-                <option>Truster</option>
-                <option>Member</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
-            </div>
             {/* Ô search */}
             <div className="flex relative">
               <span className="h-full absolute inset-y-0 right-2 flex items-center pl-2">
@@ -109,56 +103,34 @@ const Users = () => {
 
           <div className="flex">
             <Link to="/create-user">
-              <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700">
-                Create User
-              </button>
-            </Link>
-            <Link to="/invite-user">
-              <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700 ml-1">
-                Invite Users
-              </button>
+              <Button>Create User</Button>
             </Link>
           </div>
         </div>
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
           <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-            <table className="min-w-full leading-normal">
-              <thead>
-                <tr>
-                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Full name
-                  </th>
-                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Username
-                  </th>
-                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Email
-                  </th>
-                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                     Role
-                  </th> 
-                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                  { renderUsers() }
-              </tbody>
-            </table>
-            <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between          ">
-              <span className="text-xs xs:text-sm text-gray-900">
-                Showing 1 to 4 of 50 Entries
-              </span>
-              <div className="inline-flex mt-2 xs:mt-0">
-                <button className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-l">
-                  Prev
-                </button>
-                <button className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-r">
-                  Next
-                </button>
-              </div>
-            </div>
+            <TableContainer className="mb-8">
+              <Table className="min-w-full leading-normal">
+                <TableHeader>
+                  <tr>
+                    <TableCell>Full name</TableCell>
+                    <TableCell>Username</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Role</TableCell>
+                    <TableCell>Action</TableCell>
+                  </tr>
+                </TableHeader>
+                <TableBody>{renderUsers()}</TableBody>
+              </Table>
+              {/* <TableFooter>
+                <Pagination
+                  totalResults={totalResults}
+                  resultsPerPage={resultsPerPage}
+                  onChange={onPageChangeTable}
+                  label="Table navigation"
+                />
+              </TableFooter> */}
+            </TableContainer>
           </div>
         </div>
       </div>

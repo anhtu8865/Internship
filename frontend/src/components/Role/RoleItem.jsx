@@ -1,21 +1,25 @@
-import React from 'react'
+import React, { useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
-import { deleteRole,setRoleUpdate} from '../../slices/roles'
+import {
+  deleteRole,
+  setRoleUpdate,
+} from '../../slices/roles'
 import RoleModal from './UpdateRoleModal';
+import { TableCell, TableRow, Button } from '@windmill/react-ui'
 
 
 const RoleItem = ({ role }) => {
- 
   const dispatch = useAppDispatch()
-
-  function deleteConfirm(e, roleId) {
-    e.preventDefault()
-    if (confirm('Delete?')) {
-      dispatch(deleteRole(roleId))
+  const deleteConfirm = ((e, roleId) => {
+      e.preventDefault()
+      if (confirm('Delete?')) {
+        dispatch(deleteRole(roleId)) 
+      }
     }
-  }
-
+  )
+   
+  
   const [openUpdate, setOpenUpdate] = React.useState(false)
 
   const handleOpenUpdate = (e, role) => {
@@ -36,8 +40,8 @@ const RoleItem = ({ role }) => {
   return (
     <>
       <RoleModal modalDialog={modalUpdate} />
-      <tr key={role.Role_Id}>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+      <TableRow key={role.Role_Id}>
+            <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
               <div className="flex items-center">
                 
                 <div className="ml-3">
@@ -50,16 +54,16 @@ const RoleItem = ({ role }) => {
                   </p>
                 </div>
               </div>
-            </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+            </TableCell>
+            <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
               <Link to="#">
                 <a className="text-blue-400 whitespace-no-wrap">
                   {role.Role_Description || role.roledescription}
                 </a>
               </Link>
-            </td>
+            </TableCell>
            
-            <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
+            <TableCell className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
               <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
                 <span
                   aria-hidden
@@ -81,8 +85,8 @@ const RoleItem = ({ role }) => {
                   Delete
                 </a>
               </span>
-            </td>
-          </tr>
+            </TableCell>
+          </TableRow>
     </>
   )
 }

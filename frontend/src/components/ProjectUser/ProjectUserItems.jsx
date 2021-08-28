@@ -13,7 +13,11 @@ import {
   lime,
   blueGrey,
 } from '@material-ui/core/colors'
+import { TableCell, TableRow, Button } from '@windmill/react-ui'
 import { makeStyles } from '@material-ui/core/styles'
+import { useToasts } from 'react-toast-notifications'
+import { Select } from '@windmill/react-ui'
+
 //list colour
 const colours = [
   blue[800],
@@ -34,6 +38,9 @@ const useStyles = makeStyles(() => ({
 }))
 export default function ProjectUserItems({ dataItem, projectkey }) {
   const dispatch = useAppDispatch()
+  const { addToast } = useToasts()
+
+  //delete user project
   function deleteConfirm(e, userId) {
     let dataDelete = {
       UserId: userId,
@@ -45,12 +52,12 @@ export default function ProjectUserItems({ dataItem, projectkey }) {
     }
   }
   const [roleId, setroleId] = useState(dataItem.RoleId)
-
+  //load role
   const { roles, loading, hasErrors } = useSelector(rolesSelector)
   useEffect(() => {
     dispatch(fetchRoles())
   }, [dispatch])
-
+  //render role
   var options = roles.map((option) => {
     return (
       <option key={option.Role_Id} value={option.Role_Id}>
@@ -68,10 +75,17 @@ export default function ProjectUserItems({ dataItem, projectkey }) {
     }
     ProjectUserRoleApi.updateRoleUserInProject(data)
       .then((res) => {
-        console.log(res)
+        addToast(res.Msg, {
+          appearance: 'success',
+          autoDismiss: true,
+        })
+        
       })
       .catch((err) => {
-        alert(err.response.data.Msg)
+         addToast(err.response.data.Msg, {
+           appearance: 'error',
+           autoDismiss: true,
+         })
       })
   }
 
@@ -87,8 +101,8 @@ export default function ProjectUserItems({ dataItem, projectkey }) {
   return (
     <>
       {/* <UpdateUserModal modalDialog={modalUpdate} /> */}
-      <tr key={dataItem.UserId}>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+      <TableRow key={dataItem.UserId}>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
             <div className="flex-shrink-0 w-10 h-10">{Ava()}</div>
             <div className="ml-3">
@@ -97,19 +111,23 @@ export default function ProjectUserItems({ dataItem, projectkey }) {
               </p>
             </div>
           </div>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">
             {dataItem.UserMail}
           </p>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">
-            <select value={roleId} onChange={handleChange}>
+            <Select
+              className="py-2 px-3 rounded-md border border-purple-500 mt-1"
+              value={roleId}
+              onChange={handleChange}
+            >
               {options}
-            </select>
+            </Select>
           </p>
-        </td>
+        </TableCell>
         <td className="px-5 py-5 border-b text-center border-gray-200 bg-white text-sm">
           <span className="relative inline-block px-3 py-1 ml-1.5 font-semibold text-green-900 leading-tight">
             <span
@@ -124,7 +142,7 @@ export default function ProjectUserItems({ dataItem, projectkey }) {
             </a>
           </span>
         </td>
-      </tr>
+      </TableRow>
     </>
   )
 }
