@@ -3,23 +3,22 @@ import UserDropdown from './UserDropdown'
 import { Link } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { getMe,logout, inforUserSelector } from '../../slices/infouser'
+import { getMe, logout, inforUserSelector } from '../../slices/infouser'
 import { useAppDispatch } from '../../store'
+import { AddIssueForm } from '../Issue/AddIssueForm'
 function Navbar() {
   const [isLogged, setIsLogged] = useState(false)
   const dispatch = useAppDispatch()
-  const {inforUser, success, errorMessage, loading, hasErrors } =
-      useSelector(inforUserSelector)
+  const { inforUser, success, errorMessage, loading, hasErrors } =
+    useSelector(inforUserSelector)
   useEffect(() => {
     setIsLogged(!!localStorage.getItem('accessToken'))
   })
-useEffect(() => {
-  if (isLogged) {
-    dispatch(getMe())
-  }
-}, [isLogged])
- 
-
+  useEffect(() => {
+    if (isLogged) {
+      dispatch(getMe())
+    }
+  }, [isLogged])
 
   return (
     <>
@@ -62,12 +61,9 @@ useEffect(() => {
               </Link>
             </li>
             <li>
-              <Link
-                to="/addIssue"
-                className="bg-white border shadow-sm ml-4 px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700"
-              >
-                Create Issue
-              </Link>
+              <div className="text-white ml-4 hover:text-yellow-300 cursor-pointer">
+                <AddIssueForm />
+              </div>
             </li>
             <div className="relative ml-5 text-gray-600 mr-4 lg:block hidden">
               <input
@@ -176,6 +172,5 @@ useEffect(() => {
     </>
   )
 }
-
 
 export default Navbar

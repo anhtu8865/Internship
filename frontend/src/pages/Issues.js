@@ -8,11 +8,11 @@ import {
 } from '../slices/issues'
 
 const IssueExcerpt = ({ issue }) => {
-  const dispatch = useDispatch()
-  function deleteConfirm(e, Id) {
-    e.preventDefault()
-    dispatch(deleteIssue({ Id }))
-  }
+  // const dispatch = useDispatch()
+  // function deleteConfirm(e, Id) {
+  //   e.preventDefault()
+  //   dispatch(deleteIssue({ Id }))
+  // }
   return (
     <tr key={issue.Id}>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">

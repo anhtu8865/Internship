@@ -164,7 +164,7 @@ export const ScreenCustomFields = () => {
       <div className="py-8">
         <div>
           <h2 className="text-2xl font-semibold leading-tight">
-            {`Screen name: ${screen.Name}`}
+            {`Screen: ${screen.Name}`}
           </h2>
         </div>
         <div className="my-2 flex justify-between sm:flex-row flex-col">

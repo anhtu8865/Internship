@@ -3,12 +3,23 @@ import { useDispatch } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
 import { useHistory } from 'react-router-dom'
 import { addNewScreen } from '../../slices/screens'
+import {
+  Input,
+  Label,
+  Select,
+  Textarea,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+} from '@windmill/react-ui'
 
 export const AddScreenForm = () => {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [addRequestStatus, setAddRequestStatus] = useState('idle')
-
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const dispatch = useDispatch()
   const history = useHistory()
   const onNameChanged = (e) => setName(e.target.value)
@@ -20,82 +31,62 @@ export const AddScreenForm = () => {
     if (canSave) {
       try {
         setAddRequestStatus('pending')
+        setName('')
+        setDescription('')
         const resultAction = await dispatch(
           addNewScreen({ Name: name, Description: description })
         )
-        history.push(`/screens`)
         unwrapResult(resultAction)
-        setName('')
-        setDescription('')
       } catch (err) {
         console.error('Failed to save the screen: ', err)
       } finally {
         setAddRequestStatus('idle')
+        closeModal()
       }
     }
   }
+  function openModal() {
+    setIsModalOpen(true)
+  }
+  function closeModal() {
+    setIsModalOpen(false)
+  }
   return (
-    <main>
-      <section className="absolute w-full h-full">
-        <div className="container mx-auto px-4 h-full">
-          <div className="flex content-center items-center justify-center h-full">
-            <div className="w-full lg:w-4/12 px-4">
-              <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300 border-0">
-                <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-                  <div className="text-gray-500 text-center mb-3 font-bold">
-                    <h2>Add a New Screen</h2>
-                  </div>
-                  <form>
-                    <div className="relative w-full mb-3">
-                      <label
-                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="screenName"
-                      >
-                        Screen Name:
-                      </label>
-                      <input
-                        type="text"
-                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                        //placeholder="Email"
-                        value={name}
-                        onChange={onNameChanged}
-                        style={{ transition: 'all .15s ease' }}
-                      />
-                    </div>
+    <>
+      <div className="absolute">
+        <Button onClick={openModal}>Create</Button>
+      </div>
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <ModalHeader className="m-2">Add a screen</ModalHeader>
+        <ModalBody class="overflow-auto h-80">
+          <Label className="m-2">
+            <span>Name</span>
+            <Input className="mt-1" value={name} onChange={onNameChanged} />
+          </Label>
 
-                    <div className="relative w-full mb-3">
-                      <label
-                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="screenDescription"
-                      >
-                        Description:
-                      </label>
-                      <textarea
-                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                        //placeholder="Password"
-                        value={description}
-                        onChange={onDescriptionChanged}
-                        style={{ transition: 'all .15s ease' }}
-                      />
-                    </div>
-                    <div className="text-center mt-6">
-                      <button
-                        className="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
-                        type="button"
-                        onClick={onSaveScreenClicked}
-                        disabled={!canSave}
-                        style={{ transition: 'all .15s ease' }}
-                      >
-                        Save Screen
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
+          <Label className="m-2">
+            <span>Description</span>
+            <Textarea
+              className="mt-1"
+              rows="3"
+              value={description}
+              onChange={onDescriptionChanged}
+            />
+          </Label>
+        </ModalBody>
+        <ModalFooter>
+          <div className="hidden sm:block">
+            <Button layout="outline" onClick={closeModal}>
+              Cancel
+            </Button>
           </div>
-        </div>
-      </section>
-    </main>
+          <div className="hidden sm:block">
+            <Button onClick={onSaveScreenClicked} disabled={!canSave}>
+              Accept
+            </Button>
+          </div>
+        </ModalFooter>
+      </Modal>
+    </>
   )
 }
