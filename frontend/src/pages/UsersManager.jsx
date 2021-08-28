@@ -103,7 +103,7 @@ const Users = () => {
 
           <div className="flex">
             <Link to="/create-user">
-              <Button size="large">Create User</Button>
+              <Button>Create User</Button>
             </Link>
           </div>
         </div>

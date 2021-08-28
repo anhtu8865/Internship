@@ -84,9 +84,11 @@ export default function ProjectUserRole() {
             </h2>
           </div>
           <div className="my-2 flex justify-between sm:flex-row flex-col">
+            <div className="flex flex-row mb-1 sm:mb-0"></div>
+
             <div className="flex">
               <a onClick={(e) => handleAddUser(e)}>
-                <Button size="large">Add User</Button>
+                <Button>Add User</Button>
               </a>
             </div>
           </div>

@@ -59,9 +59,10 @@ const Roles = () => {
           </div>
         </div>
         <div className="my-2 flex justify-between sm:flex-row flex-col">
+            <div className="flex flex-row mb-1 sm:mb-0"></div>
           <div className="flex">
             <Link to="/create-roles">
-              <Button size="large">Create role</Button>
+              <Button>Create role</Button>
             </Link>
           </div>
         </div>

@@ -89,9 +89,11 @@ export default function DetailPermission() {
             </p>
           </div>
           <div className="my-2 flex justify-between sm:flex-row flex-col">
+            <div className="flex flex-row mb-1 sm:mb-0"></div>
+
             <div className="flex">
               <a onClick={(e) => handleOpenUpdate(e)}>
-                <Button size="large">Add role</Button>
+                <Button >Add role</Button>
               </a>
             </div>
           </div>
