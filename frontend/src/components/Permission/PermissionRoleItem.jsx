@@ -2,6 +2,8 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
 import { deleteRoleInPermission } from '../../slices/per-role'
+import { TableCell, TableRow, Button } from '@windmill/react-ui'
+
 export default function PermissionRoleItem({ permission_role }) {
 
   const dispatch = useAppDispatch()
@@ -18,8 +20,8 @@ export default function PermissionRoleItem({ permission_role }) {
   return (
     <>
       {/* <RoleModal modalDialog={modalUpdate} /> */}
-      <tr>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+      <TableRow>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
             <div className="ml-3">
               <p className="text-gray-900 whitespace-no-wrap">
@@ -31,35 +33,8 @@ export default function PermissionRoleItem({ permission_role }) {
               </p>
             </div>
           </div>
-        </td>
-        {/* <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-            <Link to="#">
-              <a className="text-blue-400 whitespace-no-wrap">
-                {permission.Permission_Description}
-              </a>
-            </Link>
-          </td> */}
-        {/* <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-            <Link to="#">
-              <ul className="text-blue-400 whitespace-no-wrap">
-                {renderPermissionRole()}
-              </ul>
-            </Link>
-          </td> */}
-
-        <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
-          {/* <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-              <span
-                aria-hidden
-                className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-              />
-               <a 
-                // onClick={(e) => handleOpenUpdate(e,permission)}
-                className="relative cursor-pointer"
-              >
-                Edit
-              </a>
-            </span> */}
+        </TableCell>
+        <TableCell className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
           <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden
@@ -72,8 +47,8 @@ export default function PermissionRoleItem({ permission_role }) {
               Delete
             </a>
           </span>
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     </>
   )
 }

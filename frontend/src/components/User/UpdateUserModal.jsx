@@ -1,22 +1,31 @@
 import React from 'react'
 import DialogModal from '../DialogModal'
-import FormInput from '../Form/FormInput'
+import FormInput from '../Form/FormInputNew'
 import { useForm } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { useAppDispatch } from '../../store'
 import { usersSelector, updateUser } from '../../slices/users'
 import { DialogActions, DialogContent } from '../DialogModal'
-// import FormSelect from '../Form/FormSelect'
+import { useToasts } from 'react-toast-notifications'
+import {
+  Button,
+} from '@windmill/react-ui'
 
-import Button from '@material-ui/core/Button'
 
 function UpdateUserModal({ modalDialog }) {
   const dispatch = useAppDispatch()
+  const { addToast } = useToasts()
   const { register, handleSubmit } = useForm()
-  const { userUpdate } = useSelector(usersSelector)
+  const { userUpdate, updateMess, updateSuccess } = useSelector(usersSelector)
   const { handleClose } = modalDialog
   const onSubmit = (data) => {
     dispatch(updateUser({ id: userUpdate.User_Id, data }))
+    if (updateSuccess) {
+      addToast(updateMess, {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+    }
     handleClose()
   }
   return (
@@ -46,7 +55,7 @@ function UpdateUserModal({ modalDialog }) {
                 Global Role
               </label>
               <select
-                className="py-2 px-3 rounded-md border border-green-500 mt-2 focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-transparent"
+                className="py-2 px-3 rounded-md border border-purple-500 mt-2 focus:outline-none focus:ring-1 focus:ring-purple-700 focus:border-transparent"
                 {...register('globalrole')}
               >
                 <option value="0">Admin</option>
@@ -56,10 +65,12 @@ function UpdateUserModal({ modalDialog }) {
             </div>
           </DialogContent>
           <DialogActions>
-            <div className="my-3 mx-5">
-              <Button onClick={handleClose} color="secondary">
+            <div className="hidden sm:block m-2">
+              <Button layout="outline" onClick={handleClose}>
                 Cancel
               </Button>
+            </div>
+            <div className="hidden sm:block m-2">
               <Button type="submit" color="primary">
                 Submit
               </Button>

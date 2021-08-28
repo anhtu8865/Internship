@@ -1,8 +1,19 @@
 import React from 'react'
 // import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
-import { deleteUser, setUserUpdate } from '../../slices/users'
+import {
+  usersSelector,
+  deleteUser,
+  setUserUpdate,
+  
+} from '../../slices/users'
 import UpdateUserModal from './UpdateUserModal';
+import { useSelector } from 'react-redux'
+import {
+  TableCell,
+  TableRow,
+  Button,
+} from '@windmill/react-ui'
 import Avatar from '@material-ui/core/Avatar'
 import {
   orange,
@@ -13,6 +24,9 @@ import {
   blueGrey,
 } from '@material-ui/core/colors'
 import { makeStyles } from '@material-ui/core/styles'
+import { EditIcon, TrashIcon } from '../../icons'
+import { useToasts } from 'react-toast-notifications'
+
 //list colour
 const colours = [
   blue[800],
@@ -34,6 +48,9 @@ const useStyles = makeStyles(() => ({
 
 const UserItem = ({ user }) => {
   const dispatch = useAppDispatch()
+  const {  updateMess, updateSuccess } = useSelector(usersSelector)
+  const { addToast } = useToasts()
+
   //delete user from list user
   function deleteConfirm(e, userId) {
     e.preventDefault()
@@ -82,8 +99,8 @@ const UserItem = ({ user }) => {
   return (
     <>
       <UpdateUserModal modalDialog={modalUpdate} />
-      <tr key={user.User_Id}>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+      <TableRow key={user.User_Id}>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
             <div className="flex-shrink-0 w-10 h-10">{Ava()}</div>
             <div className="ml-3">
@@ -92,19 +109,17 @@ const UserItem = ({ user }) => {
               </p>
             </div>
           </div>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <p className="text-gray-900 whitespace-no-wrap">
-            {user.User_Name}
-          </p>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+          <p className="text-gray-900 whitespace-no-wrap">{user.User_Name}</p>
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">{user.User_Email}</p>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <p className="text-gray-900 whitespace-no-wrap">{globalrole}</p>
-        </td>
-        <td className="px-5 py-5 border-b text-center border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden
@@ -129,8 +144,8 @@ const UserItem = ({ user }) => {
               Delete
             </a>
           </span>
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     </>
   )
 }

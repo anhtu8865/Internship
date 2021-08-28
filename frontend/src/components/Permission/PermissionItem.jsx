@@ -7,6 +7,8 @@ import {
   fetchPermissionRoles,
   permissionRolesSelector,
 } from '../../slices/per-role'
+import { TableCell, TableRow, Button } from '@windmill/react-ui'
+
 import { useHistory } from 'react-router-dom'
 import { setPermissionUpdate } from '../../slices/permission'
 import permissionApi from '../../api/permissionApi'
@@ -42,8 +44,8 @@ const PermissionItem = ({ permission }) => {
   return (
     <>
       {/* <RoleModal modalDialog={modalUpdate} /> */}
-      <tr key={permission.Permission_Id}>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+      <TableRow key={permission.Permission_Id}>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
             <div className="ml-3">
               <p className="text-gray-900 whitespace-no-wrap">
@@ -55,14 +57,14 @@ const PermissionItem = ({ permission }) => {
               </p>
             </div>
           </div>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <Link to="#">
             <a className="text-blue-400 whitespace-no-wrap">
               {permission.Permission_Description}
             </a>
           </Link>
-        </td>
+        </TableCell>
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <Link to="#">
             <ul className="text-blue-400 whitespace-no-wrap">
@@ -71,7 +73,7 @@ const PermissionItem = ({ permission }) => {
           </Link>
         </td>
 
-        <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
+        <TableCell className="px-5 py-5  border-b border-gray-200 bg-white text-sm">
           <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden
@@ -84,20 +86,8 @@ const PermissionItem = ({ permission }) => {
               Edit
             </a>
           </span>
-          {/* <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
-                <span
-                  aria-hidden
-                  className="absolute inset-0 bg-red-400 opacity-50 rounded-full"
-                />
-                <a
-                  // onClick={(e) => deleteConfirm(e,role.Role_Id)}
-                  className="relative cursor-pointer text-red-900"
-                >
-                  Delete
-                </a>
-              </span> */}
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     </>
   )
 }

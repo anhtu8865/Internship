@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import DialogModal from '../DialogModal'
 import { DialogActions, DialogContent } from '../DialogModal'
 import FormInput from '../Form/FormInput'
-import Button from '@material-ui/core/Button'
+import { Button } from '@windmill/react-ui'
 import { useForm } from 'react-hook-form'
 import { useAppDispatch } from '../../store'
 import { AddRoleToPermission } from '../../slices/per-role'
@@ -65,7 +65,7 @@ export default function UpdateRolePermission({ modalDialog }) {
                 Project Role
               </label>
               <select
-                className="py-2 px-3 rounded-md border border-green-500 mt-2 focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-transparent"
+                className="py-2 px-3 rounded-md border border-purple-500 mt-2 focus:outline-none focus:ring-1 focus:ring-purple-700 focus:border-transparent"
                 {...register('idrole')}
               >
                 {options}
@@ -73,10 +73,12 @@ export default function UpdateRolePermission({ modalDialog }) {
             </div>
           </DialogContent>
           <DialogActions>
-            <div className="my-3 mx-5">
-              <Button onClick={handleClose} color="secondary">
+            <div className="hidden sm:block m-2">
+              <Button layout="outline" onClick={handleClose}>
                 Cancel
               </Button>
+            </div>
+            <div className="hidden sm:block m-2">
               <Button type="submit" color="primary">
                 Submit
               </Button>
