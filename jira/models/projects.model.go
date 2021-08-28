@@ -266,7 +266,7 @@ func (pr *ProjectsModel) GetProjectLeadByKeyProject(projectkey string) ([]Projec
 
 func (pm *ProjectsModel) Check_project(n string, k string) ([]Project, error) {
 	var temp_project []Project
-	query := fmt.Sprintf("SELECT A.PROJECT_KEY, A.PROJECT_NAME, A.PROJECT_URL, A.PROJECT_AVATAR, A.PROJECT_DESCRIPTION, A.PROJECT_LEAD, B.ID_WORKFLOW FROM NEW_JIRA_PROJECT A, NEW_JIRA_WORKFLOWPROJECT B WHERE A.PROJECT_KEY = '%v' AND A.PROJECT_KEY = B.PROJECT_KEY", n)
+	query := fmt.Sprintf("SELECT A.PROJECT_KEY, A.PROJECT_NAME, A.PROJECT_URL, A.PROJECT_AVATAR, A.PROJECT_DESCRIPTION, A.PROJECT_LEAD, B.ID_WORKFLOW FROM NEW_JIRA_PROJECT A, NEW_JIRA_WORKFLOWPROJECT B WHERE A.PROJECT_KEY = '%v' AND A.PROJECT_KEY = B.PROJECT_KEY", k)
 	rows, err := DbOracle.Db.Query(query)
 	if err == nil {
 		for rows.Next() {

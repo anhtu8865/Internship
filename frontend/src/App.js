@@ -30,7 +30,7 @@ import { ScreenCustomFields } from './pages/ScreenCustomFields'
 import { ProjectIssueTypeScreens } from './pages/ProjectIssueTypeScreens'
 import Workflows from './pages/Workflows';
 import CreateWorkflow from './pages/CreateWorkflow';
-import CreateTransition from './pages/CreateTransition';
+// import CreateTransition from './pages/CreateTransition';
 import AddWorkflow from './pages/AddWorkflow';
 import CreateStatus from './pages/CreateStatus';
 import Statuss from './pages/StatusManager';
@@ -91,9 +91,9 @@ function App() {
           <Route path="/create-statuss">
             <CreateStatus></CreateStatus>
           </Route>
-          <Route path="/create-transitions">
+          {/* <Route path="/create-transitions">
             <CreateTransition />
-          </Route>
+          </Route> */}
           <Route path="/screens">
             <Screens />
           </Route>

@@ -3,18 +3,30 @@ import { useForm } from "react-hook-form";
 import WorkflowApi from "../api/workflowApi";
 import { useHistory } from 'react-router-dom'
 import React from 'react'
+import { useToasts } from 'react-toast-notifications'
 // import { useAppDispatch } from '../store'
 // import { createWorkflow } from "../slices/Workflows";
 
 export default function CreateWorkflow() {
+    const {addToast} = useToasts()
     const{register,handleSubmit} = useForm();
     const history = useHistory()
     const onSubmit = data => {
         console.log(data)
         WorkflowApi.createWorkflow(data).then(()=>{
-            alert('Create Workflow Success')
+            //alert('Create Workflow Success')
+            addToast("Create Workflow Success", {
+                        appearance: 'success',
+                        autoDismiss: true,
+                      })
             history.push('/workflows-manager')
-        }).catch(err => alert(err))
+        }).catch(err => 
+         //alert(err)
+         addToast("The NAME WORKFLOW is exsited!!!", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
+         )
     }
     // const history = useHistory()
     //  const dispatch = useAppDispatch()

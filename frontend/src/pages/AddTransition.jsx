@@ -4,10 +4,12 @@ import TransitionApi from "../api/transitionApi";
 import { useHistory } from 'react-router-dom'
 import React from 'react'
 import Select from 'react-select'
+import { useToasts } from 'react-toast-notifications'
 // import { useAppDispatch } from '../store'
 // import { createTransition } from "../slices/Transitions";
 
 export default function CreateTransition(modalDialog) {
+    const { addToast } = useToasts()
     const {fulldata} = modalDialog
     let temp = JSON.parse(localStorage.getItem('Status') || '[]' )
     let temp1 = JSON.parse(localStorage.getItem('Workflow') || '[]' )
@@ -17,8 +19,12 @@ export default function CreateTransition(modalDialog) {
     const onSubmit = data => {
         console.log(data)
         if(data.Status1Id == data.Status2Id){
-          alert("Not Success")
-          alert("STATUS1 must be different from STATUS2")
+          // alert("Not Success")
+          // alert("STATUS1 must be different from STATUS2")
+          addToast("STATUS1 must be different from STATUS2", {
+                      appearance: 'error',
+                      autoDismiss: true,
+                    })
         }
         else{
         let statusname1
@@ -47,7 +53,11 @@ export default function CreateTransition(modalDialog) {
         }
         console.log(postData)
         TransitionApi.createTransition(postData).then(()=>{
-            alert('Create Transition Success')
+            //alert('Create Transition Success')
+            addToast("Create Transition Success", {
+              appearance: 'success',
+              autoDismiss: true,
+            })
             history.push('/transitions-manager')
         }).catch(err => alert(err))
       }

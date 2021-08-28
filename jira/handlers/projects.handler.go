@@ -157,7 +157,8 @@ func (u *ProjectsHandler) CreateProject() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "The parameters are not enough"})
 		} else {
 			Exist_project, err := models.ProjectsModels.Check_project(project_name, project_key)
-
+			fmt.Println(Exist_project)
+			fmt.Println("KKKK")
 			if err != nil {
 				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running 1 query"})
 

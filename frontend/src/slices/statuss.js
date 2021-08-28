@@ -7,6 +7,8 @@ export const initialState = {
   hasErrors: false,
   statuss: [],
   statusUpdate: {},
+  updateMess: '',
+  updateSuccess: false,
 }
 
 //slice
@@ -22,6 +24,7 @@ const statussSlice = createSlice({
         (status) => status.StatusId !== action.payload
       )
       state.statuss = filteredStatus
+      state.updateSuccess = true
     },
     startLoading: (state) => {        
         state.loading = true
@@ -47,11 +50,19 @@ const statussSlice = createSlice({
             ))
         state.statuss = newStatuss
 
-    }
+    },
+    removeUpdateSuccess: (state, action) => {
+      state.updateMess = action.payload
+      state.updateSuccess = true
+},
+    deleteState: (state) => {
+      state.updateSuccess = false
+      state.updateMess = {}
+},
   },
 })
 
-const {addStatus, getStatusSuccess,startLoading,getStatusFailure,removeStatus} =
+const {removeUpdateSuccess,deleteState ,addStatus, getStatusSuccess,startLoading,getStatusFailure,removeStatus} =
 statussSlice.actions
 
 const {actions} = statussSlice
@@ -97,15 +108,20 @@ export const deleteStatus = (id) => async(dispatch) =>{
   statusApi
   .delete(id)
   .then((res)=>{
+    dispatch(removeUpdateSuccess(res.Msg))
     dispatch(removeStatus(id))
+    
     console.log(res)
+    return res
   })
   .catch((err)=>{
     dispatch(getStatusFailure())
     return(err)
   })
 }
-
+export const setState = () => async (dispatch) => {
+  dispatch(deleteState())
+}
 export const setStatusUpdate = (status) => async(dispatch) =>{
   try {
     console.log("=====")
@@ -122,7 +138,8 @@ export const updateStatus = (status) => async(dispatch) =>{
   .updateStatus(status)
   .then((res)=>{
     dispatch(actions.updateStatus(status))
-    return res
+    dispatch(actions.removeUpdateSuccess(res.Msg))
+    
   })
   .catch((err)=>{
     dispatch(getStatusFailure())

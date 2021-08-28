@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import DialogModal from '../DialogModal'
 import { DialogActions, DialogContent } from '../DialogModal'
 import FormInput from '../Form/FormInput'
-import Button from '@material-ui/core/Button'
+
+import { Button } from '@windmill/react-ui'
 import { useForm } from 'react-hook-form'
 import { useAppDispatch } from '../../store'
 import { AddProjectToWorkflow } from '../../slices/wor-pro'
@@ -104,10 +105,12 @@ export default function UpdateProjectWorkflow({ modalDialog }) {
             </div>
           </DialogContent>
           <DialogActions>
-            <div className="my-3 mx-5">
-              <Button onClick={handleClose} color="secondary">
+            <div className="hidden sm:block m-2">
+              <Button layout="outline" onClick={handleClose} color="secondary">
                 Cancel
               </Button>
+              </div>
+            <div className="hidden sm:block m-2">
               <Button type="submit" color="primary">
                 Submit
               </Button>

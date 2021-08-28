@@ -3,18 +3,30 @@ import { useForm } from "react-hook-form";
 import statusApi from "../api/statusApi";
 import { useHistory } from 'react-router-dom'
 import React from 'react'
+import { useToasts } from 'react-toast-notifications'
 // import { useAppDispatch } from '../store'
 // import { createStatus } from "../slices/statuss";
 
 export default function CreateStatus() {
+  const { addToast } = useToasts()
     const{register,handleSubmit} = useForm();
     const history = useHistory()
     const onSubmit = data => {
         console.log(data)
         statusApi.createStatus(data).then(()=>{
-            alert('Create Status Success')
+            //alert('Create Status Success')
+            addToast("Create Status Success", {
+              appearance: 'success',
+              autoDismiss: true,
+            })
             history.push('/statuss-manager')
-        }).catch(err => alert(err))
+        }).catch(err => 
+          //alert(err)
+          addToast("The Name Stastus is Existed", {
+            appearance: 'error',
+            autoDismiss: true,
+          })
+          )
     }
     // const history = useHistory()
     //  const dispatch = useAppDispatch()
