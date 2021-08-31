@@ -22,7 +22,8 @@ import {
   Badge,
 } from '@windmill/react-ui'
 
-export const UpdateIssueForm = ({ issue }) => {
+export const ViewIssueForm = ({ issueId }) => {
+  const issue = useSelector((state) => selectIssueById(state, issueId))
   const dispatch = useDispatch()
   const { register, handleSubmit, reset } = useForm()
   const [name, setName] = useState(issue.Name)
@@ -96,6 +97,7 @@ export const UpdateIssueForm = ({ issue }) => {
                 className="mt-1"
                 {...register(item.Name)}
                 defaultValue={item.Value}
+                disabled={true}
               />
             </Label>
           )
@@ -108,6 +110,7 @@ export const UpdateIssueForm = ({ issue }) => {
                 className="mt-1"
                 {...register(item.Name)}
                 defaultValue={item.Value}
+                disabled={true}
               />
             </Label>
           )
@@ -119,6 +122,7 @@ export const UpdateIssueForm = ({ issue }) => {
                 className="mt-1"
                 {...register(item.Name)}
                 defaultValue={item.Value}
+                disabled={true}
               />
             </Label>
           )
@@ -130,6 +134,7 @@ export const UpdateIssueForm = ({ issue }) => {
                 className="mt-1"
                 {...register(item.Name)}
                 defaultValue={item.Value}
+                disabled={true}
               >
                 <option value=""></option>
                 {userOptions}
@@ -144,18 +149,18 @@ export const UpdateIssueForm = ({ issue }) => {
     <>
       <Badge
         className="hover:bg-green-200 cursor-pointer"
-        type={'success'}
+        type={'primary'}
         onClick={openModal}
       >
-        Edit
+        View
       </Badge>
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <ModalHeader className="m-2">Edit a issue</ModalHeader>
         <ModalBody class="overflow-auto h-80">
-          <Label className="m-2">
+          <Label className="m-2 disabled:opacity-50">
             <span>Name</span>
-            <Input className="mt-1" value={name} onChange={onNameChanged} />
+            <Input className="mt-1" value={name} onChange={onNameChanged} disabled={true} />
           </Label>
           <Label className="m-2">
             <span>Key</span>
@@ -182,7 +187,7 @@ export const UpdateIssueForm = ({ issue }) => {
 
           <Label className="m-2">
             <span>{status}</span>
-            <Select className="mt-1" value="" onChange={onStatusChanged}>
+            <Select className="mt-1" value="" onChange={onStatusChanged} disabled={true}>
               <option value=""></option>
               {transitionOptions}
             </Select>
@@ -195,14 +200,14 @@ export const UpdateIssueForm = ({ issue }) => {
               Cancel
             </Button>
           </div>
-          <div className="hidden sm:block">
+          {/* <div className="hidden sm:block">
             <Button
               onClick={handleSubmit(onSaveIssueClicked)}
               disabled={!canSave}
             >
               Accept
             </Button>
-          </div>
+          </div> */}
         </ModalFooter>
       </Modal>
     </>

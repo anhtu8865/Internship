@@ -72,12 +72,12 @@ export const AddCustomFieldForm = () => {
   ))
   return (
     <>
-      <div className="absolute">
+      <div>
         <Button onClick={openModal}>Create</Button>
       </div>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <ModalHeader className="m-2">Add a custom field</ModalHeader>
-        <ModalBody class="overflow-auto h-80">
+        <ModalBody>
           <Label className="m-2">
             <span>Name</span>
             <Input className="mt-1" value={name} onChange={onNameChanged} />

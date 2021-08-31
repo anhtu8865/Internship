@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { selectAllScreens, fetchScreens, deleteScreen, setErrorNull, setSuccessNull } from '../slices/screens'
+import {
+  selectAllScreens,
+  fetchScreens,
+  deleteScreen,
+  setErrorNull,
+  setSuccessNull,
+} from '../slices/screens'
 import {
   selectAllScreenCustomFields,
   fetchScreenCustomFields,
@@ -17,70 +23,65 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  TableBody,
+  TableContainer,
+  Table,
+  TableHeader,
+  TableCell,
+  TableRow,
+  TableFooter,
+  Avatar,
+  Badge,
+  Pagination,
 } from '@windmill/react-ui'
 import { AddScreenForm } from '../components/Screen/AddScreenForm'
 import { UpdateScreenForm } from '../components/Screen/UpdateScreenForm'
 
-
 const ScreenExcerpt = ({ screen, listCustomFields, openModal }) => {
   return (
-    <tr key={screen.Id}>
-      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <div className="flex items-center">
-          <div className="ml-3">
-            <p className="text-gray-900 whitespace-no-wrap">
-              <Link to="#">
-                <a className="text-blue-400 whitespace-no-wrap">
-                  {screen.Name}
-                </a>
-              </Link>
-            </p>
+    <TableRow key={screen.Id}>
+      <TableCell>
+        <div className="flex items-center text-sm">
+          <div>
+            <p className="font-semibold">{screen.Name}</p>
           </div>
         </div>
-      </td>
-      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <p className="text-gray-900 whitespace-no-wrap">{screen.Description}</p>
-      </td>
-      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+      </TableCell>
+      <TableCell>
+        <span className="text-sm">{screen.Description}</span>
+      </TableCell>
+      <TableCell>
         {listCustomFields.map((customField) => (
-          <p key={customField.Id} className="text-gray-900 whitespace-no-wrap">
+          <p className="text-sm" key={customField.Id}>
             {customField.Name}
           </p>
         ))}
-      </td>
-      <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
-        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-        <UpdateScreenForm screenId={screen.Id} />
-        </span>
-        <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
-          <span
-            aria-hidden
-            className="absolute inset-0 bg-red-400 opacity-50 rounded-full"
-          />
-          <a
-            onClick={() => openModal(screen.Id)}
-            className="relative cursor-pointer text-red-900"
-          >
-            Delete
-          </a>
-        </span>
-        <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
-          <span
-            aria-hidden
-            className="absolute inset-0 bg-blue-400 opacity-50 rounded-full"
-          />
+      </TableCell>
+      <TableCell>
+        <UpdateScreenForm screen={screen} />
+        <Badge
+          className="ml-1 hover:bg-red-200 cursor-pointer"
+          type={'danger'}
+          onClick={() => openModal(screen.Id)}
+        >
+          Delete
+        </Badge>
+        <Badge
+          className="ml-1 hover:bg-gray-200 cursor-pointer"
+          type={'neutral'}
+          onClick={() => openModal(screen.Id)}
+        >
           <Link
             to={{
               pathname: `/screenCustomFields/${screen.Id}`,
               state: { screen, listCustomFields },
             }}
-            className="relative cursor-pointer text-blue-900"
           >
             Configure
           </Link>
-        </span>
-      </td>
-    </tr>
+        </Badge>
+      </TableCell>
+    </TableRow>
   )
 }
 
@@ -105,7 +106,16 @@ export const Screens = () => {
     (state) => state.screenCustomFields.error
   )
   const errorCustomFields = useSelector((state) => state.customFields.error)
+  const [page, setPage] = useState(1)
+  const [data, setData] = useState([])
+  // pagination setup
+  const resultsPerPage = 2
+  const totalResults = screens.length
 
+  // pagination change control
+  function onPageChange(p) {
+    setPage(p)
+  }
   useEffect(() => {
     if (screenStatus === 'idle') {
       dispatch(fetchScreens())
@@ -121,16 +131,27 @@ export const Screens = () => {
         appearance: 'error',
         autoDismiss: true,
       })
-      dispatch(setErrorNull({error: null}))
+      dispatch(setErrorNull({ error: null }))
     }
     if (success) {
       addToast(success, {
         appearance: 'success',
         autoDismiss: true,
       })
-      dispatch(setSuccessNull({success: null}))
+      dispatch(setSuccessNull({ success: null }))
     }
-  }, [screenStatus, screenCustomFieldStatus, customFieldStatus, dispatch, error, success])
+    
+  }, [
+    screenStatus,
+    screenCustomFieldStatus,
+    customFieldStatus,
+    dispatch,
+    error,
+    success,
+  ])
+  useEffect(() => {
+    setData(screens.slice((page - 1) * resultsPerPage, page * resultsPerPage))
+  }, [screens, page])
   function openModal(id) {
     setIsModalOpen(true)
     setId(id)
@@ -156,7 +177,7 @@ export const Screens = () => {
     screenCustomFieldStatus === 'succeeded' &&
     customFieldStatus === 'succeeded'
   ) {
-    let tbody = screens.map((screen) => {
+    let tbody = data.map((screen) => {
       const listCustomFieldsId = screenCustomFields.filter(
         (row) => row?.Screen == screen.Id
       )
@@ -176,14 +197,40 @@ export const Screens = () => {
           key={screen.Id}
           screen={screen}
           listCustomFields={listCustomFields}
-        openModal={openModal}
+          openModal={openModal}
         />
       )
     })
     content = (
       <div className="container mx-auto px-4 mb-16 sm:px-8">
         <div className="py-8">
-        <Modal isOpen={isModalOpen} onClose={closeModal}>
+          <div className="mb-5 my-2 flex justify-between sm:flex-row flex-col">
+            <h2 className="text-2xl font-semibold leading-tight">Screens</h2>
+            <AddScreenForm />
+          </div>
+          <TableContainer>
+            <Table>
+              <TableHeader>
+                <tr>
+                  <TableCell>Name</TableCell>
+
+                  <TableCell>Description</TableCell>
+                  <TableCell>Custom fields</TableCell>
+                  <TableCell>Action</TableCell>
+                </tr>
+              </TableHeader>
+              <TableBody>{tbody}</TableBody>
+            </Table>
+            <TableFooter>
+              <Pagination
+                totalResults={totalResults}
+                resultsPerPage={resultsPerPage}
+                label="Table navigation"
+                onChange={onPageChange}
+              />
+            </TableFooter>
+          </TableContainer>
+          <Modal isOpen={isModalOpen} onClose={closeModal}>
             <ModalHeader>Delete ?</ModalHeader>
             <ModalBody>
               {
@@ -191,11 +238,6 @@ export const Screens = () => {
               }
             </ModalBody>
             <ModalFooter>
-              {/* I don't like this approach. Consider passing a prop to ModalFooter
-               * that if present, would duplicate the buttons in a way similar to this.
-               * Or, maybe find some way to pass something like size="large md:regular"
-               * to Button
-               */}
               <div className="hidden sm:block">
                 <Button layout="outline" onClick={closeModal}>
                   Cancel
@@ -206,48 +248,6 @@ export const Screens = () => {
               </div>
             </ModalFooter>
           </Modal>
-          <div>
-            <h2 className="text-2xl font-semibold leading-tight">Screens</h2>
-          </div>
-          <div className="mb-10 my-2 flex justify-between sm:flex-row flex-col">
-            <AddScreenForm />
-          </div>
-          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-            <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-              <table className="min-w-full leading-normal">
-                <thead>
-                  <tr>
-                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Description
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Custom Fields
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>{tbody}</tbody>
-              </table>
-              <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between          ">
-                <span className="text-xs xs:text-sm text-gray-900">
-                  Showing 1 to 4 of 50 Entries
-                </span>
-                <div className="inline-flex mt-2 xs:mt-0">
-                  <button className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-l">
-                    Prev
-                  </button>
-                  <button className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-r">
-                    Next
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     )
@@ -256,14 +256,8 @@ export const Screens = () => {
     screenCustomFieldStatus === 'failed' ||
     customFieldStatus === 'failed'
   ) {
-    content = (
-      <div>{(error, errorScreenCustomField, errorCustomFields)}</div>
-    )
+    content = <div>{(error, errorScreenCustomField, errorCustomFields)}</div>
   }
 
-  return (
-    <section className="screens-list">
-      {content}
-    </section>
-  )
+  return <section className="screens-list">{content}</section>
 }

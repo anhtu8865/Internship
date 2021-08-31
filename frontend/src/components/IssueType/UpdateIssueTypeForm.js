@@ -13,12 +13,10 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  Badge,
 } from '@windmill/react-ui'
 
-export const UpdateIssueTypeForm = ({ issueTypeId }) => {
-  const issueType = useSelector((state) =>
-    selectIssueTypeById(state, issueTypeId)
-  )
+export const UpdateIssueTypeForm = ({ issueType }) => {
   const [name, setName] = useState(issueType.Name)
   const [icon, setIcon] = useState(issueType.Icon)
   const [description, setDescription] = useState(issueType.Description)
@@ -40,16 +38,10 @@ export const UpdateIssueTypeForm = ({ issueTypeId }) => {
   const onSaveIssueTypeClicked = async () => {
     if (canSave) {
       try {
-        console.log({
-          Id: issueTypeId,
-          Name: name,
-          Icon: icon,
-          Description: description,
-        })
         setUpdateRequestStatus('pending')
         const resultAction = await dispatch(
           updateIssueType({
-            Id: issueTypeId,
+            Id: issueType.Id,
             Name: name,
             Icon: icon,
             Description: description,
@@ -75,15 +67,13 @@ export const UpdateIssueTypeForm = ({ issueTypeId }) => {
   }
   return (
     <>
-      <div>
-        <span
-          aria-hidden
-          className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-        />
-        <a onClick={openModal} className="relative cursor-pointer">
-          Edit
-        </a>
-      </div>
+      <Badge
+        className="hover:bg-green-200 cursor-pointer"
+        type={'success'}
+        onClick={openModal}
+      >
+        Edit
+      </Badge>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <ModalHeader className="m-2">Edit a issue type</ModalHeader>
         <ModalBody class="overflow-auto h-80">
@@ -95,8 +85,6 @@ export const UpdateIssueTypeForm = ({ issueTypeId }) => {
             <span>Icon</span>
             <Input className="mt-1" value={icon} onChange={onIconChanged} />
           </Label>
-
-          
 
           <Label className="m-2">
             <span>Description</span>
