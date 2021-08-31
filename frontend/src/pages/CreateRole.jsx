@@ -13,7 +13,7 @@ export default function CreateRole() {
         console.log(data)
         roleApi.createRole(data).then(()=>{
             alert('Create Role Success')
-            history.push('/roles-manager')
+            history.goBack()
         }).catch(err => alert(err))
     }
   

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
 import App from './App'
@@ -6,14 +6,19 @@ import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
 import store from './store'
 import { Windmill } from '@windmill/react-ui'
-
+import { SidebarProvider } from './context/SidebarContext'
+import ThemedSuspense from './components/ThemedSuspense'
 ReactDOM.render(
   <React.StrictMode>
-    <Windmill>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </Windmill>
+    <SidebarProvider>
+      <Suspense fallback={<ThemedSuspense />}>
+      <Windmill usePreferences>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </Windmill>
+      </Suspense>
+    </SidebarProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )

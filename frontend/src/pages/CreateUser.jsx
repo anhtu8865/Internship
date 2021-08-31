@@ -15,7 +15,7 @@ function CreateUser() {
       .create(data)
       .then(() => {
         alert('Create User Success')
-        history.push('/user-manager')
+        history.goBack()
       })
       .catch((err) =>
       addToast(err.response.data.Msg, {

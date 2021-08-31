@@ -3,7 +3,7 @@ import './App.css'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import CreateUser from './pages/CreateUser'
 import Login from './pages/Login'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, lazy } from 'react'
 import Home from './pages/Home'
 import Layout from './components/Layout'
 import Projects from './pages/Projects'
@@ -40,139 +40,148 @@ import UpdateWorkflowModal from './pages/UpdateWorkflow';
 import Profile from './pages/Profile'
 import TransitionItemForProject from './pages/TransitionManagerForProject'
 import { ToastProvider } from 'react-toast-notifications';
+const Layout2 = lazy(() => import('./containers/Layout'))
+// import Layout2 from './containers/Layout'
 
 function App() {
   return (
     <ToastProvider
-    //autoDismiss
-    autoDismissTimeout={3000}
-    // components={{ Toast: Snack }}
-    // placement="bottom-center"
-  >
-    <Router>
-      <Switch>
-        <Layout>
-          <Route path="/login" component={Login} />
-          <Route path="/create-user">
-            <CreateUser />
-          </Route>
-          <Route path="/create-roles">
-            <CreateRole />
-          </Route>
-          <Route path="/projects">
-            <Projects />
-          </Route>
-          <Route path="/update-workflows">
-            <UpdateWorkflowModal></UpdateWorkflowModal>
-          </Route>
+      //autoDismiss
+      autoDismissTimeout={3000}
+      // components={{ Toast: Snack }}
+      // placement="bottom-center"
+    >
+      <Router>
+        <Switch>
+          <Route path="/admin" component={Layout2} />
+          <Layout>
+            <Route path="/login" component={Login} />
+            {/* <Route path="admin/create-user">
+              <CreateUser />
+            </Route> */}
+            <Route path="/create-roles">
+              <CreateRole />
+            </Route>
+            <Route path="/projects">
+              <Projects />
+            </Route>
+            <Route path="/update-workflows">
+              <UpdateWorkflowModal></UpdateWorkflowModal>
+            </Route>
 
-          <Route path="/create-workflows">
-            <CreateWorkflow />
-          </Route>
-          <Route path="/workflows-manager">
-            <Workflows></Workflows>
-          </Route>
-          <Route path="/add-workflows">
-            <AddWorkflow></AddWorkflow>
-          </Route>
-          <Route path="/transitionsforproject-manager">
-            <TransitionItemForProject></TransitionItemForProject>
-          </Route>
-          <Route path="/add-transitions">
-            <AddTransition></AddTransition>
-          </Route>
+            <Route path="/create-workflows">
+              <CreateWorkflow />
+            </Route>
+            <Route path="/workflows-manager">
+              <Workflows></Workflows>
+            </Route>
+            <Route path="/add-workflows">
+              <AddWorkflow></AddWorkflow>
+            </Route>
+            <Route path="/transitionsforproject-manager">
+              <TransitionItemForProject></TransitionItemForProject>
+            </Route>
+            <Route path="/add-transitions">
+              <AddTransition></AddTransition>
+            </Route>
 
-          <Route path="/statuss-manager">
-            <Statuss></Statuss>
-          </Route>
-          <Route path="/transitions-manager">
-            <Transition></Transition>
-          </Route>
-          <Route path="/create-statuss">
-            <CreateStatus></CreateStatus>
-          </Route>
-          {/* <Route path="/create-transitions">
+            <Route path="/statuss-manager">
+              <Statuss></Statuss>
+            </Route>
+            <Route path="/transitions-manager">
+              <Transition></Transition>
+            </Route>
+            <Route path="/create-statuss">
+              <CreateStatus></CreateStatus>
+            </Route>
+            {/* <Route path="/create-transitions">
             <CreateTransition />
           </Route> */}
-          <Route path="/screens">
-            <Screens />
-          </Route>
-          <Route path="/addScreen">
-            <AddScreenForm />
-          </Route>
+            <Route path="/screens">
+              <Screens />
+            </Route>
+            <Route path="/addScreen">
+              <AddScreenForm />
+            </Route>
 
-          <Route
-            exact
-            path="/editScreen/:screenId"
-            component={UpdateScreenForm}
-          />
-          <Route
-            exact
-            path="/screenCustomFields/:screenId"
-            component={ScreenCustomFields}
-          />
-          <Route
-            exact
-            path="/projectIssueTypeScreens/:issueTypeId"
-            component={ProjectIssueTypeScreens}
-          />
+            <Route
+              exact
+              path="/editScreen/:screenId"
+              component={UpdateScreenForm}
+            />
+            <Route
+              exact
+              path="/screenCustomFields/:screenId"
+              component={ScreenCustomFields}
+            />
+            <Route
+              exact
+              path="/projectIssueTypeScreens/:issueTypeId"
+              component={ProjectIssueTypeScreens}
+            />
 
-          <Route path="/customFields">
-            <CustomFields />
-          </Route>
-          <Route path="/addCustomField">
-            <AddCustomFieldForm />
-          </Route>
+            <Route path="/customFields">
+              <CustomFields />
+            </Route>
+            <Route path="/addCustomField">
+              <AddCustomFieldForm />
+            </Route>
 
-          <Route
-            exact
-            path="/editCustomField/:customFieldId"
-            component={UpdateCustomFieldForm}
-          />
-          <Route path="/issueTypes">
-            <IssueTypes />
-          </Route>
-          <Route path="/issues">
-            <Issues />
-          </Route>
-          <Route path="/addIssueType">
-            <AddIssueTypeForm />
-          </Route>
-          <Route path="/addIssue">
-            <AddIssueForm />
-          </Route>
-          <Route
-            exact
-            path="/editIssueType/:issueTypeId"
-            component={UpdateIssueTypeForm}
-          />
+            <Route
+              exact
+              path="/editCustomField/:customFieldId"
+              component={UpdateCustomFieldForm}
+            />
+            <Route path="/issueTypes">
+              <IssueTypes />
+            </Route>
+            <Route path="/issues">
+              <Issues />
+            </Route>
+            <Route path="/addIssueType">
+              <AddIssueTypeForm />
+            </Route>
+            <Route path="/addIssue">
+              <AddIssueForm />
+            </Route>
+            <Route
+              exact
+              path="/editIssueType/:issueTypeId"
+              component={UpdateIssueTypeForm}
+            />
 
-          <Route exact path="/editIssue/:issueId" component={UpdateIssueForm} />
-          <Route exact path="/IssuesByProject/:project" component={IssuesByProject} />
-          <Route path="/user-manager">
-            <Users></Users>
-          </Route>
-          <Route path="/roles-manager">
-            <Roles></Roles>
-          </Route>
-          <Route path="/permission-manager">
-            <PermissionManager></PermissionManager>
-          </Route>
-          <Route path="/detail-permission">
-            <DetailPermission></DetailPermission>
-          </Route>
-          <Route path="/project-user/:keyProject-:nameProject">
-            <ProjectUserRole></ProjectUserRole>
-          </Route>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route path="/profile">
-            <Profile></Profile>
-          </Route>
-        </Layout>
-      </Switch>
-    </Router>
+            <Route
+              exact
+              path="/editIssue/:issueId"
+              component={UpdateIssueForm}
+            />
+            <Route
+              exact
+              path="/IssuesByProject/:project"
+              component={IssuesByProject}
+            />
+
+            {/* <Route path="/roles-manager">
+              <Roles></Roles>
+            </Route> */}
+            {/* <Route path="/permission-manager">
+              <PermissionManager></PermissionManager>
+            </Route>
+            <Route path="/detail-permission">
+              <DetailPermission></DetailPermission>
+            </Route> */}
+            <Route path="/project-user/:keyProject-:nameProject">
+              <ProjectUserRole></ProjectUserRole>
+            </Route>
+            <Route exact path="/">
+              <Home />
+            </Route>
+            <Route path="/profile">
+              <Profile></Profile>
+            </Route>
+          </Layout>
+        </Switch>
+      </Router>
     </ToastProvider>
   )
 }

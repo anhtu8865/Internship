@@ -25,19 +25,7 @@ const Users = () => {
   const { users, loading, hasErrors, updateMess, updateSuccess } =
     useSelector(usersSelector)
 
-  // // setup pages control for every table
-  // const [pageTable, setPageTable] = useState(1)
 
-  // // // setup data for every table
-  // const [dataTable, setDataTable] = useState([])
-
-  // // // pagination setup
-  // const resultsPerPage = 10
-  // const totalResults = users.length
-  // // // pagination change control
-  // function onPageChangeTable(p) {
-  //   setPageTable(p)
-  // }
   //get data user
   useEffect(() => {
     dispatch(fetchUsers())
@@ -53,13 +41,7 @@ const Users = () => {
       dispatch(setState())
     }
   }, [updateSuccess])
-  // // on page change, load new sliced data
-  // // here you would make another server request for new data
-  // useEffect(() => {
-  //   setDataTable(
-  //     users.slice((pageTable - 1) * resultsPerPage, pageTable * resultsPerPage)
-  //   )
-  // }, [pageTable])
+
 
   //render usr
   const renderUsers = () => {
@@ -102,7 +84,7 @@ const Users = () => {
           </div>
 
           <div className="flex">
-            <Link to="/create-user">
+            <Link to="user-manager/create-user">
               <Button>Create User</Button>
             </Link>
           </div>
@@ -122,14 +104,6 @@ const Users = () => {
                 </TableHeader>
                 <TableBody>{renderUsers()}</TableBody>
               </Table>
-              {/* <TableFooter>
-                <Pagination
-                  totalResults={totalResults}
-                  resultsPerPage={resultsPerPage}
-                  onChange={onPageChangeTable}
-                  label="Table navigation"
-                />
-              </TableFooter> */}
             </TableContainer>
           </div>
         </div>
