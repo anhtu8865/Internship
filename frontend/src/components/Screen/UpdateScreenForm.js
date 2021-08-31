@@ -13,10 +13,10 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  Badge,
 } from '@windmill/react-ui'
 
-export const UpdateScreenForm = ({ screenId }) => {
-  const screen = useSelector((state) => selectScreenById(state, screenId))
+export const UpdateScreenForm = ({ screen }) => {
   const [name, setName] = useState(screen.Name)
   const [description, setDescription] = useState(screen.Description)
   const [updateRequestStatus, setUpdateRequestStatus] = useState('idle')
@@ -38,7 +38,7 @@ export const UpdateScreenForm = ({ screenId }) => {
       try {
         setUpdateRequestStatus('pending')
         const resultAction = await dispatch(
-          updateScreen({ Id: screenId, Name: name, Description: description })
+          updateScreen({ Id: screen.Id, Name: name, Description: description })
         )
         unwrapResult(resultAction)
       } catch (err) {
@@ -59,18 +59,16 @@ export const UpdateScreenForm = ({ screenId }) => {
   }
   return (
     <>
-      <div>
-        <span
-          aria-hidden
-          className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-        />
-        <a onClick={openModal} className="relative cursor-pointer">
-          Edit
-        </a>
-      </div>
+      <Badge
+        className="hover:bg-green-200 cursor-pointer"
+        type={'success'}
+        onClick={openModal}
+      >
+        Edit
+      </Badge>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <ModalHeader className="m-2">Edit a screen</ModalHeader>
-        <ModalBody class="overflow-auto h-80">
+        <ModalBody>
           <Label className="m-2">
             <span>Name</span>
             <Input className="mt-1" value={name} onChange={onNameChanged} />

@@ -16,6 +16,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  Badge,
 } from '@windmill/react-ui'
 
 const fieldTypes = [
@@ -25,10 +26,7 @@ const fieldTypes = [
   { Id: '3', Name: 'People' },
 ]
 
-export const UpdateCustomFieldForm = ({ customFieldId }) => {
-  const customField = useSelector((state) =>
-    selectCustomFieldById(state, customFieldId)
-  )
+export const UpdateCustomFieldForm = ({ customField }) => {
   const [name, setName] = useState(customField.Name)
   const [fieldType, setFieldType] = useState(customField.Field_Type)
   const [description, setDescription] = useState(customField.Description)
@@ -52,7 +50,7 @@ export const UpdateCustomFieldForm = ({ customFieldId }) => {
     if (canSave) {
       try {
         console.log({
-          Id: customFieldId,
+          Id: customField.Id,
           Name: name,
           Field_Type: fieldType,
           Description: description,
@@ -60,7 +58,7 @@ export const UpdateCustomFieldForm = ({ customFieldId }) => {
         setUpdateRequestStatus('pending')
         const resultAction = await dispatch(
           updateCustomField({
-            Id: customFieldId,
+            Id: customField.Id,
             Name: name,
             Field_Type: fieldType,
             Description: description,
@@ -91,18 +89,10 @@ export const UpdateCustomFieldForm = ({ customFieldId }) => {
   ))
   return (
     <>
-      <div>
-        <span
-          aria-hidden
-          className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-        />
-        <a onClick={openModal} className="relative cursor-pointer">
-          Edit
-        </a>
-      </div>
+      <Badge className="hover:bg-green-200 cursor-pointer" type={'success'} onClick={openModal}>Edit</Badge>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <ModalHeader className="m-2">Edit a custom field</ModalHeader>
-        <ModalBody class="overflow-auto h-80">
+        <ModalBody>
           <Label className="m-2">
             <span>Name</span>
             <Input className="mt-1" value={name} onChange={onNameChanged} />

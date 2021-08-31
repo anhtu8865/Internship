@@ -61,7 +61,7 @@ export const AddIssueTypeForm = () => {
 
   return (
     <>
-      <div className="absolute">
+      <div>
         <Button onClick={openModal}>Create</Button>
       </div>
       <Modal isOpen={isModalOpen} onClose={closeModal}>

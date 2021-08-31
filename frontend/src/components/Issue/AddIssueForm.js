@@ -105,7 +105,10 @@ export const AddIssueForm = () => {
   const onNameChanged = (e) => setName(e.target.value)
   const onKeyChanged = (e) => setKey(e.target.value)
   const onIssueTypeChanged = (e) => setIssueTypeName(e.target.value)
-  const onProjectChanged = (e) => setProjectName(e.target.value)
+  const onProjectChanged = (e) => {
+    setProjectName(e.target.value)
+    setIssueTypeName('')
+  }
   const canSave =
     [name, key, projectName, issueTypeName].every(Boolean) &&
     addRequestStatus === 'idle'
@@ -126,6 +129,7 @@ export const AddIssueForm = () => {
           Value: data[item.Name],
           Issue: key,
         }))
+        reset()
         const resultAction = await dispatch(
           addNewIssue({
             Key: key,
@@ -141,7 +145,6 @@ export const AddIssueForm = () => {
         console.error('Failed to save the issue: ', err)
       } finally {
         setAddRequestStatus('idle')
-        reset()
       }
     }
   }

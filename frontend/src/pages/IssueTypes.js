@@ -21,6 +21,16 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  TableBody,
+  TableContainer,
+  Table,
+  TableHeader,
+  TableCell,
+  TableRow,
+  TableFooter,
+  Avatar,
+  Badge,
+  Pagination,
 } from '@windmill/react-ui'
 import { AddIssueTypeForm } from '../components/IssueType/AddIssueTypeForm'
 import { UpdateIssueTypeForm } from '../components/IssueType/UpdateIssueTypeForm'
@@ -31,61 +41,45 @@ const IssueTypeExcerpt = ({
   openModal,
 }) => {
   return (
-    <tr key={issueType.Id}>
-      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <div className="flex items-center">
-          <div className="ml-3">
-            <p className="text-gray-900 whitespace-no-wrap">
-              <Link to="#">
-                <a className="text-blue-400 whitespace-no-wrap">
-                  {issueType.Name}
-                </a>
-              </Link>
-            </p>
+    <TableRow key={issueType.Id}>
+      <TableCell>
+        <div className="flex items-center text-sm">
+          <div>
+            <p className="font-semibold">{issueType.Name}</p>
           </div>
         </div>
-      </td>
-      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <p className="text-gray-900 whitespace-no-wrap">{issueType.Icon}</p>
-      </td>
-      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <p className="text-gray-900 whitespace-no-wrap">
-          {issueType.Description}
-        </p>
-      </td>
-      <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
-        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-          <UpdateIssueTypeForm issueTypeId={issueType.Id} />
-        </span>
-        <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
-          <span
-            aria-hidden
-            className="absolute inset-0 bg-red-400 opacity-50 rounded-full"
-          />
-          <a
-            onClick={() => openModal(issueType.Id)}
-            className="relative cursor-pointer text-red-900"
-          >
-            Delete
-          </a>
-        </span>
-        <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
-          <span
-            aria-hidden
-            className="absolute inset-0 bg-blue-400 opacity-50 rounded-full"
-          />
+      </TableCell>
+      <TableCell>
+        <span className="text-sm">{issueType.Icon}</span>
+      </TableCell>
+      <TableCell>
+        <span className="text-sm">{issueType.Description}</span>
+      </TableCell>
+      <TableCell>
+        <UpdateIssueTypeForm issueType={issueType} />
+        <Badge
+          className="ml-1 hover:bg-red-200 cursor-pointer"
+          type={'danger'}
+          onClick={() => openModal(issueType.Id)}
+        >
+          Delete
+        </Badge>
+        <Badge
+          className="ml-1 hover:bg-gray-200 cursor-pointer"
+          type={'neutral'}
+          onClick={() => openModal(issueType.Id)}
+        >
           <Link
             to={{
               pathname: `/projectIssueTypeScreens/${issueType.Id}`,
               state: { issueType, projectIssueTypeScreensHaveName },
             }}
-            className="relative cursor-pointer text-blue-900"
           >
             Configure
           </Link>
-        </span>
-      </td>
-    </tr>
+        </Badge>
+      </TableCell>
+    </TableRow>
   )
 }
 
@@ -112,7 +106,16 @@ export const IssueTypes = () => {
     (state) => state.projectIssueTypeScreens.error
   )
   const errorScreens = useSelector((state) => state.screens.error)
+  const [page, setPage] = useState(1)
+  const [data, setData] = useState([])
+  // pagination setup
+  const resultsPerPage = 10
+  const totalResults = issueTypes.length
 
+  // pagination change control
+  function onPageChange(p) {
+    setPage(p)
+  }
   useEffect(() => {
     if (issueTypeStatus === 'idle') {
       dispatch(fetchIssueTypes())
@@ -148,6 +151,11 @@ export const IssueTypes = () => {
     error,
     success,
   ])
+  useEffect(() => {
+    setData(
+      issueTypes.slice((page - 1) * resultsPerPage, page * resultsPerPage)
+    )
+  }, [issueTypes, page])
   function openModal(id) {
     setIsModalOpen(true)
     setId(id)
@@ -195,7 +203,7 @@ export const IssueTypes = () => {
       })
     })
 
-    let tbody = issueTypes.map((issueType) => {
+    let tbody = data.map((issueType) => {
       const temp = projectIssueTypeScreensHaveName.filter(
         (item1) => item1.Issue_Type === issueType.Id
       )
@@ -211,6 +219,32 @@ export const IssueTypes = () => {
     content = (
       <div className="container mx-auto px-4 mb-16 sm:px-8">
         <div className="py-8">
+          <div className="mb-5 my-2 flex justify-between sm:flex-row flex-col">
+            <h2 className="text-2xl font-semibold leading-tight">Issue types</h2>
+            <AddIssueTypeForm />
+          </div>
+          <TableContainer>
+            <Table>
+              <TableHeader>
+                <tr>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Icon</TableCell>
+                  <TableCell>Description</TableCell>
+
+                  <TableCell>Action</TableCell>
+                </tr>
+              </TableHeader>
+              <TableBody>{tbody}</TableBody>
+            </Table>
+            <TableFooter>
+              <Pagination
+                totalResults={totalResults}
+                resultsPerPage={resultsPerPage}
+                label="Table navigation"
+                onChange={onPageChange}
+              />
+            </TableFooter>
+          </TableContainer>
           <Modal isOpen={isModalOpen} onClose={closeModal}>
             <ModalHeader>Delete ?</ModalHeader>
             <ModalBody>
@@ -219,11 +253,6 @@ export const IssueTypes = () => {
               }
             </ModalBody>
             <ModalFooter>
-              {/* I don't like this approach. Consider passing a prop to ModalFooter
-               * that if present, would duplicate the buttons in a way similar to this.
-               * Or, maybe find some way to pass something like size="large md:regular"
-               * to Button
-               */}
               <div className="hidden sm:block">
                 <Button layout="outline" onClick={closeModal}>
                   Cancel
@@ -234,48 +263,6 @@ export const IssueTypes = () => {
               </div>
             </ModalFooter>
           </Modal>
-          <div>
-            <h2 className="text-2xl font-semibold leading-tight">Issue types</h2>
-          </div>
-          <div className="mb-10 my-2 flex justify-between sm:flex-row flex-col">
-            <AddIssueTypeForm />
-          </div>
-          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-            <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-              <table className="min-w-full leading-normal">
-                <thead>
-                  <tr>
-                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Icon
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Description
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-green-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>{tbody}</tbody>
-              </table>
-              <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between          ">
-                <span className="text-xs xs:text-sm text-gray-900">
-                  Showing 1 to 4 of 50 Entries
-                </span>
-                <div className="inline-flex mt-2 xs:mt-0">
-                  <button className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-l">
-                    Prev
-                  </button>
-                  <button className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-r">
-                    Next
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     )
