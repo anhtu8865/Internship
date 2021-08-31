@@ -3,24 +3,22 @@ import UserDropdown from './UserDropdown'
 import { Link } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { getMe,logout, inforUserSelector } from '../../slices/infouser'
+import { getMe, logout, inforUserSelector } from '../../slices/infouser'
 import { useAppDispatch } from '../../store'
 import { AddIssueForm } from '../Issue/AddIssueForm'
 function Navbar() {
   const [isLogged, setIsLogged] = useState(false)
   const dispatch = useAppDispatch()
-  const {inforUser, success, errorMessage, loading, hasErrors } =
-      useSelector(inforUserSelector)
+  const { inforUser, success, errorMessage, loading, hasErrors } =
+    useSelector(inforUserSelector)
   useEffect(() => {
     setIsLogged(!!localStorage.getItem('accessToken'))
   })
-useEffect(() => {
-  if (isLogged) {
-    dispatch(getMe())
-  }
-}, [isLogged])
- 
-
+  useEffect(() => {
+    if (isLogged) {
+      dispatch(getMe())
+    }
+  }, [isLogged])
 
   return (
     <>
@@ -62,9 +60,7 @@ useEffect(() => {
                 </a>
               </Link>
             </li>
-            <li className="ml-4"> 
-              {isLogged && <AddIssueForm/> }
-            </li>
+            <li className="ml-4">{isLogged && <AddIssueForm />}</li>
             <div className="relative ml-5 text-gray-600 mr-4 lg:block hidden">
               <input
                 className="border-2 border-gray-300 bg-white h-10 pl-2 pr-8 rounded-xl text-sm focus:outline-none"
@@ -172,6 +168,5 @@ useEffect(() => {
     </>
   )
 }
-
 
 export default Navbar

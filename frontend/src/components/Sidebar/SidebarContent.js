@@ -13,10 +13,7 @@ function Icon({ icon, ...props }) {
 function SidebarContent() {
   return (
     <div className="py-4 text-gray-500 dark:text-gray-400">
-      <a className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" href="#">
-        Windmill
-      </a>
-      <ul className="mt-6">
+      <ul >
         {routes.map((route) =>
           route.routes ? (
             <SidebarSubmenu route={route} key={route.name} />

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useEffect,useContext, useState } from 'react'
 import { SidebarContext } from '../context/SidebarContext'
 import {
   SearchIcon,
@@ -10,7 +10,16 @@ import {
   OutlineCogIcon,
   OutlineLogoutIcon,
 } from '../icons'
-import { Avatar, Badge, Input, Dropdown, DropdownItem, WindmillContext } from '@windmill/react-ui'
+import {
+  Avatar,
+  Badge,
+  Input,
+  Dropdown,
+  DropdownItem,
+  WindmillContext,
+} from '@windmill/react-ui'
+import { Link } from 'react-router-dom'
+import { AddIssueForm } from '../components/Issue/AddIssueForm'
 
 function Header() {
   const { mode, toggleMode } = useContext(WindmillContext)
@@ -26,9 +35,13 @@ function Header() {
   function handleProfileClick() {
     setIsProfileMenuOpen(!isProfileMenuOpen)
   }
+  const [isLogged, setIsLogged] = useState(false)
+  useEffect(() => {
+    setIsLogged(!!localStorage.getItem('accessToken'))
+  })
 
   return (
-    <header className="z-40 py-4 w-full bg-white shadow-bottom dark:bg-gray-800">
+    <header className="z-40 py-4 bg-white shadow-bottom dark:bg-gray-800">
       <div className="container flex items-center justify-between h-full px-6 mx-auto text-purple-600 dark:text-purple-300">
         {/* <!-- Mobile hamburger --> */}
         <button
@@ -39,8 +52,30 @@ function Header() {
           <MenuIcon className="w-6 h-6" aria-hidden="true" />
         </button>
         {/* <!-- Search input --> */}
+        <a
+          className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
+          href="#"
+        >
+          Jira Admin
+        </a>
+        <Link to="/projects">
+          <a
+            href
+            className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
+          >
+            Projects
+          </a>
+        </Link>
+        <Link to="/issues">
+          <a
+            href
+            className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
+          >
+            Issues
+          </a>
+        </Link>
+        <a className="ml-4">{isLogged && <AddIssueForm />}</a>
         <div className="flex justify-center flex-1 lg:mr-32">
-         
           <div className="relative w-full max-w-xl mr-6 focus-within:text-purple-500">
             <div className="absolute inset-y-0 flex items-center pl-2">
               <SearchIcon className="w-4 h-4" aria-hidden="true" />
