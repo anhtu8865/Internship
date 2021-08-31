@@ -59,9 +59,9 @@ function App() {
             {/* <Route path="admin/create-user">
               <CreateUser />
             </Route> */}
-            <Route path="/create-roles">
+            {/* <Route path="/create-roles">
               <CreateRole />
-            </Route>
+            </Route> */}
             <Route path="/projects">
               <Projects />
             </Route>
