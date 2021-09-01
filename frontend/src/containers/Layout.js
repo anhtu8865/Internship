@@ -36,12 +36,12 @@ function Layout() {
                     <Route
                       key={i}
                       exact={true}
-                      path={`/admin${route.path}`}
+                      path={`/app${route.path}`}
                       render={(props) => <route.component {...props} />}
                     />
                   ) : null
                 })}
-                <Redirect exact from="/admin" to="/admin/user-manager" />
+                <Redirect exact from="/app" to="/app/projects" />
                 <Route component={Page404} />
               </Switch>
             </Suspense>

@@ -48,7 +48,7 @@ const RoleItem = ({ role }) => {
           <span>{role.Role_Description || role.roledescription}</span>
         </TableCell>
 
-        <TableCell className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
+        <TableCell>
           <Badge
             className="hover:bg-green-200 cursor-pointer"
             type={'success'}
@@ -68,7 +68,14 @@ const RoleItem = ({ role }) => {
               Edit
             </a>
           </span> */}
-          <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
+          <Badge
+            className="ml-1 hover:bg-red-200 cursor-pointer"
+            type={'danger'}
+            onClick={(e) => deleteConfirm(e, role.Role_Id)}
+          >
+            Delete
+          </Badge>
+          {/* <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden
               className="absolute inset-0 bg-red-400 opacity-50 rounded-full"
@@ -79,7 +86,7 @@ const RoleItem = ({ role }) => {
             >
               Delete
             </a>
-          </span>
+          </span> */}
         </TableCell>
       </TableRow>
     </>

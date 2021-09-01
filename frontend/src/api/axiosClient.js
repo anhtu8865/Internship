@@ -57,10 +57,12 @@ axiosClient.interceptors.response.use(
                 console.log('lấy data hết hạn ')
                 console.log(res.data.Data)
                 resolve(res.data.Data)
+                window.location.reload()
               })
               .catch((err) => {
                 console.log(err)
                 reject(err)
+                window.location.reload()
               })
           })
         })

@@ -7,19 +7,39 @@
  */
 const routes = [
   {
-    path: '/admin/user-manager', // the url
+    path: '/app/user-manager', // the url
     icon: 'UserIcon', // the component being exported from icons/index.js
     name: 'User Manager', // name that appear in Sidebar
   },
   {
-    path: '/admin/permission-manager',
+    path: '/app/permission-manager',
     icon: 'PermissionIcon',
     name: 'Permission Project',
   },
   {
-    path: '/admin/role-manager',
+    path: '/app/role-manager',
     icon: 'PeopleIcon',
     name: 'Role Manager',
+  },
+  {
+    path: '/app/workflows-manager',
+    icon: 'PeopleIcon',
+    name: 'Workflows Manager',
+  },
+  {
+    path: '/app/customFields',
+    icon: 'PeopleIcon',
+    name: 'CustomFields',
+  },
+  {
+    path: '/app/issueTypes',
+    icon: 'PeopleIcon',
+    name: 'IssueTypes',
+  },
+  {
+    path: '/app/status-manager',
+    icon: 'PeopleIcon',
+    name: 'Status',
   },
 ]
 

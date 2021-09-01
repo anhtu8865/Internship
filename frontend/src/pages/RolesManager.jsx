@@ -114,15 +114,15 @@ const Roles = () => {
               <Table className="min-w-full leading-normal">
                 <TableHeader>
                   <tr>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <TableCell >
                       Role Name
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    </TableCell>
+                    <TableCell>
                       Description
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    </TableCell>
+                    <TableCell >
                       Action
-                    </th>
+                    </TableCell>
                   </tr>
                 </TableHeader>
                 <TableBody>{renderRole()}</TableBody>

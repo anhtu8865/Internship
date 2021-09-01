@@ -58,7 +58,7 @@ function Header() {
         >
           Jira Admin
         </a>
-        <Link to="/projects">
+        <Link to="/app/projects">
           <a
             href
             className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
@@ -66,7 +66,7 @@ function Header() {
             Projects
           </a>
         </Link>
-        <Link to="/issues">
+        <Link to="/app/issues">
           <a
             href
             className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"

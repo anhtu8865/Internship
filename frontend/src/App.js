@@ -53,7 +53,7 @@ function App() {
     >
       <Router>
         <Switch>
-          <Route path="/admin" component={Layout2} />
+          <Route path="/app" component={Layout2} />
           <Layout>
             <Route path="/login" component={Login} />
             {/* <Route path="admin/create-user">
@@ -135,7 +135,7 @@ function App() {
             <Route path="/issueTypes">
               <IssueTypes />
             </Route>
-            <Route path="/issues">
+            <Route path="app/issues">
               <Issues />
             </Route>
             <Route path="/addIssueType">
@@ -170,9 +170,9 @@ function App() {
             <Route path="/detail-permission">
               <DetailPermission></DetailPermission>
             </Route> */}
-            <Route path="/project-user/:keyProject-:nameProject">
+            {/* <Route path="/project-user/:keyProject-:nameProject">
               <ProjectUserRole></ProjectUserRole>
-            </Route>
+            </Route> */}
             <Route exact path="/">
               <Home />
             </Route>

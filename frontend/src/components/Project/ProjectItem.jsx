@@ -59,7 +59,7 @@ const ProjectItem = ({ project }) => {
   const handleOpenTransition = (e, workflow) => {
     e.preventDefault()
     dispatch(setWorkflowUpdate(workflow))
-    history.push('/transitionsforproject-manager')
+    history.push('/app/transitionsforproject-manager')
   }
 
   return (
@@ -79,7 +79,7 @@ const ProjectItem = ({ project }) => {
             <div className="ml-3">
               <p className="text-gray-900 whitespace-no-wrap">
                 <Link
-                  to={`/IssuesByProject/${project.ProjectKey}`}
+                  to={`/app/IssuesByProject/${project.ProjectKey}`}
                   className="relative cursor-pointer text-blue-400 whitespace-no-wrap"
                 >
                   {project.ProjectName}
@@ -129,7 +129,7 @@ const ProjectItem = ({ project }) => {
               className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
             />
             <Link
-              to={`/project-user/${project.ProjectKey}-${project.ProjectName}`}
+              to={`/app/project-user/${project.ProjectKey}-${project.ProjectName}`}
               className="relative cursor-pointer"
             >
               Access
