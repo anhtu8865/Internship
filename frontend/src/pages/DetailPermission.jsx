@@ -4,7 +4,7 @@ import { permissionsSelector } from '../slices/permission'
 import {
   fetchPermissionRoles,
   permissionRolesSelector,
-  setState
+  setState,
 } from '../slices/per-role'
 import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../store'
@@ -49,14 +49,40 @@ export default function DetailPermission() {
       dispatch(setState())
     }
   }, [updateSuccess])
+
+  //search role
+  //setup search
+  const [searchTerm, setSearchTerm] = React.useState('')
+  const [searchResults, setSearchResults] = React.useState([])
+  const handleChange = (e) => {
+    setSearchTerm(e.target.value)
+  }
+  useEffect(() => {
+    const results = permissionroles.filter(
+      (role) =>
+        role.RoleName.toLowerCase().indexOf(searchTerm.toLowerCase()) != -1
+    )
+    setSearchResults(results)
+  }, [searchTerm])
   //render permission role
   const renderPermissionRole = () => {
-    return permissionroles.map((temp_role) => (
-      <PermissionRoleItem
-        key={temp_role.RoleId}
-        permission_role={temp_role}
-      ></PermissionRoleItem>
-    ))
+    if (searchTerm == '') {
+      //get full data
+      return permissionroles.map((temp_role) => (
+        <PermissionRoleItem
+          key={temp_role.RoleId}
+          permission_role={temp_role}
+        ></PermissionRoleItem>
+      ))
+    } else {
+      //after using search
+      return searchResults.map((temp_role) => (
+        <PermissionRoleItem
+          key={temp_role.RoleId}
+          permission_role={temp_role}
+        ></PermissionRoleItem>
+      ))
+    }
   }
   //open modalUpdate
   const [openUpdate, setOpenUpdate] = React.useState(false)
@@ -89,11 +115,28 @@ export default function DetailPermission() {
             </p>
           </div>
           <div className="my-2 flex justify-between sm:flex-row flex-col">
-            <div className="flex flex-row mb-1 sm:mb-0"></div>
-
+            <div className="flex flex-row mb-1 sm:mb-0">
+              {/* Ô search */}
+              <div className="flex relative">
+                <span className="h-full absolute inset-y-0 right-2 flex items-center pl-2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="h-4 w-4 fill-current text-gray-500"
+                  >
+                    <path d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z"></path>
+                  </svg>
+                </span>
+                <input
+                  placeholder="Search"
+                  className="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+                  value={searchTerm}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
             <div className="flex">
               <a onClick={(e) => handleOpenUpdate(e)}>
-                <Button >Add role</Button>
+                <Button>Add role</Button>
               </a>
             </div>
           </div>

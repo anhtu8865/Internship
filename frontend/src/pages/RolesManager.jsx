@@ -20,25 +20,47 @@ import { useToasts } from 'react-toast-notifications'
 const Roles = () => {
   const dispatch = useAppDispatch()
   const { addToast } = useToasts()
-
-  const {updateMess, updateSuccess, roles, loading, hasErrors } = useSelector(rolesSelector)
+  //roles
+  const { updateMess, updateSuccess, roles, loading, hasErrors } =
+    useSelector(rolesSelector)
   useEffect(() => {
     dispatch(fetchRoles())
   }, [dispatch])
   //notification delete,update
-   useEffect(() => {
-     if (updateSuccess) {
-       addToast(updateMess, {
-         appearance: 'success',
-         autoDismiss: true,
-       })
-       dispatch(setState())
-     }
-   }, [updateSuccess])
-   //render roles
-  const renderRole = () => {
-    return roles.map((role) => <RoleItem key={role.Role_Id} role={role} />)
+  useEffect(() => {
+    if (updateSuccess) {
+      addToast(updateMess, {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+      dispatch(setState())
+    }
+  }, [updateSuccess])
+  //search role
+  //setup search
+  const [searchTerm, setSearchTerm] = React.useState('')
+  const [searchResults, setSearchResults] = React.useState([])
+  const handleChange = (e) => {
+    setSearchTerm(e.target.value)
   }
+  useEffect(() => {
+    const results = roles.filter(
+      (role) =>
+        role.Role_Name.toLowerCase().indexOf(searchTerm.toLowerCase()) != -1
+    )
+    setSearchResults(results)
+  }, [searchTerm])
+  //render roles
+  const renderRole = () => {
+    if (searchTerm == '') { //get full data
+      return roles.map((role) => <RoleItem key={role.Role_Id} role={role} />)
+    } else {//after using search 
+      return searchResults.map((role) => (
+        <RoleItem key={role.Role_Id} role={role} />
+      ))
+    }
+  }
+
   if (loading) {
     return (
       <tr>
@@ -59,9 +81,29 @@ const Roles = () => {
           </div>
         </div>
         <div className="my-2 flex justify-between sm:flex-row flex-col">
-            <div className="flex flex-row mb-1 sm:mb-0"></div>
+          <div className="flex flex-row mb-1 sm:mb-0">
+        
+            {/* Ô search */}
+            <div className="flex relative">
+              <span className="h-full absolute inset-y-0 right-2 flex items-center pl-2">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="h-4 w-4 fill-current text-gray-500"
+                >
+                  <path d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z"></path>
+                </svg>
+              </span>
+              <input
+                placeholder="Search"
+                className="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+                value={searchTerm}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div className="flex flex-row mb-1 sm:mb-0"></div>
           <div className="flex">
-            <Link to="/create-roles">
+            <Link to="role-manager/create-role">
               <Button>Create role</Button>
             </Link>
           </div>

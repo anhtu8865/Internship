@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { fetchUsers, usersSelector, setState } from '../slices/users'
 import { Link } from 'react-router-dom'
-import UserItem from '../components/User/UserItem';
+import UserItem from '../components/User/UserItem'
 import { useAppDispatch } from '../store'
 import {
   Table,
@@ -15,6 +15,7 @@ import {
   TableContainer,
   Button,
   Pagination,
+  Select
 } from '@windmill/react-ui'
 import { useToasts } from 'react-toast-notifications'
 
@@ -25,24 +26,10 @@ const Users = () => {
   const { users, loading, hasErrors, updateMess, updateSuccess } =
     useSelector(usersSelector)
 
-  // // setup pages control for every table
-  // const [pageTable, setPageTable] = useState(1)
-
-  // // // setup data for every table
-  // const [dataTable, setDataTable] = useState([])
-
-  // // // pagination setup
-  // const resultsPerPage = 10
-  // const totalResults = users.length
-  // // // pagination change control
-  // function onPageChangeTable(p) {
-  //   setPageTable(p)
-  // }
   //get data user
   useEffect(() => {
     dispatch(fetchUsers())
   }, [dispatch])
-
   //notification delete,update
   useEffect(() => {
     if (updateSuccess) {
@@ -53,17 +40,49 @@ const Users = () => {
       dispatch(setState())
     }
   }, [updateSuccess])
-  // // on page change, load new sliced data
-  // // here you would make another server request for new data
-  // useEffect(() => {
-  //   setDataTable(
-  //     users.slice((pageTable - 1) * resultsPerPage, pageTable * resultsPerPage)
-  //   )
-  // }, [pageTable])
 
-  //render usr
+  //search user
+  //setup search
+  const [searchTerm, setSearchTerm] = React.useState('')
+  const [searchResults, setSearchResults] = React.useState([])
+  //setup select 
+  const [selectTerm, setSelectTerm] = React.useState('')
+  const handleChange = (e) => {
+    setSearchTerm(e.target.value)
+  }
+  const handleSelect = (e) =>{
+    setSelectTerm(e.target.value)
+  }
+  useEffect(() => {
+    const results = users.filter(
+      (person) =>
+        person.User_Name.toLowerCase().indexOf(searchTerm.toLowerCase()) !=
+          -1 ||
+        person.User_Email.toLowerCase().indexOf(searchTerm.toLowerCase()) !=
+          -1 ||
+        person.User_Full_Name.toLowerCase().indexOf(searchTerm.toLowerCase()) !=
+          -1
+    )
+    setSearchResults(results)
+  }, [searchTerm])
+  useEffect(() => {
+    const resultsSelect = users.filter(
+      (person) => person.Is_Admin == selectTerm
+    )
+    setSearchResults(resultsSelect)
+  }, [selectTerm])
+  //render user
   const renderUsers = () => {
-    return users.map((user) => <UserItem key={user.User_Id} user={user} />)
+    if (
+      (searchTerm == '' && selectTerm == 'All') ||
+      (searchTerm == '' && selectTerm == '')
+    ) {
+      return users.map((user) => <UserItem key={user.User_Id} user={user} />)
+    } else {
+      return searchResults.map((user) => (
+        <UserItem key={user.User_Id} user={user} />
+      ))
+    }
   }
   if (loading) {
     return (
@@ -73,7 +92,6 @@ const Users = () => {
     )
   }
   if (hasErrors) return <p>Unable to get Users.</p>
-
   return (
     <div className="container mx-auto px-4 mb-16 sm:px-8">
       <div className="py-8">
@@ -84,6 +102,18 @@ const Users = () => {
         </div>
         <div className="my-2 flex justify-between sm:flex-row flex-col">
           <div className="flex flex-row mb-1 sm:mb-0">
+            <div className="relative">
+              <Select
+                value={selectTerm}
+                onChange={handleSelect}
+                className="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500"
+              >
+                <option selected >All</option>
+                <option value="0">User Admin</option>
+                <option value="1">User Trusted</option>
+                <option value="2">User Member</option>
+              </Select>
+            </div>
             {/* Ô search */}
             <div className="flex relative">
               <span className="h-full absolute inset-y-0 right-2 flex items-center pl-2">
@@ -97,12 +127,14 @@ const Users = () => {
               <input
                 placeholder="Search"
                 className="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+                value={searchTerm}
+                onChange={handleChange}
               />
             </div>
           </div>
 
           <div className="flex">
-            <Link to="/create-user">
+            <Link to="user-manager/create-user">
               <Button>Create User</Button>
             </Link>
           </div>
@@ -122,14 +154,6 @@ const Users = () => {
                 </TableHeader>
                 <TableBody>{renderUsers()}</TableBody>
               </Table>
-              {/* <TableFooter>
-                <Pagination
-                  totalResults={totalResults}
-                  resultsPerPage={resultsPerPage}
-                  onChange={onPageChangeTable}
-                  label="Table navigation"
-                />
-              </TableFooter> */}
             </TableContainer>
           </div>
         </div>

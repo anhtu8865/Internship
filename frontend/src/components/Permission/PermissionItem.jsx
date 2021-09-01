@@ -29,7 +29,7 @@ const PermissionItem = ({ permission }) => {
   const handleOpenUpdate = (e, permission) => {
     e.preventDefault()
     dispatch(setPermissionUpdate(permission))
-    history.push('/detail-permission')
+    history.push('permission-manager/detail-permission')
   }
 
   const renderPermissionRole = () => {
