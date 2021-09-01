@@ -9,11 +9,7 @@ import {
 } from '../../slices/users'
 import UpdateUserModal from './UpdateUserModal';
 import { useSelector } from 'react-redux'
-import {
-  TableCell,
-  TableRow,
-  Button,
-} from '@windmill/react-ui'
+import { TableCell, TableRow, Button, Badge } from '@windmill/react-ui'
 import Avatar from '@material-ui/core/Avatar'
 import {
   orange,
@@ -100,28 +96,43 @@ const UserItem = ({ user }) => {
     <>
       <UpdateUserModal modalDialog={modalUpdate} />
       <TableRow key={user.User_Id}>
-        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        <TableCell>
           <div className="flex items-center">
-            <div className="flex-shrink-0 w-10 h-10">{Ava()}</div>
+            <div >{Ava()}</div>
             <div className="ml-3">
-              <p className="text-gray-900 whitespace-no-wrap">
+              <p >
                 {user.User_Full_Name}
               </p>
             </div>
           </div>
         </TableCell>
-        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <p className="text-gray-900 whitespace-no-wrap">{user.User_Name}</p>
+        <TableCell>
+          <span>{user.User_Name}</span>
         </TableCell>
-        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <p className="text-gray-900 whitespace-no-wrap">{user.User_Email}</p>
+        <TableCell>
+          <span>{user.User_Email}</span>
         </TableCell>
-        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <p className="text-gray-900 whitespace-no-wrap">{globalrole}</p>
+        <TableCell>
+          <span>{globalrole}</span>
         </TableCell>
-        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-            <span
+        <TableCell>
+          <Badge
+            className="hover:bg-green-200 cursor-pointer"
+            type={'success'}
+            onClick={(e) => handleOpenUpdate(e, user)}
+          >
+            Edit
+          </Badge>
+          <Badge
+            className="ml-1 hover:bg-red-200 cursor-pointer"
+            type={'danger'}
+            onClick={(e) => deleteConfirm(e, user.User_Id)}
+          >
+            Delete
+          </Badge>
+
+          {/* <Badge className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+            <Badge
               aria-hidden
               className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
             />
@@ -131,9 +142,9 @@ const UserItem = ({ user }) => {
             >
               Edit
             </a>
-          </span>
-          <span className="relative inline-block px-3 py-1 ml-1.5 font-semibold text-green-900 leading-tight">
-            <span
+          </Badge>
+          <Badge className="relative inline-block px-3 py-1 ml-1.5 font-semibold text-green-900 leading-tight">
+            <Badge
               aria-hidden
               className="absolute inset-0 bg-red-400 opacity-50 rounded-full"
             />
@@ -143,7 +154,7 @@ const UserItem = ({ user }) => {
             >
               Delete
             </a>
-          </span>
+          </Badge> */}
         </TableCell>
       </TableRow>
     </>

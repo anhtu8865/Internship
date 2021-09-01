@@ -7,7 +7,7 @@ import {
   fetchPermissionRoles,
   permissionRolesSelector,
 } from '../../slices/per-role'
-import { TableCell, TableRow, Button } from '@windmill/react-ui'
+import { TableCell, TableRow, Button, Badge } from '@windmill/react-ui'
 
 import { useHistory } from 'react-router-dom'
 import { setPermissionUpdate } from '../../slices/permission'
@@ -45,36 +45,18 @@ const PermissionItem = ({ permission }) => {
     <>
       {/* <RoleModal modalDialog={modalUpdate} /> */}
       <TableRow key={permission.Permission_Id}>
-        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <div className="flex items-center">
-            <div className="ml-3">
-              <p className="text-gray-900 whitespace-no-wrap">
-                <Link to="#">
-                  <a className="text-blue-400 whitespace-no-wrap">
-                    {permission.Permission_Name}
-                  </a>
-                </Link>
-              </p>
-            </div>
-          </div>
+        <TableCell>
+          <span>{permission.Permission_Name}</span>
         </TableCell>
-        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <Link to="#">
-            <a className="text-blue-400 whitespace-no-wrap">
-              {permission.Permission_Description}
-            </a>
-          </Link>
+        <TableCell>
+          <span>{permission.Permission_Description}</span>
         </TableCell>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <Link to="#">
-            <ul className="text-blue-400 whitespace-no-wrap">
-              {renderPermissionRole()}
-            </ul>
-          </Link>
-        </td>
+        <TableCell>
+          <ul>{renderPermissionRole()}</ul>
+        </TableCell>
 
-        <TableCell className="px-5 py-5  border-b border-gray-200 bg-white text-sm">
-          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+        <TableCell >
+          {/* <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden
               className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
@@ -85,7 +67,14 @@ const PermissionItem = ({ permission }) => {
             >
               Edit
             </a>
-          </span>
+          </span> */}
+          <Badge
+            className="hover:bg-green-200 cursor-pointer"
+            type={'success'}
+            onClick={(e) => handleOpenUpdate(e, permission)}
+          >
+            Edit
+          </Badge>
         </TableCell>
       </TableRow>
     </>
