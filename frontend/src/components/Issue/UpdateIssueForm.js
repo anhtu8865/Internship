@@ -36,10 +36,10 @@ export const UpdateIssueForm = ({ issue }) => {
   const [editRequestStatus, setEditRequestStatus] = useState('idle')
   const userList = useSelector(selectUserList)
   useEffect(() => {
-    if (project) {
+    if (isModalOpen) {
       dispatch(fetchUserList({ project: project }))
     }
-  }, [dispatch])
+  }, [dispatch, isModalOpen])
   const onNameChanged = (e) => setName(e.target.value)
   const onStatusChanged = (e) => setStatus(e.target.value)
   const canSave =
