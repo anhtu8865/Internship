@@ -9,6 +9,7 @@ import {
   OutlinePersonIcon,
   OutlineCogIcon,
   OutlineLogoutIcon,
+  LayersIcon,
 } from '../icons'
 import {
   Avatar,
@@ -66,6 +67,7 @@ function Header() {
           <MenuIcon className="w-6 h-6" aria-hidden="true" />
         </button>
         {/* <!-- Search input --> */}
+        <LayersIcon className="w-10 h-10" aria-hidden="true" />
         <a
           className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
           href="#"

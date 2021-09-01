@@ -28,6 +28,7 @@ import { ReactComponent as OutlineCogIcon } from './outlineCog.svg'
 import { ReactComponent as OutlineLogoutIcon } from './outlineLogout.svg'
 import {ReactComponent as PermissionIcon} from './permission.svg'
 import {ReactComponent as UserIcon} from './user.svg'
+import {ReactComponent as LayersIcon} from './layers.svg'
 export {
   ButtonsIcon,
   CardsIcon,
@@ -59,4 +60,5 @@ export {
   OutlineLogoutIcon,
   PermissionIcon,
   UserIcon,
+  LayersIcon,
 }

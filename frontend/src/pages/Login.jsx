@@ -10,7 +10,7 @@ import { useToasts } from 'react-toast-notifications'
 
 function Login(props) {
   const { register, handleSubmit } = useForm()
-    const { addToast } = useToasts()
+  const { addToast } = useToasts()
 
   const onSubmit = (data) => {
     userApi
@@ -19,8 +19,8 @@ function Login(props) {
         if (response.Msg == 'Login Success') {
           localStorage.setItem('accessToken', response.Data.access_token)
           localStorage.setItem('refreshToken', response.Data.refresh_token)
-          props.history.push('/')
-          window.location.reload()
+          props.history.push('/app')
+          // window.location.reload()
         } else {
            addToast(response.Msg, {
              appearance: 'error',

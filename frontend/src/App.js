@@ -53,9 +53,9 @@ function App() {
     >
       <Router>
         <Switch>
+          <Route path="/login" component={Login} />
           <Route path="/app" component={Layout2} />
           <Layout>
-            <Route path="/login" component={Login} />
             {/* <Route path="admin/create-user">
               <CreateUser />
             </Route> */}
