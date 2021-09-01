@@ -19,7 +19,7 @@ export default function CreateWorkflow() {
                         appearance: 'success',
                         autoDismiss: true,
                       })
-            history.push('/workflows-manager')
+            history.goBack()
         }).catch(err => 
          //alert(err)
          addToast("The NAME WORKFLOW is exsited!!!", {

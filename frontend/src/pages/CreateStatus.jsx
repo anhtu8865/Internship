@@ -19,7 +19,7 @@ export default function CreateStatus() {
               appearance: 'success',
               autoDismiss: true,
             })
-            history.push('/statuss-manager')
+            history.goBack()
         }).catch(err => 
           //alert(err)
           addToast("The Name Stastus is Existed", {

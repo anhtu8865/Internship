@@ -18,8 +18,11 @@ import {
   DropdownItem,
   WindmillContext,
 } from '@windmill/react-ui'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { AddIssueForm } from '../components/Issue/AddIssueForm'
+import { logout, inforUserSelector } from '../slices/infouser'
+import userApi from '../api/userApi'
+import { useAppDispatch } from '../store'
 
 function Header() {
   const { mode, toggleMode } = useContext(WindmillContext)
@@ -39,6 +42,17 @@ function Header() {
   useEffect(() => {
     setIsLogged(!!localStorage.getItem('accessToken'))
   })
+  //logout
+  const history = useHistory()
+  function Logout() {
+    userApi.logout().then(() => {
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
+      dispatch(logout())
+    })
+    history.push('/login')
+  }
+  const dispatch = useAppDispatch()
 
   return (
     <header className="z-40 py-4 bg-white shadow-bottom dark:bg-gray-800">
@@ -156,18 +170,21 @@ function Header() {
               isOpen={isProfileMenuOpen}
               onClose={() => setIsProfileMenuOpen(false)}
             >
-              <DropdownItem tag="a" href="#">
-                <OutlinePersonIcon
-                  className="w-4 h-4 mr-3"
-                  aria-hidden="true"
-                />
-                <span>Profile</span>
-              </DropdownItem>
+              <Link to="/app/profile">
+                <DropdownItem tag="a" href="#">
+                  <OutlinePersonIcon
+                    className="w-4 h-4 mr-3"
+                    aria-hidden="true"
+                  />
+
+                  <span>Profile</span>
+                </DropdownItem>
+              </Link>
               <DropdownItem tag="a" href="#">
                 <OutlineCogIcon className="w-4 h-4 mr-3" aria-hidden="true" />
                 <span>Settings</span>
               </DropdownItem>
-              <DropdownItem onClick={() => alert('Log out!')}>
+              <DropdownItem onClick={Logout}>
                 <OutlineLogoutIcon
                   className="w-4 h-4 mr-3"
                   aria-hidden="true"

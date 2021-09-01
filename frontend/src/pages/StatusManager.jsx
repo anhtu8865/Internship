@@ -47,12 +47,10 @@ const Statuss = () => {
         <div>
           <h2 className="text-2xl font-semibold leading-tight"> Status</h2>
         </div>
-<div className="my-2 flex justify-between sm:flex-row flex-col">
+        <div className="my-2 flex justify-between sm:flex-row flex-col">
           <div className="flex">
-            <Link to="/create-statuss">
-              <Button >
-                Create status
-              </Button>
+            <Link to="/app/status-manager/create-status">
+              <Button>Create status</Button>
             </Link>
             {/* <Link to="/invite-user">
               <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700 ml-1">

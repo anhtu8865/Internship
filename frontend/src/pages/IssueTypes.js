@@ -71,7 +71,7 @@ const IssueTypeExcerpt = ({
         >
           <Link
             to={{
-              pathname: `/projectIssueTypeScreens/${issueType.Id}`,
+              pathname: `/app/issueTypes/projectIssueTypeScreens/${issueType.Id}`,
               state: { issueType, projectIssueTypeScreensHaveName },
             }}
           >

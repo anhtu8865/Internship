@@ -40,7 +40,7 @@ const WorkflowItem = ({ workflow }) => {
       appearance: 'success',
       autoDismiss: true,
     })
-    history.push('/create-workflows')
+    history.push('/app/workflows-manager/create-workflows')
   }
   const handleOpenTransition = (e, workflow) => {
     e.preventDefault()
@@ -49,7 +49,7 @@ const WorkflowItem = ({ workflow }) => {
       appearance: 'success',
       autoDismiss: true,
     })
-    history.push('/transitions-manager')
+    history.push('/app/workflows-manager/transitions-manager')
   }
   const [openUpdate, setOpenUpdate] = React.useState(false)
 

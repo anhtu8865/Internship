@@ -17,6 +17,13 @@ const WorkFlows = lazy(()=>import('../pages/Workflows'))
 import { CustomFields } from '../pages/CustomFields'
 import { IssueTypes } from '../pages/IssueTypes'
 const Status = lazy(() => import('../pages/StatusManager'))
+const AddWorkflow = lazy(()=>import('../pages/AddWorkflow')) 
+import CreateWorkflow from '../pages/CreateWorkflow'
+import Transition from '../pages/TransitionManager'
+import { ProjectIssueTypeScreens } from '../pages/ProjectIssueTypeScreens'
+import CreateStatus from '../pages/CreateStatus'
+import Profile from '../pages/Profile'
+
 // const Modals = lazy(() => import('../pages/Modals'))
 // const Tables = lazy(() => import('../pages/Tables'))
 // // const Page404 = lazy(() => import('../pages/404'))
@@ -82,10 +89,6 @@ const routes = [
     component: Screens,
   },
   {
-    path: '/workflows-manager',
-    component: WorkFlows,
-  },
-  {
     path: '/customFields',
     component: CustomFields,
   },
@@ -94,8 +97,36 @@ const routes = [
     component: IssueTypes,
   },
   {
+    path: '/issueTypes/projectIssueTypeScreens/:issueTypeId',
+    component: ProjectIssueTypeScreens,
+  },
+  {
     path: '/status-manager',
     component: Status,
+  },
+  {
+    path: '/status-manager/create-status',
+    component: CreateStatus,
+  },
+  {
+    path: '/workflows-manager',
+    component: WorkFlows,
+  },
+  {
+    path: '/workflows-manager/add-workflows',
+    component: AddWorkflow,
+  },
+  {
+    path: '/workflows-manager/create-workflows',
+    component: CreateWorkflow,
+  },
+  {
+    path: '/workflows-manager/transitions-manager',
+    component: Transition,
+  },
+  {
+    path: '/profile',
+    component:Profile,
   },
 ]
 
