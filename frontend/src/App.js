@@ -38,7 +38,7 @@ import CreateWorkflow from './pages/CreateWorkflow';
 // import CreateTransition from './pages/CreateTransition';
 import AddWorkflow from './pages/AddWorkflow';
 import CreateStatus from './pages/CreateStatus';
-import Statuss from './pages/StatusManager';
+import Status from './pages/StatusManager';
 import Transition from './pages/TransitionManager';
 import AddTransition from './pages/AddTransition';
 import UpdateWorkflowModal from './pages/UpdateWorkflow';

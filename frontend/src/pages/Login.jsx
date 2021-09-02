@@ -6,8 +6,7 @@ import ImageLight from '../assets/img/login-office.jpeg'
 import ImageDark from '../assets/img/login-office-dark.jpeg'
 import { useAppDispatch } from '../store'
 import { useToasts } from 'react-toast-notifications'
-import { getMe, inforUserSelector } from '../slices/infouser'
-import { useSelector } from 'react-redux'
+import { getMe } from '../slices/infouser'
 
 function Login(props) {
   const { register, handleSubmit } = useForm()
