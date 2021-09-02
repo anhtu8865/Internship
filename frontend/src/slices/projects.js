@@ -5,7 +5,9 @@ export const initialState = {
   loading: false,
   hasErrors: false,
   projects: [],
-  projectUpdate: {}
+  projectUpdate: {},
+  updateWor:'',
+  updateSuccess: false,
 }
 // A slice
 const projectsSlice = createSlice({
@@ -48,12 +50,20 @@ const projectsSlice = createSlice({
       console.log(newProjects);
       state.projects = newProjects
 
-    }
+    },
+    removeUpdateSuccess: (state, action) => {
+      state.updateMess = action.payload
+      state.updateSuccess = true
+},
+    deleteState: (state) => {
+      state.updateSuccess = false
+      state.updateMess = {}
+},
   },
 })
 
 // Actions generated from the slice
-const { removeProject, startLoading, getProjectsFailure, getProjectsSuccess,GetByIdWorkflow } =
+const { removeUpdateSuccess, deleteState, removeProject, startLoading, getProjectsFailure, getProjectsSuccess,GetByIdWorkflow } =
   projectsSlice.actions
 
 const { actions } = projectsSlice
@@ -96,6 +106,7 @@ export const deleteProject = (key) => async (dispatch) => {
   projectApi
   .delete(key)
   .then((res) => {
+    // dispatch(removeUpdateSuccess(res.Msg))
     dispatch(removeProject(key))
   })
   .catch((err) => {
@@ -103,6 +114,9 @@ export const deleteProject = (key) => async (dispatch) => {
     alert(err.response.data.Msg)
             //NEW
   })
+}
+export const setState = () => async (dispatch) => {
+  dispatch(deleteState())
 }
 
 export const setProjectUpdate = (Project) => async (dispatch) => {
@@ -120,9 +134,11 @@ export const updateProject = (data) => async (dispatch) => {
   .then((res) => {
     console.log(res)
     dispatch(actions.updateProject(data))
+    dispatch(actions.removeUpdateSuccess(res.Msg))
   })
   .catch((err) => {
     console.log(err)
+    dispatch(getWorkflowFailure())
     alert(err.response.data.Msg)
       
   

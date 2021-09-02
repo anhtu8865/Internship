@@ -95,6 +95,7 @@ export const createTransition = (Transition) => async(dispatch) =>{
       dispatch(addTransition(Transition))
       return res
     }).catch((err)=>{
+      // alert(err.response.data.Msg)
       alert(err.response.data.Msg)
       dispatch(getTransitionFailure())
     })

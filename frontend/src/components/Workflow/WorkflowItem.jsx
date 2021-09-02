@@ -16,7 +16,7 @@ import {
 } from '../../slices/workflows'
 import WorkflowModal from '../../pages/UpdateWorkflow'
 import { useToasts } from 'react-toast-notifications'
-import { TableCell, TableRow, Button } from '@windmill/react-ui'
+import { TableCell, TableRow, Button,Table, ModalHeader, ModalBody,ModalFooter,Modal,Badge } from '@windmill/react-ui'
 
 const WorkflowItem = ({ workflow }) => {
   const {addToast} = useToasts()
@@ -76,105 +76,110 @@ const WorkflowItem = ({ workflow }) => {
       return <li></li>
     }
   }
+
+  // DELETE
+  const [isModalOpen, setIsModalOpen, deleteP] = useState(false)
+
+  function openModal() {
+    setIsModalOpen(true)
+  }
+ 
+
+  function closeModal() {
+    setIsModalOpen(false)
+  }
   function deleteConfirm(e, WorkflowId) {
     e.preventDefault()
-    if (confirm('Delete?')) {
+    
       dispatch(deleteWorkflow(WorkflowId))
       addToast("Delete Workflow Success", {
         appearance: 'success',
         autoDismiss: true,
       })
-    }
+    
   }
   return (
     <>
       <WorkflowModal modalDialog={modalUpdate} />
       <TableRow key={workflow.WorkflowId}>
-        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <div className="flex items-center">
-            <div className="ml-3">
-              <p className="text-gray-900 whitespace-no-wrap">
-                <Link to="#">
-                  <a className="text-blue-400 whitespace-no-wrap">
-                    {workflow.WorkflowName}
-                    
-                  </a>
-                </Link>
-              </p>
-            </div>
-          </div>
+        <TableCell className="px-5 py-5 font-semibold border-b border-gray-200 bg-white text-sm">
+          
+          <span>{workflow.WorkflowName}</span>
         </TableCell>
         <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <Link to="#">
-            <a className="text-red-400 whitespace-no-wrap">
-              {workflow.WorkflowId}
-            </a>
-          </Link>
+        
+          <span>{workflow.WorkflowId}</span>
         </TableCell>
         <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <Link to="#">
-            <a className="text-black-400 whitespace-no-wrap">
-              {workflow.WorkflowDescription}
-            </a>
-          </Link>
+          
+          <span>{workflow.WorkflowDescription}</span>
         </TableCell>
         <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <Link to="#">
-            <ul className="text-blue-400 whitespace-no-wrap">
-              {renderWorkflowProject()}
-            </ul>
-          </Link>
+          <span>{renderWorkflowProject()}</span>
         </TableCell>
 
         <TableCell className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
-          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-white-200 opacity-50 rounded-full"
-            />
-            <a
+          
+          <Badge 
+              className="hover:bg-white-200 cursor-pointer"
+              type={'status'}
               onClick={(e) => handleOpenUpdate(e, workflow)}
-              className="relative cursor-pointer"
-            >
+          >
               Add Project
-            </a>
-          </span>
-          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-blue-200 opacity-50 rounded-full"
-            />
-            <a
+          </Badge>
+          <Badge 
+              className="hover:bg-blue-200 cursor-pointer"
+              type={'button'}
               onClick={(e) => handleOpenTransition(e, workflow)}
-              className="relative cursor-pointer"
-            >
+          >
               Transition
-            </a>
-          </span>
-          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-red-200 opacity-50 rounded-full"
-            />
-            <a
-              onClick={(e) => deleteConfirm(e, workflow.WorkflowId)}
-              className="relative cursor-pointer"
-            >
-              Delete
-            </a>
-          </span>
-          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-            />
-            <a
+          </Badge>
+          <Badge 
+              className="hover:bg-green-200 cursor-pointer"
+              type={'success'}
               onClick={(e) => handleOpenUpdateWorkflow(e, workflow)}
-              className="relative cursor-pointer"
-            >
+          >
               Edit
-            </a>
-          </span>
+          </Badge>
+          <Badge 
+              className="hover:bg-red-200 cursor-pointer"
+              type={'danger'}
+              onClick={openModal}
+          >
+              Delete
+          </Badge>
+          
+          <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <ModalHeader>Delete Workflow</ModalHeader>
+        <ModalBody>
+          Are you sure DELETE this Workflow!
+        </ModalBody>
+        <ModalFooter>
+          {/* I don't like this approach. Consider passing a prop to ModalFooter
+           * that if present, would duplicate the buttons in a way similar to this.
+           * Or, maybe find some way to pass something like size="large md:regular"
+           * to Button
+           */}
+          <div className="hidden sm:block">
+            <Button layout="outline" onClick={closeModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="hidden sm:block" onClick={(e) => deleteConfirm(e, workflow.WorkflowId)}>
+            <Button>Accept</Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large" layout="outline" onClick={closeModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large">
+              Accept
+            </Button>
+          </div>
+        </ModalFooter>
+      </Modal>
           {/* <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
                 <span
                   aria-hidden

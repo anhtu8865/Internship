@@ -12,6 +12,8 @@ import { setTransitionUpdate } from '../../slices/transition'
 import transitionApi from '../../api/transitionApi'
 import { deleteTransition } from '../../slices/transition'
 import { useToasts } from 'react-toast-notifications'
+import { TableCell, TableRow, Button,Table, ModalHeader, ModalBody,ModalFooter,Modal,Badge } from '@windmill/react-ui'
+
 const TransitionItem = ({ transition }) => {
   const {addToast} = useToasts()
   const dispatch = useAppDispatch()
@@ -40,12 +42,12 @@ const TransitionItem = ({ transition }) => {
   const handleOpenUpdate = (e, transition) => {
     e.preventDefault()
     dispatch(setTransitionUpdate(transition))
-    history.push('/create-transitions')
+    history.push('/app/workflows-manager/transitions-manager/create-transitions')
   }
   const handleOpenTransition = (e, transition) => {
     e.preventDefault()
     
-    history.push('/transitions-manager')
+    history.goBack()
   }
 
   const renderTransitionStatus = () => {
@@ -58,21 +60,31 @@ const TransitionItem = ({ transition }) => {
       return <li></li>
     }
   }
+  
+  const [isModalOpen, setIsModalOpen, deleteP] = useState(false)
+
+  function openModal() {
+    setIsModalOpen(true)
+  }
+ 
+
+  function closeModal() {
+    setIsModalOpen(false)
+  }
   function deleteConfirm(e, TransitionId) {
     e.preventDefault()
-    if (confirm('Delete?')) {
-
+    
       dispatch(deleteTransition(TransitionId))
       addToast("Delete Transition Success", {
         appearance: 'success',
         autoDismiss: true,
       })
-    }
+    
   }
   return (
     <>
       {/* <StatusModal modalDialog={modalUpdate} /> */}
-      <tr key={transition.TransitionId}>
+      <TableRow key={transition.TransitionId}>
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
             <div className="ml-3">
@@ -91,22 +103,17 @@ const TransitionItem = ({ transition }) => {
             </div>
           </div>
         </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <Link to="#">
-            <a className="text-blue-400 whitespace-no-wrap">
-              {transition.Status1Name}
-            </a>
-          </Link>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <Link to="#">
-            <ul className="text-blue-400 whitespace-no-wrap">
-              {transition.Status2Name}
-            </ul>
-          </Link>
-        </td>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+          
+          <span>{transition.Status1Name}</span>
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+          
+          <span>{transition.Status2Name}</span>
+        </TableCell>
+        
 
-        <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
+        <TableCell className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
           {/* <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden
@@ -120,18 +127,45 @@ const TransitionItem = ({ transition }) => {
             </a>
           </span> */}
           
-          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-red-200 opacity-50 rounded-full"
-            />
-            <a
-              onClick={(e) => deleteConfirm(e, transition.TransitionId)}
-              className="relative cursor-pointer"
-            >
+         
+          <Badge 
+              className="hover:bg-red-200 cursor-pointer"
+              type={'danger'}
+              onClick={openModal}
+          >
               Delete
-            </a>
-          </span>
+          </Badge>
+          <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <ModalHeader>Delete Transition</ModalHeader>
+        <ModalBody>
+          Are you sure DELETE this Transition!
+        </ModalBody>
+        <ModalFooter>
+          {/* I don't like this approach. Consider passing a prop to ModalFooter
+           * that if present, would duplicate the buttons in a way similar to this.
+           * Or, maybe find some way to pass something like size="large md:regular"
+           * to Button
+           */}
+          <div className="hidden sm:block">
+            <Button layout="outline" onClick={closeModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="hidden sm:block" onClick={(e) => deleteConfirm(e, transition.TransitionId)}>
+            <Button>Accept</Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large" layout="outline" onClick={closeModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large">
+              Accept
+            </Button>
+          </div>
+        </ModalFooter>
+      </Modal>
           {/* <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
                 <span
                   aria-hidden
@@ -144,8 +178,8 @@ const TransitionItem = ({ transition }) => {
                   Delete
                 </a>
               </span> */}
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     </>
   )
 }

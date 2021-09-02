@@ -1,24 +1,34 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
 import { deleteStatus,setStatusUpdate} from '../../slices/statuss'
 import StatusModal from './UpdateStatusModal';
-import { TableCell, TableRow, Button } from '@windmill/react-ui'
+import { TableCell, TableRow, Button, ModalHeader, ModalBody,ModalFooter,Modal,Badge } from '@windmill/react-ui'
 import { useToasts } from 'react-toast-notifications'
 
 const StatusItem = ({ status }) => {
   const {addToast} = useToasts()
   const dispatch = useAppDispatch()
 
+  const [isModalOpen, setIsModalOpen, deleteP] = useState(false)
+
+  function openModal() {
+    setIsModalOpen(true)
+  }
+ 
+
+  function closeModal() {
+    setIsModalOpen(false)
+  }
   function deleteConfirm(e, statusId) {
     e.preventDefault()
-    if (confirm('Delete?')) {
+    
       dispatch(deleteStatus(statusId))
       // addToast("Delete Status Success", {
       //   appearance: 'success',
       //   autoDismiss: true,
       // })
-    }
+    
   }
 
   const [openUpdate, setOpenUpdate] = React.useState(false)
@@ -42,50 +52,66 @@ const StatusItem = ({ status }) => {
     <>
       <StatusModal modalDialog={modalUpdate} />
       <TableRow key={status.StatusId}>
-            <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <div className="flex items-center">
-                
-                <div className="ml-3">
-                  <p className="text-gray-900 whitespace-no-wrap">
-                    <Link to="#">
-                      <a className="text-blue-400 whitespace-no-wrap">
-                        {status.StatusName}
-                      </a>
-                    </Link>
-                  </p>
-                </div>
-              </div>
+            <TableCell className="px-5 py-5 font-semibold border-b border-gray-200 bg-white text-sm">
+              
+              <span>{status.StatusName}</span>
             </TableCell>
             <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <Link to="#">
-                <a className="text-blue-400 whitespace-no-wrap">
-                  {status.StatusDescription}
-                </a>
-              </Link>
+             
+              <span>{status.StatusDescription}</span>
             </TableCell>
            
             <TableCell className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
-              <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                <span
-                  aria-hidden
-                  className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-                />
-                <a
+              <Badge 
+                className="ml-1 hover:bg-green-200 cursor-pointer"
                 onClick={(e) => handleOpenUpdate(e, status)} 
-                className="relative cursor-pointer">Edit</a>
-              </span>
-              <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
-                <span
-                  aria-hidden
-                  className="absolute inset-0 bg-red-400 opacity-50 rounded-full"
-                />
-                <a
-                  onClick={(e) => deleteConfirm(e,status.StatusId)}
-                  className="relative cursor-pointer text-red-900"
-                >
+                    type={'success'} >
+              
+              
+                
+                Edit
+              </Badge>
+              <Badge 
+                    className="ml-1 hover:bg-red-200 cursor-pointer"
+                    onClick={openModal}
+                    type={'danger'} >
+                  
+                
+                  
                   Delete
-                </a>
-              </span>
+                
+              </Badge>
+              <Modal isOpen={isModalOpen} onClose={closeModal}>
+                <ModalHeader>Delete Status</ModalHeader>
+                  <ModalBody>
+                    Are you sure DELETE this Status!
+                  </ModalBody>
+                <ModalFooter>
+          {/* I don't like this approach. Consider passing a prop to ModalFooter
+           * that if present, would duplicate the buttons in a way similar to this.
+           * Or, maybe find some way to pass something like size="large md:regular"
+           * to Button
+           */}
+              <div className="hidden sm:block">
+                <Button layout="outline" onClick={closeModal}>
+                  Cancel
+                </Button>
+              </div>
+              <div className="hidden sm:block" onClick={(e) => deleteConfirm(e, status.StatusId)}>
+                <Button>Accept</Button>
+              </div>
+              <div className="block w-full sm:hidden">
+                <Button block size="large" layout="outline" onClick={closeModal}>
+                  Cancel
+                </Button>
+              </div>
+              <div className="block w-full sm:hidden">
+                <Button block size="large">
+                  Accept
+                </Button>
+              </div>
+                </ModalFooter>
+      </Modal>
             </TableCell>
           </TableRow>
     </>

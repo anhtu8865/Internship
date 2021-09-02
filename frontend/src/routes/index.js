@@ -23,7 +23,8 @@ import Transition from '../pages/TransitionManager'
 import { ProjectIssueTypeScreens } from '../pages/ProjectIssueTypeScreens'
 import CreateStatus from '../pages/CreateStatus'
 import Profile from '../pages/Profile'
-
+const CreateTransition = lazy(() => import('../pages/AddTransition'))
+import AddTransition from '../pages/AddTransition'
 // const Modals = lazy(() => import('../pages/Modals'))
 // const Tables = lazy(() => import('../pages/Tables'))
 // // const Page404 = lazy(() => import('../pages/404'))
@@ -75,6 +76,10 @@ const routes = [
   {
     path: '/transitionsforproject-manager',
     component: TransitionItemForProject,
+  },
+  {
+    path: '/workflows-manager/transitions-manager/create-transitions',
+    component: AddTransition,
   },
   {
     path: '/issues',

@@ -11,6 +11,8 @@ import { useHistory } from 'react-router-dom'
 import { setTransitionUpdate } from '../../slices/transition'
 import transitionApi from '../../api/transitionApi'
 import { deleteTransition } from '../../slices/transition'
+import { TableCell, TableRow, Button,Table, ModalHeader, ModalBody,ModalFooter,Modal,Badge } from '@windmill/react-ui'
+
 const TransitionItemForProject = ({ transition }) => {
   const dispatch = useAppDispatch()
   const history = useHistory()
@@ -65,39 +67,20 @@ const TransitionItemForProject = ({ transition }) => {
   return (
     <>
       {/* <StatusModal modalDialog={modalUpdate} /> */}
-      <tr key={transition.TransitionId}>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <div className="flex items-center">
-            <div className="ml-3">
-              <p className="text-gray-900 whitespace-no-wrap">
-                <Link to="#">
-                  <a className="text-black-400 whitespace-no-wrap">
-                    {transition.TransitionName} 
-                    
-                  </a>
-                  <a className="text-red-400 whitespace-no-wrap">
-                    ({transition.TransitionId})
-                    
-                  </a>
-                </Link>
-              </p>
-            </div>
-          </div>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <Link to="#">
-            <a className="text-blue-400 whitespace-no-wrap">
-              {transition.Status1Name}
-            </a>
-          </Link>
-        </td>
-        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <Link to="#">
-            <ul className="text-blue-400 whitespace-no-wrap">
-              {transition.Status2Name}
-            </ul>
-          </Link>
-        </td>
+      <TableRow key={transition.TransitionId}>
+      <TableCell className="px-5 py-5 font-semibold border-b border-gray-200 bg-white text-sm">
+          
+          <span>{transition.TransitionName}({transition.TransitionId})</span>
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+          
+          <span>{transition.Status1Name}</span>
+        </TableCell>
+        <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+          
+          <span>{transition.Status2Name}</span>
+        </TableCell>
+        
 
         <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
           {/* <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
@@ -127,7 +110,7 @@ const TransitionItemForProject = ({ transition }) => {
                 </a>
               </span> */}
         </td>
-      </tr>
+      </TableRow>
     </>
   )
 }

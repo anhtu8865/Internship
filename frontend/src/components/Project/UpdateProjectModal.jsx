@@ -1,13 +1,13 @@
 import React from 'react'
 import DialogModal from '../DialogModal'
-import FormInput from '../Form/FormInput'
+import FormInput from '../Form/FormInputNew'
 import { useForm } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { useAppDispatch } from "../../store";
 import { projectsSelector, updateProject } from '../../slices/projects'
 import { DialogActions, DialogContent } from '../DialogModal';
 import Button from '@material-ui/core/Button'
-
+import {Textarea} from '@windmill/react-ui'
 function UpdateProjectModal({ modalDialog }) {
   const dispatch = useAppDispatch()
   const { register, handleSubmit } = useForm()
@@ -16,7 +16,7 @@ function UpdateProjectModal({ modalDialog }) {
   const onSubmit = (formData) => {
     const data = Object.assign({}, projectUpdate, formData)
     
-    alert(projectUpdate)
+   
     dispatch(updateProject({key: projectUpdate.ProjectKey, data}))
     handleClose()
   }
@@ -53,7 +53,7 @@ function UpdateProjectModal({ modalDialog }) {
               <option>Option 3</option>
             </FormSelect> */}
             <div className="mb-5 w-full relative z-0">
-              <textarea className="pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-0 
+              <Textarea className="pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-0 
               border-b-2 h-36 resize-none appearance-none focus:outline-none focus:ring-0 focus:border-green-800 border-gray-200" 
               name="name" placeholder=" " defaultValue={projectUpdate.ProjectDescription} />
               <label htmlFor="name" className="absolute duration-300 

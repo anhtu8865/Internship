@@ -1,10 +1,11 @@
-import FormInput from "../components/Form/FormInput";
+import FormInput from "../components/Form/FormInputNew";
 import { useForm } from "react-hook-form";
 import TransitionApi from "../api/transitionApi";
 import { useHistory } from 'react-router-dom'
 import React from 'react'
-import Select from 'react-select'
+import Select1 from 'react-select'
 import { useToasts } from 'react-toast-notifications'
+import { Button, Select } from "@windmill/react-ui";
 // import { useAppDispatch } from '../store'
 // import { createTransition } from "../slices/Transitions";
 
@@ -58,7 +59,7 @@ export default function CreateTransition(modalDialog) {
               appearance: 'success',
               autoDismiss: true,
             })
-            history.push('/transitions-manager')
+            history.goBack()
         }).catch(err => alert(err))
       }
     }
@@ -108,23 +109,25 @@ export default function CreateTransition(modalDialog) {
           {/* <FormInput r={register} name="Status1Id" label='Status'  />  */}
           {/* <Select option= {temp}/>  */}
           Status 1           :
-          <select
-                className="py-2 px-3 rounded-md border border-green-500 mt-2 focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-transparent"
+          <Select
+                className="py-2 px-3 rounded-md border border-white-500 mt-2 focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-transparent"
                 {...register('Status1Id')}
               >
                 {option1s}
-              </select>
+              </Select>
 
               Status 2            :
-              <select
-                className="py-2 px-3 rounded-md border border-green-500 mt-2 focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-transparent"
+              <Select
+                className="py-2 px-3 rounded-md border border-white-500 mt-2 focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-transparent"
                 {...register('Status2Id')}
               >
                 {option2s}
-              </select>
+              </Select>
           <div className="w-full mt-10 mb-5 px-10">
-            <input type="submit" value="Create Transition" className="bg-green-600 rounded-md py-2 
-            text-white text-xl w-full" />
+          <Button layout="outline" size="large" type= "submit" className="rounded-md py-2 
+            text-white text-xl w-full ">
+            Create Transition
+          </Button>
           </div>
           </form>
         </div>

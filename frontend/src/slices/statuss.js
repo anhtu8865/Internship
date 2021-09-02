@@ -108,7 +108,7 @@ export const deleteStatus = (id) => async(dispatch) =>{
   statusApi
   .delete(id)
   .then((res)=>{
-    dispatch(removeUpdateSuccess(res.Msg))
+    // dispatch(removeUpdateSuccess(res.Msg))
     dispatch(removeStatus(id))
     
     console.log(res)

@@ -202,3 +202,20 @@ func (pm *ProjectsModel) Check_Project_Exist(key string) ([]Project, error){
 	}
 }
 */
+func (sm *TransitionsModel) Check_Exist(idstatus1 string, idstatus2 string, idworkflow string) ([]Transition, error) {
+	var temp_transitions []Transition
+	//query
+	query := fmt.Sprintf("SELECT * FROM NEW_JIRA_TRANSITION WHERE ID_STATUS1 ='%v' AND ID_STATUS2 ='%v' AND ID_WORKFLOW = '%v' ", idstatus1, idstatus2, idworkflow)
+	rows, err := DbOracle.Db.Query(query)
+	if err == nil {
+		for rows.Next() {
+			transition := Transition{}
+			rows.Scan(
+				&transition.TransitionName, &transition.Status1Id, &transition.TransitionId, &transition.WorkflowId, &transition.Status1Name, &transition.Status2Id, &transition.Status2Name)
+			temp_transitions = append(temp_transitions, transition)
+		}
+		return temp_transitions, nil
+	} else {
+		return nil, err
+	}
+}

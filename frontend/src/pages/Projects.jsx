@@ -1,28 +1,123 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect } from 'react'
+import React, { useEffect,useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
   fetchProjects,
   projectsSelector,
   createProject,
+  setState
 } from '../slices/projects'
 import { Link } from 'react-router-dom'
 import ProjectItem from '../components/Project/ProjectItem'
 import { useAppDispatch } from '../store'
 import CreateProjectModal from '../components/Project/CreateProjectModal';
-import {Button} from '@windmill/react-ui'
-
+import { useToasts } from 'react-toast-notifications'
+import {
+  Table,
+  TableHeader,
+  TableCell,
+  TableBody,
+  TableRow,
+  TableFooter,
+  TableContainer,
+  Button,
+  Pagination,
+  Select,
+  Input,
+} from '@windmill/react-ui'
 const Projects = () => {
+  
+  let temp = JSON.parse(localStorage.getItem('WorkflowAll') || '[]' )
+  const { addToast } = useToasts()
   const dispatch = useAppDispatch()
-  const { projects, loading, hasErrors } = useSelector(projectsSelector)
+  const { updateWor, updateSuccess, projects, loading, hasErrors } = useSelector(projectsSelector)
   useEffect(() => {
     dispatch(fetchProjects())
   }, [dispatch])
-  const renderProjects = () => {
-    return projects.map((project) => (
-      <ProjectItem key={project.ProjectKey} project={project} />
-    ))
+  useEffect(() => {
+    if (updateSuccess) {
+      addToast("Success", {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+      dispatch(setState())
+    }
+  }, [updateSuccess])
+// setup pages control for every table
+const [pageTable1, setPageTable1] = useState(1)
+// setup data for every table 
+const [dataTable1, setDataTable1] = useState([])
+// pagination setup
+const resultsPerPage = 2
+const totalResults = projects.length
+// pagination change control
+function onPageChangeTable1(p) {
+  setPageTable1(p)
+}
+// on page change, load new sliced data
+// here you would make another server request for new data
+useEffect(() => {
+  setDataTable1(projects.slice((pageTable1 - 1) * resultsPerPage, pageTable1 * resultsPerPage))
+}, [pageTable1])
+
+  //search user
+  //setup search
+  const [searchTerm, setSearchTerm] = React.useState('')
+  const [searchResults, setSearchResults] = React.useState([])
+  //setup select 
+  const [selectTerm, setSelectTerm] = React.useState('')
+  const handleChange = (e) => {
+    setSearchTerm(e.target.value)
   }
+  const handleSelect = (e) =>{
+    setSelectTerm(e.target.value)
+  }
+  useEffect(() => {
+    const results = projects.filter(
+      (person) =>
+        person.ProjectKey.toLowerCase().indexOf(searchTerm.toLowerCase()) !=
+          -1 ||
+        person.ProjectName.toLowerCase().indexOf(searchTerm.toLowerCase()) !=
+          -1 
+        // person.User_Full_Name.toLowerCase().indexOf(searchTerm.toLowerCase()) !=
+        //   -1
+    )
+    setSearchResults(results)
+  }, [searchTerm])
+  useEffect(() => {
+    const resultsSelect = projects.filter(
+      (person) => person.WorkflowId == selectTerm
+    )
+    setSearchResults(resultsSelect)
+  }, [selectTerm])
+  //render user
+ 
+  const renderProjects = () => {
+    if (
+      (selectTerm == '' || selectTerm == 'All') 
+      
+    ) {
+      return projects.map((project) => <ProjectItem key={project.ProjectKey} project={project} />)
+    }
+    else if ((searchTerm == '' && selectTerm == 'Per Page')) 
+    {
+      return dataTable1.map((project) => <ProjectItem key={project.ProjectKey} project={project} />)
+    }
+    else {
+      return searchResults.map((project) => (
+        <ProjectItem key={project.ProjectKey} project={project} />
+      ))
+    }
+  }
+  // filter workflow id
+  var option1s = temp.map((option) => {
+    return (
+      <option key={option.WorkflowId} value={option.WorkflowId}>
+        {option.WorkflowName}({option.WorkflowId})
+      </option>
+    )
+  })
+  
 
   const [openCreate, setOpenCreate] = React.useState(false)
 
@@ -68,62 +163,21 @@ const Projects = () => {
         <div className="my-2 flex justify-between sm:flex-row flex-col">
           <div className="flex flex-row mb-1 sm:mb-0">
             <div className="relative">
-              <select className="appearance-none h-full rounded-l border block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                <option selected disabled>
-                  Project per page
-                </option>
-                <option>5</option>
-                <option>10</option>
-                <option>20</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
+            <Select
+                value={selectTerm}
+                onChange={handleSelect}
+                className="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500"
+              > 
+                {/* <option selected className="h-4 w-4 font-semibold ">OPTION</option> */}
+                <option selected className="h-4 w-4 fill-current text-blue-500">All</option>
+                <option selected className="h-4 w-4 fill-current text-blue-500" >Per Page</option>                
+                <option value='0' className="h-4 w-4 fill-current text-blue-500">NULL</option>
+                
+              
+                {option1s}
+              </Select>
             </div>
-            <div className="relative">
-              <select className="appearance-none h-full rounded-r border-t sm:rounded-r-none border-r border-b block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
-                <option selected disabled>
-                  Status
-                </option>
-                <option>All</option>
-                <option>Active</option>
-                <option>Inactive</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
-            </div>
-            <div className="relative">
-              <select className="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
-                <option selected disabled>
-                  In group
-                </option>
-                <option>DEV ASAM</option>
-                <option>ALT - LEADER</option>
-                <option>MND - ALT GROUP</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
-            </div>
+            
             {/* Ô search */}
             <div className="flex relative">
               <span className="h-full absolute inset-y-0 right-2 flex items-center pl-2">
@@ -134,9 +188,11 @@ const Projects = () => {
                   <path d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z"></path>
                 </svg>
               </span>
-              <input
-                placeholder="Search"
-                className="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+              <Input
+                placeholder="Search for projects"
+                className="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-8 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+                value={searchTerm}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -177,19 +233,14 @@ const Projects = () => {
               </thead>
               <tbody>{renderProjects()}</tbody>
             </table>
-            <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between          ">
-              <span className="text-xs xs:text-sm text-gray-900">
-                Showing 1 to 4 of 50 Entries
-              </span>
-              <div className="inline-flex mt-2 xs:mt-0">
-                <button className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-l">
-                  Prev
-                </button>
-                <button className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-r">
-                  Next
-                </button>
-              </div>
-            </div>
+            <TableFooter>
+          <Pagination
+            totalResults={totalResults}
+            resultsPerPage={resultsPerPage}
+            onChange={onPageChangeTable1}
+            label="Table navigation"
+          />
+        </TableFooter>
           </div>
         </div>
       </div>

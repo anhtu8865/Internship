@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { fetchTransitions,getDataByIdWorkflow,transitionsSelector } from '../slices/transition'
 import { fetchTransitionStatuss,transitionStatussSelector } from '../slices/tra-sta'
 import { useAppDispatch } from '../store'
@@ -6,7 +6,18 @@ import { useSelector } from 'react-redux'
 import TransitionItem from '../components/Transition/TransitionItem'
 import { Link } from 'react-router-dom'
 import { workflowsSelector } from '../slices/workflows'
-import { Button } from '@windmill/react-ui'
+import {
+  Table,
+  TableHeader,
+  TableCell,
+  TableBody,
+  TableRow,
+  TableFooter,
+  TableContainer,
+  Button,
+  Pagination,
+  Select
+} from '@windmill/react-ui'
  const TransitionManager= () => {
     const {workflowUpdate} = useSelector(workflowsSelector)
     if (workflowUpdate.WorkflowId) {
@@ -18,6 +29,24 @@ import { Button } from '@windmill/react-ui'
    useEffect(() => {
         dispatch(getDataByIdWorkflow(temp.WorkflowId)) 
     }, [dispatch])
+
+
+    // setup pages control for every table
+  const [pageTable1, setPageTable1] = useState(1)
+  // setup data for every table 
+  const [dataTable1, setDataTable1] = useState([])
+  // pagination setup
+  const resultsPerPage = 10
+  const totalResults = transitions.length
+  // pagination change control
+  function onPageChangeTable1(p) {
+    setPageTable1(p)
+  }
+  // on page change, load new sliced data
+  // here you would make another server request for new data
+  useEffect(() => {
+    setDataTable1(transitions.slice((pageTable1 - 1) * resultsPerPage, pageTable1 * resultsPerPage))
+  }, [pageTable1])
 
     const renderTransition = () =>
        {    if(transitions)
@@ -44,7 +73,7 @@ import { Button } from '@windmill/react-ui'
           </div>
           <div className="my-2 flex justify-between sm:flex-row flex-col">
           <div className="flex">
-            <Link to="/add-transitions">
+            <Link to="/app/workflows-manager/transitions-manager/create-transitions">
               <Button >
                 Create Transition
               </Button>
@@ -98,6 +127,14 @@ import { Button } from '@windmill/react-ui'
                 </thead>
                 <tbody>{renderTransition()}</tbody>
               </table>
+              <TableFooter>
+          <Pagination
+            totalResults={totalResults}
+            resultsPerPage={resultsPerPage}
+            onChange={onPageChangeTable1}
+            label="Table navigation"
+          />
+        </TableFooter>
             </div>
           </div>
         </div>

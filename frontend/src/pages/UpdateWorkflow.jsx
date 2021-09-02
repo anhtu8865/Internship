@@ -1,12 +1,13 @@
 import React from 'react'
 import DialogModal from '../components/DialogModal'
-import FormInput from '../components/Form/FormInput'
+import FormInput from '../components/Form/FormInputNew'
 import { useForm } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { useAppDispatch } from '../store'
 import { workflowsSelector,updateWorkflow } from '../slices/workflows'
 import { DialogActions, DialogContent } from '../components/DialogModal'
-import Button from '@material-ui/core/Button'
+
+import {Textarea,Button} from '@windmill/react-ui'
 
 function UpdateWorkflowModal({ modalDialog }) {
 
@@ -38,16 +39,18 @@ function UpdateWorkflowModal({ modalDialog }) {
               required
             />
             <FormInput 
+            
               r={register}
               name="WorkflowDescription"
               label={'Description'}
               value={workflowUpdate.WorkflowDescription}
-              
+              placeholder={"Description...."}
             />
+            
           </DialogContent>
           <DialogActions>
             <div className="my-3 mx-5">
-              <Button onClick={handleClose} color="secondary">
+              <Button layout="outline" onClick={handleClose} color="secondary">
                 Cancel
               </Button>
               <Button type="submit" color="primary">

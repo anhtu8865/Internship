@@ -1,6 +1,6 @@
 import React from 'react'
 import DialogModal from '../DialogModal'
-import FormInput from '../Form/FormInput'
+import FormInput from '../Form/FormInputNew'
 import { useForm } from 'react-hook-form'
 import { useAppDispatch } from "../../store";
 import { createProject } from '../../slices/projects'

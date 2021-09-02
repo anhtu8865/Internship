@@ -1,11 +1,12 @@
-import FormInput from "../components/Form/FormInput";
+import FormInput from "../components/Form/FormInputNew";
 import { useForm } from "react-hook-form";
 import statusApi from "../api/statusApi";
 import { useHistory } from 'react-router-dom'
 import React from 'react'
 import { useToasts } from 'react-toast-notifications'
+import {Button} from '@windmill/react-ui'
 // import { useAppDispatch } from '../store'
-// import { createStatus } from "../slices/statuss";
+// import { createStatus } from "../slices/statuss";  
 
 export default function CreateStatus() {
   const { addToast } = useToasts()
@@ -47,9 +48,13 @@ export default function CreateStatus() {
           <form onSubmit={handleSubmit(onSubmit)}>
           <FormInput r={register} name="StatusName" label='Status Name' required />
           <FormInput r={register} name="StatusDescription" label='Description'  /> 
-          <div className="w-full mt-10 mb-5 px-10">
-            <input type="submit" value="Create Status" className="bg-green-600 rounded-md py-2 
-            text-white text-xl w-full" />
+          <div className="w-full mt-10 mb-10 px-10">
+            
+          <Button layout="outline" size="large" type= "submit" className="rounded-md py-2 
+            text-white text-xl w-full ">
+            Create Status
+          </Button>
+            
           </div>
           </form>
         </div>

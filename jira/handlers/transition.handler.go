@@ -99,19 +99,28 @@ func (u *TransitionsHandler) CreateTransition() gin.HandlerFunc {
 		if transition_name == "" {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "The parameters are not enough"})
 		} else {
-
-			scr := models.Transition{TransitionName: transition_name, Status1Id: st1_id, WorkflowId: wk_id, Status1Name: status1_name, Status2Id: st2_id, Status2Name: status2_name}
-
-			fmt.Println(scr)
-			if _, err := models.TransitionsModels.InsertTransition(scr); err != nil {
-				fmt.Println(err)
-				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
-
-			} else {
-				fmt.Println(err)
-				c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Create Transition Success", Data: scr})
+			Exist_transition, err := models.TransitionsModels.Check_Exist(status1_id, status2_id, workflow_id)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running 1 query"})
 			}
+			if len(Exist_transition) > 0 {
+				if Exist_transition[0].Status1Id == st1_id && Exist_transition[0].Status2Id == st2_id {
+					c.JSON(http.StatusConflict, helpers.MessageResponse{Msg: "Transition already exists, please choose another Transition"})
+				}
+			}
+			if len(Exist_transition) == 0 {
+				scr := models.Transition{TransitionName: transition_name, Status1Id: st1_id, WorkflowId: wk_id, Status1Name: status1_name, Status2Id: st2_id, Status2Name: status2_name}
 
+				fmt.Println(scr)
+				if _, err := models.TransitionsModels.InsertTransition(scr); err != nil {
+					fmt.Println(err)
+					c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
+
+				} else {
+					fmt.Println(err)
+					c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Create Transition Success", Data: scr})
+				}
+			}
 		}
 
 		// json.NewDecoder(c.Request.Body).Decode(&book)

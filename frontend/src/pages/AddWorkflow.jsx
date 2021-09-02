@@ -1,9 +1,10 @@
-import FormInput from "../components/Form/FormInput";
+import FormInput from "../components/Form/FormInputNew";
 import { useForm } from "react-hook-form";
 import WorkflowApi from "../api/workflowApi";
 import { useHistory } from 'react-router-dom'
 import React from 'react'
 import { useToasts } from 'react-toast-notifications'
+import {Button} from '@windmill/react-ui'
 // import { useAppDispatch } from '../store'
 // import { createWorkflow } from "../slices/Workflows";
 
@@ -19,6 +20,7 @@ export default function CreateWorkflow() {
                         appearance: 'success',
                         autoDismiss: true,
                       })
+            
             history.goBack()
         }).catch(err => 
          //alert(err)
@@ -48,8 +50,11 @@ export default function CreateWorkflow() {
           <FormInput r={register} name="WorkflowName" label='Workflow Name' required />
           <FormInput r={register} name="WorkflowDescription" label='Description'  /> 
           <div className="w-full mt-10 mb-5 px-10">
-            <input type="submit" value="Create Workflow" className="bg-green-600 rounded-md py-2 
-            text-white text-xl w-full" />
+            
+             <Button layout="outline" size="large" type= "submit" className="rounded-md py-2 
+            text-white text-xl w-full ">
+            Create Workflow
+          </Button>
           </div>
           </form>
         </div>

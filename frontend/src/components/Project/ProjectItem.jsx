@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
 import { deleteProject, setProjectUpdate } from '../../slices/projects'
@@ -7,22 +7,33 @@ import UpdateProjectModal from './UpdateProjectModal';
 import ViewProject from './ViewProject';
 import { setWorkflowUpdate } from '../../slices/workflows'
 import { useHistory } from 'react-router-dom'
-import { TableCell, TableRow, Button, Table } from '@material-ui/core';
+import { TableCell, TableRow, Button, Table, ModalHeader, ModalBody,ModalFooter,Modal,Badge } from '@windmill/react-ui';
 import { useToasts } from 'react-toast-notifications'
 const ProjectItem = ({ project }) => {
   const {addToast} = useToasts()
   const dispatch = useAppDispatch()
   const history = useHistory()
+  const [isModalOpen, setIsModalOpen, deleteP] = useState(false)
+
+  function openModal() {
+    setIsModalOpen(true)
+  }
+ 
+
+  function closeModal() {
+    setIsModalOpen(false)
+  }
   function deleteConfirm(e, project_key) {
+    setIsModalOpen(true)
     e.preventDefault()
-    if (confirm('Delete?')) {
+    
       dispatch(deleteProject(project_key))
       //alert('Delete Success!')
       addToast("Delete Success!", {
         appearance: 'success',
         autoDismiss: true,
       })
-    }
+    
   }
 
   const [openUpdate, setOpenUpdate] = React.useState(false)
@@ -72,7 +83,7 @@ const ProjectItem = ({ project }) => {
             <div className="flex-shrink-0 w-10 h-10">
               <img
                 className="w-full h-full rounded-full"
-                src="https://iconarchive.com/download/i78236/igh0zt/ios7-style-metro-ui/MetroUI-Office-Projects.ico"
+                src="https://www.vhv.rs/dpng/d/614-6141793_planning-icon-png-test-transparent-png.png"
                 alt=""
               />
             </div>
@@ -85,80 +96,91 @@ const ProjectItem = ({ project }) => {
                   {project.ProjectName}
                 </Link>
               </p>
-            </div>
+            </div>  
           </div>
         </TableCell>
         <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <p className="text-gray-900 whitespace-no-wrap">
-            {project.ProjectKey}
-          </p>
+         
+          <span>{project.ProjectKey}</span>
         </TableCell>
         <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <p className="text-gray-900 whitespace-no-wrap">
-            {project.ProjectUrl}
-          </p>
+         
+          <span>{project.ProjectUrl}</span>
         </TableCell>
         <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <Link to="#">
-            <a className="text-blue-400 whitespace-no-wrap">
-              {project.ProjectLeadName}
-            </a>
-          </Link>
+          
+          <span>{project.ProjectLeadName}</span>
         </TableCell>
         <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <p className="text-gray-900 whitespace-no-wrap">
-            {project.WorkflowId}
-          </p>
+          
+          <span>{project.WorkflowId}</span>
         </TableCell>
         <TableCell className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
-          <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-            />
-            <a
-              onClick={(e) => handleOpenUpdate(e, project)}
-              className="relative cursor-pointer"
-            >
-              Edit
-            </a>
-          </span>
-          <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-            />
+          
+          <Badge type={'status'}
+                  className="hover:bg-blue-200 cursor-pointer"
+           >
+            
             <Link
               to={`/app/project-user/${project.ProjectKey}-${project.ProjectName}`}
               className="relative cursor-pointer"
             >
               Access
             </Link>
-          </span>
-          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-blue-200 opacity-50 rounded-full"
-            />
-            <a
+          </Badge>
+          
+          <Badge 
+              className="hover:bg-blue-200 cursor-pointer"
+              type={'status'}
               onClick={(e) => handleOpenTransition(e, project)}
-              className="relative cursor-pointer"
-            >
+          >
               View Workflow
-            </a>
-          </span>
-          <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-red-400 opacity-50 rounded-full"
-            />
-            <a
-              onClick={(e) => deleteConfirm(e, project.ProjectKey)}
-              className="relative cursor-pointer text-red-900"
-            >
+          </Badge>
+          <Badge 
+              className="hover:bg-green-200 cursor-pointer"
+              type={'success'}
+              onClick={(e) => handleOpenUpdate(e, project)}
+          >
+              Edit
+          </Badge>
+          <Badge 
+              className="hover:bg-red-200 cursor-pointer"
+              type={'danger'}
+              onClick={openModal}
+          >
               Delete
-            </a>
-          </span>
+          </Badge>
+          <Modal isOpen={isModalOpen} onClose={closeModal}>
+            <ModalHeader>Delete Project</ModalHeader>
+              <ModalBody>
+                 Are you sure DELETE this Project !
+              </ModalBody>
+            <ModalFooter>
+          {/* I don't like this approach. Consider passing a prop to ModalFooter
+           * that if present, would duplicate the buttons in a way similar to this.
+           * Or, maybe find some way to pass something like size="large md:regular"
+           * to Button
+           */}
+                <div className="hidden sm:block">
+                  <Button layout="outline" onClick={closeModal}>
+                    Cancel
+                  </Button>
+                </div>
+                <div className="hidden sm:block" onClick={(e) => deleteConfirm(e, project.ProjectKey)}>
+                  <Button>Accept</Button>
+                </div>
+                <div className="block w-full sm:hidden">
+                  <Button block size="large" layout="outline" onClick={closeModal}>
+                    Cancel
+                  </Button>
+                </div>
+                <div className="block w-full sm:hidden">
+                  <Button block size="large">
+                    Accept
+                  </Button>
+                </div>
+            </ModalFooter>
+      </Modal>
           
         </TableCell>
       </TableRow>

@@ -109,7 +109,7 @@ export const deleteWorkflow = (id) => (dispatch) =>{
   workflowApi
   .delete(id)
   .then((res)=>{
-    dispatch(removeUpdateSuccess(res.Msg))
+    // dispatch(removeUpdateSuccess(res.Msg))
     dispatch(removeWorkflow(id))
     console.log(res)
     return res

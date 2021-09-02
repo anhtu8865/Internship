@@ -2,15 +2,21 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
 import { deleteProjectInWorkflow } from '../../slices/wor-pro'
+import { TableCell, TableRow, Badge } from '@windmill/react-ui'
+import { useToasts } from 'react-toast-notifications'
 export default function WorkflowProjectItem({ workflow_project }) {
 
   const dispatch = useAppDispatch()
-
+  const {addToast} = useToasts()
   function deleteConfirm(e, WorkflowId, ProjectKey) {
     e.preventDefault()
-    if (confirm('Delete?')) {
+    
       dispatch(deleteProjectInWorkflow(WorkflowId,ProjectKey))
-    }
+      addToast("Delete Status Success", {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+    
   }
 
 
@@ -21,16 +27,12 @@ export default function WorkflowProjectItem({ workflow_project }) {
       <tr>
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           <div className="flex items-center">
-            <div className="ml-3">
-              <p className="text-gray-900 whitespace-no-wrap">
-                <Link to="#">
-                  <a className="text-blue-400 whitespace-no-wrap">
-                    {workflow_project.ProjectName}
+            <TableCell className="ml-3">
+             
+                {workflow_project.ProjectName}
                     
-                  </a>
-                </Link>
-              </p>
-            </div>
+                 
+            </TableCell>
           </div>
         </td>
         {/* <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -61,18 +63,17 @@ export default function WorkflowProjectItem({ workflow_project }) {
                 Edit
               </a>
             </span> */}
-          <span className="relative inline-block px-3 ml-1.5 py-1 font-semibold text-green-900 leading-tight">
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-red-400 opacity-50 rounded-full"
-            />
-            <a
+           <Badge
+              className="hover:bg-green-200 cursor-pointer"
+              type={'success'}
               onClick={(e) => deleteConfirm(e, workflow_project.WorkflowId,workflow_project.ProjectKey)}
-              className="relative cursor-pointer text-red-900"
-            >
+             
+              >
+            
+            
               Delete
-            </a>
-          </span>
+              </Badge>
+          
         </td>
       </tr>
     </>
