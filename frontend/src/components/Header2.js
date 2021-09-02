@@ -45,13 +45,13 @@ function Header() {
   })
   //logout
   const history = useHistory()
-  function Logout() {
-    userApi.logout().then(() => {
+  const Logout = async ()=> {
+   await userApi.logout().then(() => {
       localStorage.removeItem('accessToken')
       localStorage.removeItem('refreshToken')
       dispatch(logout())
     })
-    history.push('/login')
+    await history.push('/login')
   }
   const dispatch = useAppDispatch()
 

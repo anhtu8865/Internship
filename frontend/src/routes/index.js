@@ -7,7 +7,7 @@ const PermissionManager = lazy(() => import('../pages/PermissionManager'))
 const DetailPermission = lazy(() => import('../pages/DetailPermission'))
 const RolesManager = lazy(() => import('../pages/RolesManager'))
 const CreateRole = lazy(()=>import('../pages/CreateRole'))
-const Projects = lazy(()=>import('../pages/Projects'))
+// const Projects = lazy(()=>import('../pages/Projects'))
 const ProjectUsers = lazy(()=>import('../pages/ProjectUserRole'))
 const TransitionItemForProject = lazy(()=>import('../pages/TransitionManagerForProject'))
 import { Issues } from '../pages/Issues'
@@ -23,6 +23,7 @@ import Transition from '../pages/TransitionManager'
 import { ProjectIssueTypeScreens } from '../pages/ProjectIssueTypeScreens'
 import CreateStatus from '../pages/CreateStatus'
 import Profile from '../pages/Profile'
+import Projects from '../pages/Projects'
 
 // const Modals = lazy(() => import('../pages/Modals'))
 // const Tables = lazy(() => import('../pages/Tables'))

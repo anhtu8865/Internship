@@ -1,6 +1,11 @@
 /* eslint-disable no-unused-vars */
 import './App.css'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from 'react-router-dom'
 import CreateUser from './pages/CreateUser'
 import Login from './pages/Login'
 import React, { useState, useEffect, lazy } from 'react'
@@ -41,7 +46,6 @@ import Profile from './pages/Profile'
 import TransitionItemForProject from './pages/TransitionManagerForProject'
 import { ToastProvider } from 'react-toast-notifications';
 const Layout2 = lazy(() => import('./containers/Layout'))
-// import Layout2 from './containers/Layout'
 
 function App() {
   return (
@@ -54,15 +58,16 @@ function App() {
       <Router>
         <Switch>
           <Route path="/login" component={Login} />
+          <Redirect exact from="/" to="/login" />
           <Route path="/app" component={Layout2} />
-          <Layout>
-            {/* <Route path="admin/create-user">
+          {/* <Layout> */}
+          {/* <Route path="admin/create-user">
               <CreateUser />
             </Route> */}
-            {/* <Route path="/create-roles">
+          {/* <Route path="/create-roles">
               <CreateRole />
             </Route> */}
-            <Route path="/projects">
+          {/* <Route path="/projects">
               <Projects />
             </Route>
             <Route path="/update-workflows">
@@ -93,11 +98,11 @@ function App() {
             </Route>
             <Route path="/create-statuss">
               <CreateStatus></CreateStatus>
-            </Route>
-            {/* <Route path="/create-transitions">
+            </Route> */}
+          {/* <Route path="/create-transitions">
             <CreateTransition />
           </Route> */}
-            <Route path="/screens">
+          {/* <Route path="/screens">
               <Screens />
             </Route>
             <Route path="/addScreen">
@@ -159,27 +164,27 @@ function App() {
               exact
               path="/IssuesByProject/:project"
               component={IssuesByProject}
-            />
+            /> */}
 
-            {/* <Route path="/roles-manager">
+          {/* <Route path="/roles-manager">
               <Roles></Roles>
             </Route> */}
-            {/* <Route path="/permission-manager">
+          {/* <Route path="/permission-manager">
               <PermissionManager></PermissionManager>
             </Route>
             <Route path="/detail-permission">
               <DetailPermission></DetailPermission>
             </Route> */}
-            {/* <Route path="/project-user/:keyProject-:nameProject">
+          {/* <Route path="/project-user/:keyProject-:nameProject">
               <ProjectUserRole></ProjectUserRole>
             </Route> */}
-            <Route exact path="/">
+          {/* <Route path="/">
               <Home />
             </Route>
             <Route path="/profile">
               <Profile></Profile>
-            </Route>
-          </Layout>
+            </Route> */}
+          {/* </Layout> */}
         </Switch>
       </Router>
     </ToastProvider>
