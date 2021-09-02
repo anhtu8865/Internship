@@ -14,12 +14,11 @@ const inforUserSlice = createSlice({
   name: 'inforUser',
   initialState,
   reducers: {
-    clearState: (state,action) => {
+    clearState: (state, action) => {
       state.loading = false
       state.success = false
       state.hasErrors = false
       state.inforUser = action.payload
-
     },
     getMeSuccess: (state, action) => {
       state.loading = false
@@ -34,17 +33,19 @@ const inforUserSlice = createSlice({
       state.hasErrors = true
       state.errorMessage = action.payload
     },
+  
+   
   },
 })
 
-const { getMeSuccess, getMeFailure, startLoading, clearState } =
+const {getMeSuccess, getMeFailure, clearState } =
   inforUserSlice.actions
 
 export const inforUserSelector = (state) => state.inforuser
 const userReducer = inforUserSlice.reducer
 export default userReducer
 
-export const getMe = (data) => async (dispatch) => {
+export const getMe = () => async (dispatch) => {
   //dispatch(startloignLoading())
   userApi.infoUserByToken()
     .then(async (response) => {
@@ -55,6 +56,7 @@ export const getMe = (data) => async (dispatch) => {
       alert(err)
     })
 }
+
 export const logout = () => async(dispatch) =>{
    dispatch(clearState({}))
 }

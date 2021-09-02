@@ -1,30 +1,33 @@
 import { lazy } from 'react'
 
 // use lazy for better code splitting, a.k.a. load faster
-const UsersManager = lazy(() => import('../pages/UsersManager'))
-const CreateUser = lazy(() => import('../pages/CreateUser'))
-const PermissionManager = lazy(() => import('../pages/PermissionManager'))
-const DetailPermission = lazy(() => import('../pages/DetailPermission'))
-const RolesManager = lazy(() => import('../pages/RolesManager'))
-const CreateRole = lazy(()=>import('../pages/CreateRole'))
-const Projects = lazy(()=>import('../pages/Projects'))
-const ProjectUsers = lazy(()=>import('../pages/ProjectUserRole'))
-const TransitionItemForProject = lazy(()=>import('../pages/TransitionManagerForProject'))
+import UsersManager from '../pages/UsersManager'
+import CreateUser from '../pages/CreateUser'
+import PermissionManager from '../pages/PermissionManager'
+import DetailPermission from '../pages/DetailPermission'
+import RolesManager from '../pages/RolesManager'
+import CreateRole from '../pages/CreateRole'
+import ProjectUserRole from '../pages/ProjectUserRole'
+import TransitionItemForProject from '../pages/TransitionManagerForProject'
 import { Issues } from '../pages/Issues'
 import { IssuesByProject } from '../pages/IssuesByProject'
 import { Screens } from '../pages/Screens'
-const WorkFlows = lazy(()=>import('../pages/Workflows'))
+import Workflows from '../pages/Workflows'
 import { CustomFields } from '../pages/CustomFields'
 import { IssueTypes } from '../pages/IssueTypes'
-const Status = lazy(() => import('../pages/StatusManager'))
-const AddWorkflow = lazy(()=>import('../pages/AddWorkflow')) 
+import Status from '../pages/StatusManager'
+import AddWorkflow from '../pages/AddWorkflow'
 import CreateWorkflow from '../pages/CreateWorkflow'
 import Transition from '../pages/TransitionManager'
 import { ProjectIssueTypeScreens } from '../pages/ProjectIssueTypeScreens'
 import CreateStatus from '../pages/CreateStatus'
 import Profile from '../pages/Profile'
+
 const CreateTransition = lazy(() => import('../pages/AddTransition'))
 import AddTransition from '../pages/AddTransition'
+
+import Projects from '../pages/Projects'
+
 // const Modals = lazy(() => import('../pages/Modals'))
 // const Tables = lazy(() => import('../pages/Tables'))
 // // const Page404 = lazy(() => import('../pages/404'))
@@ -71,7 +74,7 @@ const routes = [
   },
   {
     path: '/project-user/:keyProject-:nameProject',
-    component: ProjectUsers,
+    component: ProjectUserRole,
   },
   {
     path: '/transitionsforproject-manager',
@@ -115,7 +118,7 @@ const routes = [
   },
   {
     path: '/workflows-manager',
-    component: WorkFlows,
+    component: Workflows,
   },
   {
     path: '/workflows-manager/add-workflows',
@@ -131,7 +134,7 @@ const routes = [
   },
   {
     path: '/profile',
-    component:Profile,
+    component: Profile,
   },
 ]
 
