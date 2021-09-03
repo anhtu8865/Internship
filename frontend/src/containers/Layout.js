@@ -4,13 +4,48 @@ import routes from '../routes'
 
 import Sidebar from '../components/Sidebar'
 import Header2 from '../components/Header2'
-import Main from '../containers/Main'
+import { useSelector } from 'react-redux'
 import ThemedSuspense from '../components/ThemedSuspense'
 import { SidebarContext } from '../context/SidebarContext'
+import { getMe } from '../slices/infouser'
+import { useAppDispatch } from '../store'
+import { inforUserSelector } from '../slices/infouser'
 
- const Page404 = lazy(() => import('../pages/404'))
+const Page404 = lazy(() => import('../pages/404'))
 
 function Layout() {
+  //WHY: get info user by
+  const dispatch = useAppDispatch()
+  useEffect(() => {
+    dispatch(getMe())
+  }, [])
+  const { inforUser, success } = useSelector(inforUserSelector)
+  let sidebar
+  let router_temp = []
+  // Admin or trusted has sidebar to edit
+  if (success) {
+    if (inforUser.Is_Admin == 0 || inforUser.Is_Admin == 1) {
+      sidebar = <Sidebar />
+    }
+    if (inforUser.Is_Admin == 2) {
+      routes.map((route, i) => {
+        if (route.globalRole == 'Member') {
+          router_temp.push(route)
+        }
+      })
+    }
+    if (inforUser.Is_Admin == 0) {
+      router_temp = routes
+    }
+    if (inforUser.Is_Admin == 1) {
+      routes.map((route, i) => {
+        if (route.globalRole == 'Member' || route.globalRole == 'Trusted') {
+          router_temp.push(route)
+        }
+      })
+    }
+  }
+  //Sidebar
   const { isSidebarOpen, closeSidebar } = useContext(SidebarContext)
   let location = useLocation()
 
@@ -27,11 +62,11 @@ function Layout() {
       <div className="flex flex-col flex-1 w-full">
         <Header2 />
         <div className="flex">
-          <Sidebar />
+          {sidebar}
           <div className="w-full">
             <Suspense fallback={<ThemedSuspense />}>
               <Switch>
-                {routes.map((route, i) => {
+                {router_temp.map((route, i) => {
                   return route.component ? (
                     <Route
                       key={i}

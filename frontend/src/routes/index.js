@@ -22,10 +22,7 @@ import Transition from '../pages/TransitionManager'
 import { ProjectIssueTypeScreens } from '../pages/ProjectIssueTypeScreens'
 import CreateStatus from '../pages/CreateStatus'
 import Profile from '../pages/Profile'
-
-const CreateTransition = lazy(() => import('../pages/AddTransition'))
 import AddTransition from '../pages/AddTransition'
-
 import Projects from '../pages/Projects'
 
 // const Modals = lazy(() => import('../pages/Modals'))
@@ -47,94 +44,117 @@ const routes = [
   {
     path: '/user-manager', // the url
     component: UsersManager, // view rendered
+    globalRole: 'Admin',
   },
   {
     path: '/user-manager/create-user',
     component: CreateUser,
+    globalRole: 'Admin',
   },
   {
     path: '/permission-manager',
     component: PermissionManager,
+    globalRole: 'Trusted',
   },
   {
     path: '/permission-manager/detail-permission',
     component: DetailPermission,
+    globalRole: 'Trusted',
   },
   {
     path: '/role-manager',
     component: RolesManager,
+    globalRole: 'Trusted',
   },
   {
     path: '/role-manager/create-role',
     component: CreateRole,
+    globalRole: 'Trusted',
   },
   {
     path: '/projects',
     component: Projects,
+    globalRole: 'Member',
   },
   {
     path: '/project-user/:keyProject-:nameProject',
     component: ProjectUserRole,
+    globalRole: 'Member',
   },
   {
     path: '/transitionsforproject-manager',
     component: TransitionItemForProject,
+    globalRole: 'Member',
   },
   {
     path: '/workflows-manager/transitions-manager/create-transitions',
     component: AddTransition,
+    globalRole: 'Trusted',
   },
   {
     path: '/issues',
     component: Issues,
+    globalRole: 'Member',
   },
   {
     path: '/IssuesByProject/:project',
     component: IssuesByProject,
+    globalRole: 'Member',
   },
   {
     path: '/Screens',
     component: Screens,
+    globalRole: 'Trusted',
   },
   {
     path: '/customFields',
     component: CustomFields,
+    globalRole: 'Trusted',
   },
   {
     path: '/issueTypes',
     component: IssueTypes,
+    globalRole: 'Trusted',
   },
   {
     path: '/issueTypes/projectIssueTypeScreens/:issueTypeId',
     component: ProjectIssueTypeScreens,
+    globalRole: 'Member',
   },
   {
     path: '/status-manager',
     component: Status,
+    globalRole: 'Trusted',
   },
   {
     path: '/status-manager/create-status',
     component: CreateStatus,
+    globalRole: 'Trusted',
   },
   {
     path: '/workflows-manager',
     component: Workflows,
+    globalRole: 'Trusted',
   },
   {
     path: '/workflows-manager/add-workflows',
     component: AddWorkflow,
+    globalRole: 'Trusted',
   },
   {
     path: '/workflows-manager/create-workflows',
     component: CreateWorkflow,
+    globalRole: 'Trusted',
   },
   {
     path: '/workflows-manager/transitions-manager',
     component: Transition,
+    globalRole: 'Trusted',
   },
   {
     path: '/profile',
     component: Profile,
+    globalRole: 'Member',
   },
 ]
 

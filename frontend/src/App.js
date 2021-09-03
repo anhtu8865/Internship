@@ -58,8 +58,10 @@ function App() {
       <Router>
         <Switch>
           <Route path="/login" component={Login} />
-          <Redirect exact from="/" to="/login" />
-          <Route path="/app" component={Layout2} />
+          <Redirect exact from="/" to="/login" />  
+          <Route path="/app" render={()=>{
+            return localStorage.getItem("accessToken")? <Layout2/> : <Redirect to="/"/>
+          }}/>
           {/* <Layout> */}
           {/* <Route path="admin/create-user">
               <CreateUser />

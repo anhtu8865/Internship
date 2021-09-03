@@ -6,12 +6,12 @@ import ImageLight from '../assets/img/login-office.jpeg'
 import ImageDark from '../assets/img/login-office-dark.jpeg'
 import { useAppDispatch } from '../store'
 import { useToasts } from 'react-toast-notifications'
-import { getMe } from '../slices/infouser'
-
+import { useHistory } from 'react-router-dom'
 function Login(props) {
   const { register, handleSubmit } = useForm()
   const { addToast } = useToasts()
   const dispatch = useAppDispatch()
+  const history = useHistory()
   //check xem đã đăng xuất, đăng nhập hay chưa này 
   const [isLogged, setIsLogged] = useState(false)
   useEffect(() => {
@@ -20,8 +20,7 @@ function Login(props) {
   })
   useEffect(() => {
     if (isLogged){
-      props.history.push('/app')
-      dispatch(getMe())
+      history.push('/app')
     }
   }, [isLogged])
 
@@ -29,12 +28,11 @@ function Login(props) {
   const onSubmit = (data) => {
     userApi
       .login(data)
-      .then(async (response) => {
+      .then((response) => {
         if (response.Msg == 'Login Success') {
           localStorage.setItem('accessToken', response.Data.access_token)
           localStorage.setItem('refreshToken', response.Data.refresh_token)
-          props.history.push('/app')
-          dispatch(getMe())
+          history.push('/app')
           // window.location.reload()
         } else {
           addToast(response.Msg, {

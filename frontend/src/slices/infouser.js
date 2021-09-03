@@ -2,8 +2,6 @@ import { createSlice } from '@reduxjs/toolkit'
 import userApi from '../api/userApi'
 
 export const initialState = {
-  username: '',
-  email: '',
   inforUser: {},
   loading: false,
   success: false,
