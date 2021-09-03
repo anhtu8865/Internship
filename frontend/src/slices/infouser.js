@@ -46,12 +46,11 @@ export default userReducer
 export const getMe = () => async (dispatch) => {
   //dispatch(startloignLoading())
   userApi.infoUserByToken()
-    .then(async (response) => {
+    .then( (response) => {
         dispatch(getMeSuccess(response.Data))
     })
     .catch((err) => {
       dispatch(getMeFailure())
-      alert(err)
     })
 }
 

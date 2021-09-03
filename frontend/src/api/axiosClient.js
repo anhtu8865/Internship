@@ -21,9 +21,10 @@ axiosClient.interceptors.request.use(async (config) => {
   const accessToken = localStorage.getItem('accessToken')
   if (accessToken) {
     config.headers.Authorization = 'Bearer ' + accessToken
-  } else {
-    console.log('not have accesstoken')
   }
+  // } else {
+  //   console.log('not have accesstoken')
+  // }
   return config
 })
 axiosClient.interceptors.response.use(
@@ -31,11 +32,19 @@ axiosClient.interceptors.response.use(
     if (response && response.data) {
       return response.data
     }
-    return response
+    // return response
   },
   (error) => {
+     if (
+       error.response.status === 401 &&
+       error.config.url === `users/refresh`
+     ) {
+       localStorage.removeItem('accessToken')
+       localStorage.removeItem('refreshToken')
+       window.location.reload()
+     }
     if (
-      error.response.data.Msg == 'Token expired, please login again' &&
+      error.response.status === 401 &&
       error.config.url != '/users/logout'
     ) {
       const refresh_token = localStorage.getItem('refreshToken')
@@ -44,27 +53,28 @@ axiosClient.interceptors.response.use(
       }
       if (refresh_token) {
         userApi.refresh(data).then((response) => {
+          
           const accessToken = response.access_token
           localStorage.setItem('accessToken', response.access_token)
           localStorage.setItem('refreshToken', response.refresh_token)
           const config = error.config
           config.headers['Authorization'] = `Bearer ${accessToken}`
-          console.log('oke1')
           return new Promise((resolve, reject) => {
             axios
               .request(config)
               .then((res) => {
-                console.log('lấy data hết hạn ')
-                console.log(res.data.Data)
                 resolve(res.data.Data)
                 window.location.reload()
               })
               .catch((err) => {
-                console.log(err)
                 reject(err)
                 window.location.reload()
               })
           })
+          
+        }).catch(error=>{
+          console.log(error.response)
+          return Promise.reject(error)
         })
       }
     }
