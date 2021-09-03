@@ -28,7 +28,7 @@ import {
     }, [dispatch])
     useEffect(() => {
            if (updateSuccess) {
-             addToast("Edit Success", {
+             addToast("Success", {
                appearance: 'success',
                autoDismiss: true,
              })
@@ -41,7 +41,7 @@ const [pageTable1, setPageTable1] = useState(1)
 // setup data for every table 
 const [dataTable1, setDataTable1] = useState([])
 // pagination setup
-const resultsPerPage = 10
+const resultsPerPage = 5
 const totalResults = workflows.length
 // pagination change control
 function onPageChangeTable1(p) {
@@ -51,7 +51,7 @@ function onPageChangeTable1(p) {
 // here you would make another server request for new data
 useEffect(() => {
   setDataTable1(workflows.slice((pageTable1 - 1) * resultsPerPage, pageTable1 * resultsPerPage))
-}, [pageTable1])
+}, [workflows, pageTable1])
 
 
     //search user
@@ -81,7 +81,7 @@ useEffect(() => {
       (searchTerm == '' && selectTerm == 'All') ||
       (searchTerm == '' && selectTerm == '')
     ) {
-      return workflows.map((workflow) => <WorkflowItem key={workflow.WorkflowId} workflow={workflow} />)
+      return dataTable1.map((workflow) => <WorkflowItem key={workflow.WorkflowId} workflow={workflow} />)
     } else {
       return searchResults.map((workflow) => (
         <WorkflowItem key={workflow.WorkflowId} workflow={workflow} />

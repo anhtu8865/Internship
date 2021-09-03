@@ -14,6 +14,7 @@ export default function CreateTransition(modalDialog) {
     const {fulldata} = modalDialog
     let temp = JSON.parse(localStorage.getItem('Status') || '[]' )
     let temp1 = JSON.parse(localStorage.getItem('Workflow') || '[]' )
+    let temp2 = JSON.parse(localStorage.getItem('TransitionAll') || '[]' )
     console.log(temp)
     const{register,handleSubmit} = useForm();
     const history = useHistory()
@@ -28,39 +29,55 @@ export default function CreateTransition(modalDialog) {
                     })
         }
         else{
-        let statusname1
-        let statusname2
-        temp.map((temp) => {
+        let bool = 0
+        
+        temp2.map((temp) =>{
+            if(temp.Status1Id == data.Status1Id && temp.Status2Id == data.Status2Id){
+                bool =-5
+            }
+        })
+        if(bool != -5)
+        {
+          let statusname1
+          let statusname2
+          temp.map((temp) => {
+              console.log(temp)
+            if (temp.StatusId == data.Status1Id) {
+              statusname1 = temp.StatusName
+            }
+          })
+          temp.map((temp) => {
             console.log(temp)
-          if (temp.StatusId == data.Status1Id) {
-            statusname1 = temp.StatusName
+          if (temp.StatusId == data.Status2Id) {
+            statusname2 = temp.StatusName
           }
         })
-        temp.map((temp) => {
-          console.log(temp)
-        if (temp.StatusId == data.Status2Id) {
-          statusname2 = temp.StatusName
+          console.log(statusname1)
+          console.log('kkkkk')
+          const postData = {
+              Status1Id: data.Status1Id,
+              Status2Id: data.Status2Id,
+              Status1Name: statusname1,
+              Status2Name: statusname2,
+              TransitionName: data.TransitionName,
+              WorkflowId: data.WorkflowId,
+          }
+          console.log(postData)
+          TransitionApi.createTransition(postData).then(()=>{
+              //alert('Create Transition Success')
+              addToast("Create Transition Success", {
+                appearance: 'success',
+                autoDismiss: true,
+              })
+              history.goBack()
+          }).catch(err => alert(err))
         }
-      })
-        console.log(statusname1)
-        console.log('kkkkk')
-        const postData = {
-            Status1Id: data.Status1Id,
-            Status2Id: data.Status2Id,
-            Status1Name: statusname1,
-            Status2Name: statusname2,
-            TransitionName: data.TransitionName,
-            WorkflowId: data.WorkflowId,
+        else{
+          addToast("Transition is existed", {
+            appearance: 'error',
+            autoDismiss: true,
+          })
         }
-        console.log(postData)
-        TransitionApi.createTransition(postData).then(()=>{
-            //alert('Create Transition Success')
-            addToast("Create Transition Success", {
-              appearance: 'success',
-              autoDismiss: true,
-            })
-            history.goBack()
-        }).catch(err => alert(err))
       }
     }
 

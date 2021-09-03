@@ -14,7 +14,14 @@ const ProjectItem = ({ project }) => {
   const dispatch = useAppDispatch()
   const history = useHistory()
   const [isModalOpen, setIsModalOpen, deleteP] = useState(false)
-
+  let temp = JSON.parse(localStorage.getItem('WorkflowAll') || '[]' )
+  let temp1 = JSON.parse(localStorage.getItem('IssuesAll') || '[]' )
+  let WorkflowNa
+  temp.map((temp1) =>{
+    if(temp1.WorkflowId == project.WorkflowId){
+      WorkflowNa = temp1.WorkflowName
+    }
+  }) 
   function openModal() {
     setIsModalOpen(true)
   }
@@ -24,6 +31,19 @@ const ProjectItem = ({ project }) => {
     setIsModalOpen(false)
   }
   function deleteConfirm(e, project_key) {
+    let bool
+    temp1.map((temp) =>{
+      if(temp.Project == project_key){
+          bool =-5
+      }
+  })
+  if(bool == -5){
+    addToast("Must Delete All issue in this project!", {
+      appearance: 'error',
+      autoDismiss: true,
+    })
+  }
+  else{
     setIsModalOpen(true)
     e.preventDefault()
     
@@ -33,6 +53,8 @@ const ProjectItem = ({ project }) => {
         appearance: 'success',
         autoDismiss: true,
       })
+  }
+    
     
   }
 
@@ -113,7 +135,7 @@ const ProjectItem = ({ project }) => {
         </TableCell>
         <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
           
-          <span>{project.WorkflowId}</span>
+          <span>{WorkflowNa}</span>
         </TableCell>
         <TableCell className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
           

@@ -92,10 +92,10 @@ const WorkflowItem = ({ workflow }) => {
     e.preventDefault()
     
       dispatch(deleteWorkflow(WorkflowId))
-      addToast("Delete Workflow Success", {
-        appearance: 'success',
-        autoDismiss: true,
-      })
+      // addToast("Delete Workflow Success", {
+      //   appearance: 'success',
+      //   autoDismiss: true,
+      // })
     
   }
   return (

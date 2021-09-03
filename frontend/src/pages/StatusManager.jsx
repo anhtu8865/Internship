@@ -42,7 +42,7 @@ const Statuss = () => {
   // setup data for every table 
   const [dataTable1, setDataTable1] = useState([])
   // pagination setup
-  const resultsPerPage = 10
+  const resultsPerPage = 5
   const totalResults = statuss.length
   // pagination change control
   function onPageChangeTable1(p) {
@@ -52,7 +52,7 @@ const Statuss = () => {
   // here you would make another server request for new data
   useEffect(() => {
     setDataTable1(statuss.slice((pageTable1 - 1) * resultsPerPage, pageTable1 * resultsPerPage))
-  }, [pageTable1])
+  }, [statuss,pageTable1])
 
 
 
@@ -91,7 +91,7 @@ const Statuss = () => {
       (searchTerm == '' && selectTerm == '')
     ) {
       if(statuss){
-      return statuss.map((status) => <StatusItem key={status.StatusId} status={status} />)
+      return dataTable1.map((status) => <StatusItem key={status.StatusId} status={status} />)
       }
       else return <div> NULL STATUS </div>
     } else {

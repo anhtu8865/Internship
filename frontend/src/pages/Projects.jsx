@@ -31,24 +31,13 @@ const Projects = () => {
   const { addToast } = useToasts()
   const dispatch = useAppDispatch()
   const { updateWor, updateSuccess, projects, loading, hasErrors } = useSelector(projectsSelector)
-  useEffect(() => {
-    dispatch(fetchProjects())
-  }, [dispatch])
-  useEffect(() => {
-    if (updateSuccess) {
-      addToast("Success", {
-        appearance: 'success',
-        autoDismiss: true,
-      })
-      dispatch(setState())
-    }
-  }, [updateSuccess])
+  
 // setup pages control for every table
 const [pageTable1, setPageTable1] = useState(1)
 // setup data for every table 
 const [dataTable1, setDataTable1] = useState([])
 // pagination setup
-const resultsPerPage = 2
+const resultsPerPage = 3
 const totalResults = projects.length
 // pagination change control
 function onPageChangeTable1(p) {
@@ -57,8 +46,22 @@ function onPageChangeTable1(p) {
 // on page change, load new sliced data
 // here you would make another server request for new data
 useEffect(() => {
+  dispatch(fetchProjects())
+}, [dispatch])
+
+useEffect(() => {
+  if (updateSuccess) {
+    addToast("Success", {
+      appearance: 'success',
+      autoDismiss: true,
+    })
+    dispatch(setState())
+  }
+}, [updateSuccess])
+localStorage.setItem('ProjectAll', JSON.stringify(projects))
+useEffect(() => {
   setDataTable1(projects.slice((pageTable1 - 1) * resultsPerPage, pageTable1 * resultsPerPage))
-}, [pageTable1])
+}, [projects,pageTable1])
 
   //search user
   //setup search
@@ -91,18 +94,21 @@ useEffect(() => {
     setSearchResults(resultsSelect)
   }, [selectTerm])
   //render user
- 
+  
   const renderProjects = () => {
+    console.log(searchTerm)
+    console.log("kkk")
+    console.log(selectTerm)
+    console.log(dataTable1)
+    console.log(projects)
     if (
-      (selectTerm == '' || selectTerm == 'All') 
+      (searchTerm == '' && selectTerm == 'All') ||
+      (searchTerm == '' && selectTerm == '')
       
     ) {
-      return projects.map((project) => <ProjectItem key={project.ProjectKey} project={project} />)
-    }
-    else if ((searchTerm == '' && selectTerm == 'Per Page')) 
-    {
       return dataTable1.map((project) => <ProjectItem key={project.ProjectKey} project={project} />)
     }
+    
     else {
       return searchResults.map((project) => (
         <ProjectItem key={project.ProjectKey} project={project} />
@@ -169,8 +175,9 @@ useEffect(() => {
                 className="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500"
               > 
                 {/* <option selected className="h-4 w-4 font-semibold ">OPTION</option> */}
+                <option selected ></option> 
                 <option selected className="h-4 w-4 fill-current text-blue-500">All</option>
-                <option selected className="h-4 w-4 fill-current text-blue-500" >Per Page</option>                
+                               
                 <option value='0' className="h-4 w-4 fill-current text-blue-500">NULL</option>
                 
               

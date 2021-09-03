@@ -24,7 +24,7 @@ export default function CreateWorkflow() {
             history.goBack()
         }).catch(err => 
          //alert(err)
-         addToast("The NAME WORKFLOW is exsited!!!", {
+         addToast("The name workflow is exsited!", {
           appearance: 'error',
           autoDismiss: true,
         })

@@ -134,7 +134,7 @@ export const Issues = () => {
   const onFromDateChanged = (e) => setFromDate(e.target.value)
   const [toDate, setToDate] = useState('')
   const onToDateChanged = (e) => setToDate(e.target.value)
-
+  localStorage.setItem('IssuesAll', JSON.stringify(issues))
   const [page, setPage] = useState(1)
   const [data, setData] = useState([])
   // pagination setup
