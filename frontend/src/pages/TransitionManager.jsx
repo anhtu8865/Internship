@@ -29,14 +29,14 @@ import {
    useEffect(() => {
         dispatch(getDataByIdWorkflow(temp.WorkflowId)) 
     }, [dispatch])
-
+    localStorage.setItem('TransitionAll', JSON.stringify(transitions))
 
     // setup pages control for every table
   const [pageTable1, setPageTable1] = useState(1)
   // setup data for every table 
   const [dataTable1, setDataTable1] = useState([])
   // pagination setup
-  const resultsPerPage = 10
+  const resultsPerPage =5
   const totalResults = transitions.length
   // pagination change control
   function onPageChangeTable1(p) {
@@ -46,11 +46,11 @@ import {
   // here you would make another server request for new data
   useEffect(() => {
     setDataTable1(transitions.slice((pageTable1 - 1) * resultsPerPage, pageTable1 * resultsPerPage))
-  }, [pageTable1])
+  }, [transitions, pageTable1])
 
     const renderTransition = () =>
        {    if(transitions)
-            return transitions.map((transition)=>
+            return dataTable1.map((transition)=>
             <TransitionItem key={transition.TransitionId} transition={transition} />
         )
         else return <div>NULL</div>

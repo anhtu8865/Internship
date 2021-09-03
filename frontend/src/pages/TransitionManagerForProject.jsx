@@ -11,7 +11,18 @@ import TransitionItemForProject from '../components/Transition/TransitionItemFor
 import workflowApi from '../api/workflowApi' 
 import axios from 'axios'
 import { getDataNameByIdWorkflow } from '../slices/workflows'
-
+import {
+  Table,
+  TableHeader,
+  TableCell,
+  TableBody,
+  TableRow,
+  TableFooter,
+  TableContainer,
+  Button,
+  Pagination,
+  Select
+} from '@windmill/react-ui'
 const  TransitionManagerForProject= (project) => {
 
   const {workflowUpdate} = useSelector(workflowsSelector)
@@ -48,10 +59,25 @@ const  TransitionManagerForProject= (project) => {
     
     dispatch(getDataByIdWorkflow(temp.WorkflowId)) 
     }, [dispatch])
-
+    // setup pages control for every table
+  const [pageTable1, setPageTable1] = useState(1)
+  // setup data for every table 
+  const [dataTable1, setDataTable1] = useState([])
+  // pagination setup
+  const resultsPerPage =5
+  const totalResults = transitions.length
+  // pagination change control
+  function onPageChangeTable1(p) {
+    setPageTable1(p)
+  }
+  // on page change, load new sliced data
+  // here you would make another server request for new data
+  useEffect(() => {
+    setDataTable1(transitions.slice((pageTable1 - 1) * resultsPerPage, pageTable1 * resultsPerPage))
+  }, [transitions, pageTable1])
     const renderTransition = () =>
        {    if(transitions)
-            return transitions.map((transition)=>
+            return dataTable1.map((transition)=>
             <TransitionItemForProject key={transition.TransitionId} transition={transition} />
         )
         else return <div>NULL</div>
@@ -135,6 +161,12 @@ const  TransitionManagerForProject= (project) => {
                 </thead>
                 <tbody>{renderTransition()}</tbody>
               </table>
+              <Pagination
+            totalResults={totalResults}
+            resultsPerPage={resultsPerPage}
+            onChange={onPageChangeTable1}
+            label="Table navigation"
+          />
             </div>
           </div>
         </div>
