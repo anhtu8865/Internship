@@ -72,8 +72,9 @@ function Header() {
           className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
           href="#"
         >
-          Jira Admin
+          Jira 
         </a>
+        
         <Link to="/app/projects">
           <a
             href

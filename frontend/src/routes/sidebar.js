@@ -8,19 +8,19 @@
 const routes = [
   {
     path: '/app/user-manager', // the url
-    icon: 'UserIcon', // the component being exported from icons/index.js
+    icon: 'OutlinePersonIcon', // the component being exported from icons/index.js
     name: 'User Manager', // name that appear in Sidebar
     globalRole: 'Admin',
   },
   {
     path: '/app/permission-manager',
-    icon: 'PermissionIcon',
+    icon: 'ForbiddenIcon',
     name: 'Permission Project',
     globalRole: 'Trusted',
   },
   {
     path: '/app/role-manager',
-    icon: 'PeopleIcon',
+    icon: 'UserIcon',
     name: 'Role Manager',
     globalRole: 'Trusted',
   },
@@ -32,25 +32,25 @@ const routes = [
   },
   {
     path: '/app/customFields',
-    icon: 'PeopleIcon',
+    icon: 'PagesIcon',
     name: 'CustomFields',
     globalRole: 'Trusted',
   },
   {
     path: '/app/issueTypes',
-    icon: 'PeopleIcon',
+    icon: 'MoneyIcon',
     name: 'IssueTypes',
     globalRole: 'Trusted',
   },
   {
     path: '/app/status-manager',
-    icon: 'PeopleIcon',
+    icon: 'PagesIcon',
     name: 'Status',
     globalRole: 'Trusted',
   },
   {
     path: '/app/Screens',
-    icon: 'PeopleIcon',
+    icon: 'ModalsIcon',
     name: 'Screens',
     globalRole: 'Trusted',
   },
