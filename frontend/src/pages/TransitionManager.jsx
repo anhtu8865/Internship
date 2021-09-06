@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { fetchTransitions,getDataByIdWorkflow,transitionsSelector } from '../slices/transition'
 import { fetchTransitionStatuss,transitionStatussSelector } from '../slices/tra-sta'
+import { fetchStatuss, statussSelector,setState  } from '../slices/statuss'
 import { useAppDispatch } from '../store'
 import { useSelector } from 'react-redux'
 import TransitionItem from '../components/Transition/TransitionItem'
@@ -25,6 +26,7 @@ import {
     }
     let temp = JSON.parse(localStorage.getItem('Workflow') || '[]' )
     const dispatch = useAppDispatch()
+    
     const { transitions,loading, hasErrors } = useSelector(transitionsSelector)
    useEffect(() => {
         dispatch(getDataByIdWorkflow(temp.WorkflowId)) 

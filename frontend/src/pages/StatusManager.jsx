@@ -35,7 +35,7 @@ const Statuss = () => {
            dispatch(setState())
          }
        }, [updateSuccess])
-  localStorage.setItem('Status', JSON.stringify(statuss))
+
   
     // setup pages control for every table
   const [pageTable1, setPageTable1] = useState(1)

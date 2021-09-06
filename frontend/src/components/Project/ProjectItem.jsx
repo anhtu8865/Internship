@@ -1,23 +1,32 @@
-import React, {useState} from 'react'
+import React, {useState,useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch } from '../../store'
 import { deleteProject, setProjectUpdate } from '../../slices/projects'
-
+import { selectAllIssues, fetchIssues, deleteIssue } from '../../slices/issues'
+import { fetchWorkflows,workflowsSelector,setState } from '../../slices/workflows'
 import UpdateProjectModal from './UpdateProjectModal';
 import ViewProject from './ViewProject';
 import { setWorkflowUpdate } from '../../slices/workflows'
 import { useHistory } from 'react-router-dom'
 import { TableCell, TableRow, Button, Table, ModalHeader, ModalBody,ModalFooter,Modal,Badge } from '@windmill/react-ui';
 import { useToasts } from 'react-toast-notifications'
+import { useSelector, useDispatch } from 'react-redux'
 const ProjectItem = ({ project }) => {
+  
   const {addToast} = useToasts()
   const dispatch = useAppDispatch()
   const history = useHistory()
+  
+  const { updateWor, updateSuccess,workflows,loading, hasErrors } = useSelector(workflowsSelector)
+   useEffect(() => {
+        dispatch(fetchWorkflows()) 
+    }, [dispatch])
+    console.log(workflows)
   const [isModalOpen, setIsModalOpen, deleteP] = useState(false)
   let temp = JSON.parse(localStorage.getItem('WorkflowAll') || '[]' )
   let temp1 = JSON.parse(localStorage.getItem('IssuesAll') || '[]' )
   let WorkflowNa
-  temp.map((temp1) =>{
+  workflows.map((temp1) =>{
     if(temp1.WorkflowId == project.WorkflowId){
       WorkflowNa = temp1.WorkflowName
     }
@@ -42,6 +51,7 @@ const ProjectItem = ({ project }) => {
       appearance: 'error',
       autoDismiss: true,
     })
+
   }
   else{
     setIsModalOpen(true)
@@ -57,7 +67,8 @@ const ProjectItem = ({ project }) => {
     
     
   }
-
+  const issues = useSelector(selectAllIssues)
+  console.log(issues)
   const [openUpdate, setOpenUpdate] = React.useState(false)
 
   const handleOpenUpdate = (e, project) => {

@@ -2,7 +2,10 @@ import FormInput from "../components/Form/FormInputNew";
 import { useForm } from "react-hook-form";
 import TransitionApi from "../api/transitionApi";
 import { useHistory } from 'react-router-dom'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { fetchStatuss, statussSelector,setState  } from '../slices/statuss'
+import { useSelector } from 'react-redux'
+import { useAppDispatch } from '../store'
 import Select1 from 'react-select'
 import { useToasts } from 'react-toast-notifications'
 import { Button, Select } from "@windmill/react-ui";
@@ -11,6 +14,12 @@ import { Button, Select } from "@windmill/react-ui";
 
 export default function CreateTransition(modalDialog) {
     const { addToast } = useToasts()
+    const dispatch = useAppDispatch()
+    const { updateMess, updateSuccess,statuss, loading, hasErrors } = useSelector(statussSelector)
+  useEffect(() => {
+    dispatch(fetchStatuss())
+  }, [dispatch])
+  console.log(statuss)
     const {fulldata} = modalDialog
     let temp = JSON.parse(localStorage.getItem('Status') || '[]' )
     let temp1 = JSON.parse(localStorage.getItem('Workflow') || '[]' )
@@ -40,13 +49,13 @@ export default function CreateTransition(modalDialog) {
         {
           let statusname1
           let statusname2
-          temp.map((temp) => {
+          statuss.map((temp) => {
               console.log(temp)
             if (temp.StatusId == data.Status1Id) {
               statusname1 = temp.StatusName
             }
           })
-          temp.map((temp) => {
+          statuss.map((temp) => {
             console.log(temp)
           if (temp.StatusId == data.Status2Id) {
             statusname2 = temp.StatusName
@@ -81,7 +90,7 @@ export default function CreateTransition(modalDialog) {
       }
     }
 
-    var option1s = temp.map((option) => {
+    var option1s = statuss.map((option) => {
         return (
           <option key={option.Status1Id} value={option.StatusId}>
             {option.StatusName}
@@ -89,8 +98,8 @@ export default function CreateTransition(modalDialog) {
         )
       })
       console.log(option1s)
-      const fil = temp.filter(
-        (item1) => !temp.some((item2) => item1.Status1Id === item2.StatusId)
+      const fil = statuss.filter(
+        (item1) => !statuss.some((item2) => item1.Status1Id === item2.StatusId)
       )
       console.log(fil)
       var option2s = fil.map((option) => {
