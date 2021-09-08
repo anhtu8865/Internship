@@ -87,7 +87,6 @@ const IssueExcerpt = ({ issue, openModal }) => {
 export const Issues = () => {
   const dispatch = useDispatch()
   const issues = useSelector(selectAllIssues)
-
   const issueStatus = useSelector((state) => state.issues.status)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [id, setId] = useState()

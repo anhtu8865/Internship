@@ -96,11 +96,7 @@ useEffect(() => {
   //render user
   
   const renderProjects = () => {
-    console.log(searchTerm)
-    console.log("kkk")
-    console.log(selectTerm)
-    console.log(dataTable1)
-    console.log(projects)
+    
     if (
       (searchTerm == '' && selectTerm == 'All') ||
       (searchTerm == '' && selectTerm == '')
