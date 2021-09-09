@@ -28,7 +28,6 @@ func (u *UserRoute) Init(router *gin.Engine) {
 		u.RouterGroup.POST("/refresh",auth.RefreshToken)
 		u.RouterGroup.GET("/info-user-id",auth.CheckUserLoged,u.GetUserbyId())
 		u.RouterGroup.GET("/info-user",auth.CheckUserLoged,u.GetInfoUserByToken())
-
 	}
 }
 

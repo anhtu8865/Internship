@@ -1,29 +1,29 @@
 package handlers
 
 import (
+
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
+	_ "github.com/godror/godror"
+
 	"jira/common/helpers"
 	. "jira/common/middleware/auth"
 	"jira/models"
 	"log"
 	"net/http"
+	"net/smtp"
 	"strconv"
-
-	"github.com/gin-gonic/gin"
-	_ "github.com/godror/godror"
+	"text/template"
+	"bytes"
 )
-
-
-
 
 var UserHandlers = UserHandler{}
 
 type UserHandler struct{}
 
 //redis
-
 
 ///login
 func (u *UserHandler) Singin() gin.HandlerFunc {
@@ -62,7 +62,7 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 					}
 					//compare password
 					if password == string(originalStringBytes) {
-						ts, err := CreateToken(int64(Exists_user[0].UserId),int64(Exists_user[0].IsAdmin))
+						ts, err := CreateToken(int64(Exists_user[0].UserId), int64(Exists_user[0].IsAdmin))
 						if err != nil {
 							c.JSON(http.StatusUnprocessableEntity, err.Error())
 							return
@@ -73,10 +73,10 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 						}
 						tokens := map[string]string{
 							"access_token":  ts.AccessToken,
-							"refresh_token": ts.RefreshToken,						
+							"refresh_token": ts.RefreshToken,
 						}
-						c.JSON(http.StatusOK ,helpers.MessageResponse{Msg: "Login Success", Data: tokens})
-					
+						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: tokens})
+
 					} else {
 
 						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Wrong password, please try again!"})
@@ -93,7 +93,7 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 					}
 
 					if password == string(originalStringBytes) {
-						ts, err := CreateToken(int64(Exists_user[0].UserId),int64(Exists_user[0].IsAdmin))
+						ts, err := CreateToken(int64(Exists_user[0].UserId), int64(Exists_user[0].IsAdmin))
 						if err != nil {
 							c.JSON(http.StatusUnprocessableEntity, err.Error())
 							return
@@ -102,10 +102,10 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 						if saveErr != nil {
 							c.JSON(http.StatusUnprocessableEntity, saveErr.Error())
 						}
-					
+
 						tokens := map[string]string{
 							"access_token":  ts.AccessToken,
-							"refresh_token": ts.RefreshToken,	
+							"refresh_token": ts.RefreshToken,
 						}
 						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: tokens})
 
@@ -126,7 +126,7 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 					}
 
 					if password == string(originalStringBytes) {
-						ts, err := CreateToken(int64(Exists_user[0].UserId),int64(Exists_user[0].IsAdmin))
+						ts, err := CreateToken(int64(Exists_user[0].UserId), int64(Exists_user[0].IsAdmin))
 						if err != nil {
 							c.JSON(http.StatusUnprocessableEntity, err.Error())
 							return
@@ -137,7 +137,7 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 						}
 						tokens := map[string]string{
 							"access_token":  ts.AccessToken,
-							"refresh_token": ts.RefreshToken,	
+							"refresh_token": ts.RefreshToken,
 						}
 						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Login Success", Data: tokens})
 
@@ -151,6 +151,7 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 		}
 	}
 }
+
 //func get All user
 func (u *UserHandler) Index() gin.HandlerFunc {
 	//Do everything here, call model etc...
@@ -206,24 +207,30 @@ func (u *UserHandler) CreateUser() gin.HandlerFunc {
 			if len(exist_user) == 0 {
 				//convert string to int wwith global role
 				global_role_int, _ := strconv.Atoi(global_role)
-
-				//hash Password
-				temp := password
-				hashPassword := base64.StdEncoding.EncodeToString([]byte(temp))
-				//
-				src := models.User{
-					UserName:     username,
-					UserFullName: fullname,
-					UserEmail:    email,
-					UserPassword: hashPassword,
-					IsAdmin:      global_role_int,
-				}
-				sm := models.UserModel{}
-				//Add user
-				if _, err := sm.AddUser(src); err != nil {
+				//send mail
+				_, err := sendEmail(email, password, username,fullname)
+				if err != nil {
 					c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 				} else {
-					c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Sign Up Success"})
+					//hash Password
+					temp := password
+					hashPassword := base64.StdEncoding.EncodeToString([]byte(temp))
+					//
+					src := models.User{
+						UserName:     username,
+						UserFullName: fullname,
+						UserEmail:    email,
+						UserPassword: hashPassword,
+						IsAdmin:      global_role_int,
+					}
+					sm := models.UserModel{}
+					//Add user
+					if _, err := sm.AddUser(src); err != nil {
+						c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
+					} else {
+
+						c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Sign Up Success"})
+					}
 				}
 			}
 
@@ -287,13 +294,14 @@ func (u *UserHandler) UpdateUser() gin.HandlerFunc {
 			Check_user_exists, err := models.UserModels.Check_User_Exist_By_Id(id)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
-			} else{
-			c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Update user success",Data:Check_user_exists[0]})
-		}}
+			} else {
+				c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Update user success", Data: Check_user_exists[0]})
+			}
+		}
 	}
 }
 
-//get user by id 
+//get user by id
 func (u *UserHandler) GetUserbyId() gin.HandlerFunc {
 	//Do everything here, call model etc...
 	return func(c *gin.Context) {
@@ -307,6 +315,7 @@ func (u *UserHandler) GetUserbyId() gin.HandlerFunc {
 		}
 	}
 }
+
 //get user by token
 func (u *UserHandler) GetUserbyTokenUser() gin.HandlerFunc {
 	//Do everything here, call model etc...
@@ -316,7 +325,7 @@ func (u *UserHandler) GetUserbyTokenUser() gin.HandlerFunc {
 		if error != nil {
 			c.JSON(http.StatusUnauthorized, "unauthorized")
 		}
-		user_id:= strconv.FormatInt(tokenAuth.UserId,10)
+		user_id := strconv.FormatInt(tokenAuth.UserId, 10)
 		users, err := models.UserModels.Check_User_Exist_By_Id(user_id)
 		if err == nil {
 			c.JSON(http.StatusOK, helpers.MessageResponse{Msg: "Get data Success", Data: users[0]})
@@ -324,4 +333,89 @@ func (u *UserHandler) GetUserbyTokenUser() gin.HandlerFunc {
 			c.JSON(http.StatusFound, helpers.MessageResponse{Msg: "User null"})
 		}
 	}
+}
+func sendEmail(receiversMail string, password string, username string,fullname string) (bool, error) {
+	// Sender data.
+	from := "phucotrithihamhoc@gmail.com"
+	passwordEmail := "baflhzzxihredlqp"
+	//
+	// Receiver email address.
+	to := []string{
+		receiversMail,
+	}
+	// smtp server configuration.
+	smtpHost := "smtp.gmail.com"
+	smtpPort := "587"
+	// Authentication.
+	auth := smtp.PlainAuth("", from, passwordEmail, smtpHost)
+	t, _ := template.ParseFiles("templates/template.html")
+    var body bytes.Buffer
+
+	mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+	body.Write([]byte(fmt.Sprintf("Subject: This is a test subject \n%s\n\n", mimeHeaders)))
+
+	t.Execute(&body, struct {
+		FullName string
+		UserName string
+		Password string
+	}{
+		FullName:    fullname,
+		UserName:    username,
+		Password: password,
+	})
+
+	// Sending email.
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, body.Bytes())
+	if err != nil {
+		fmt.Println(err)
+		return false, err
+	}
+	return true, nil
+	// t := template.New("template.html")
+	// var err error
+	// t, err = t.ParseFiles("templates/template.html")
+	// if err != nil {
+	// 	fmt.Println("1")
+	// 	fmt.Println(err)
+	// }
+	// var tpl bytes.Buffer
+	// if err := t.Execute(&tpl, struct {
+	// 	username string
+	// }{
+	// 	username: username,
+	// }); err != nil {
+	// 	fmt.Println("2")
+
+	// 	fmt.Println(err)
+	// }
+	// result := tpl.String()
+
+	// m := gomail.NewMessage()
+
+	// // Set E-Mail sender
+	// m.SetHeader("From", "phucotrithihamhoc@gmail.com")
+
+	// // Set E-Mail receivers
+	// m.SetHeader("To", receiversMail)
+
+	// // Set E-Mail subject
+	// m.SetHeader("Subject", "Gomail test subject")
+
+	// // Set E-Mail body. You can set plain text or html with text/html
+	// m.SetBody("text/html", result)
+	// m.Attach("templates/template.html")
+	// // Settings for SMTP server
+	// d := gomail.NewDialer("smtp.gmail.com", 587, "phucotrithihamhoc@gmail.com", "baflhzzxihredlqp")
+
+	// // This is only needed when SSL/TLS certificate is not valid on server.
+	// // In production this should be set to false.
+	// d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// // Now send E-Mail
+	// if err := d.DialAndSend(m); err != nil {
+	// 	fmt.Println(err)
+	// 	return false, err
+	// }
+	// return true, nil
+
 }

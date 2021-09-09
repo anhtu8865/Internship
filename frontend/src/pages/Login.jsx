@@ -7,23 +7,34 @@ import ImageDark from '../assets/img/login-office-dark.jpeg'
 import { useAppDispatch } from '../store'
 import { useToasts } from 'react-toast-notifications'
 import { useHistory } from 'react-router-dom'
+import { Label, Input, HelperText } from '@windmill/react-ui'
+import { EyeIcon } from '../icons'
+
 function Login(props) {
-  const { register, handleSubmit } = useForm()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
   const { addToast } = useToasts()
   const dispatch = useAppDispatch()
   const history = useHistory()
-  //check xem đã đăng xuất, đăng nhập hay chưa này 
+  //check xem đã đăng xuất, đăng nhập hay chưa này
   const [isLogged, setIsLogged] = useState(false)
   useEffect(() => {
-     setIsLogged(!!localStorage.getItem('accessToken')) 
-    
+    setIsLogged(!!localStorage.getItem('accessToken'))
   })
   useEffect(() => {
-    if (isLogged){
+    if (isLogged) {
       history.push('/app')
     }
   }, [isLogged])
 
+  //show password
+  const [passwordShown, setPasswordShown] = useState(false)
+  const togglePasswordVisiblity = () => {
+    setPasswordShown(passwordShown ? false : true)
+  }
   //click login
   const onSubmit = (data) => {
     userApi
@@ -68,22 +79,48 @@ function Login(props) {
                 Login
               </h1>
               <form onSubmit={handleSubmit(onSubmit)}>
-                <FormInput
-                  r={register}
-                  name="username"
-                  label="Username"
-                  required
-                  placeholder="@gmail or UserName"
-                />
-
-                <FormInput
-                  r={register}
-                  name="password"
-                  label="Password"
-                  type="password"
-                  required
-                  placeholder="************"
-                />
+                <Label className="mb-5 w-full relative z-0">
+                  <label>User Name or Email</label>
+                  <Input
+                    {...register('username', {
+                      required: true,
+                      minLength: 5,
+                    })}
+                    name="username"
+                    label="Username"
+                    placeholder="User Name or Email"
+                  />
+                </Label>
+                <Label className="mb-5 w-full relative z-0 pass-wrapper">
+                  <label>Password</label>
+                  <div
+                    className="rounded-md border focus:ring-purple-700 focus:border-transparent"
+                    style={{ position: 'relative', display: 'flex' }}
+                  >
+                    <Input
+                      className="focus:none"
+                      style={{ border: 'none' }}
+                      {...register('password', {
+                        required: true,
+                        minLength: 6,
+                      })}
+                      name="password"
+                      label="Password"
+                      placeholder="*******"
+                      type={passwordShown ? 'text' : 'password'}
+                    ></Input>
+                    <EyeIcon
+                      className="w-6 h-10 mr-2 ml-2"
+                      aria-hidden="true"
+                      onClick={togglePasswordVisiblity}
+                    ></EyeIcon>
+                  </div>
+                  {errors.password && (
+                    <HelperText style={{ color: 'red' }}>
+                      Password should have more than 6 characters
+                    </HelperText>
+                  )}
+                </Label>
 
                 <div className="w-full mt-10 mb-5 px-10">
                   <input

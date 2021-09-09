@@ -29,6 +29,7 @@ import { ReactComponent as OutlineLogoutIcon } from './outlineLogout.svg'
 import {ReactComponent as PermissionIcon} from './permission.svg'
 import {ReactComponent as UserIcon} from './user.svg'
 import {ReactComponent as LayersIcon} from './layers.svg'
+import { ReactComponent as EyeIcon } from './eye.svg'
 export {
   ButtonsIcon,
   CardsIcon,
@@ -61,4 +62,5 @@ export {
   PermissionIcon,
   UserIcon,
   LayersIcon,
+  EyeIcon,
 }

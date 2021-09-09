@@ -9,8 +9,6 @@ import { inforUserSelector } from '../../slices/infouser'
 import { useSelector } from 'react-redux'
 
 function Icon({ icon, ...props }) {
-
-  
   const Icon = Icons[icon]
   return <Icon {...props} />
 }

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react'
-import { Label, Input, Button } from '@windmill/react-ui'
+import { Label, Input, Button, HelperText } from '@windmill/react-ui'
 
 // class FormInput extends Component {
 // constructor(props) {
@@ -32,13 +32,12 @@ const FormInput = ({ r, name, label, required, type, value, placeholder }) => (
   <Label className="mb-5 w-full relative z-0">
     <label>{label}</label>
     <Input
-      className="py-2 px-3  block w-full px-0 mt-2 bg-transparent border 
-    border-b-2 appearance focus:ring-0  "
       type={type}
       defaultValue={value}
       placeholder={placeholder}
       {...r(name, { required })}
     />
+    {/* <HelperText>Password should have more than 6 characters</HelperText> */}
     {/* <label
       htmlFor="name"
       className="absolute duration-300 
