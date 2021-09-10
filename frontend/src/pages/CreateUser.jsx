@@ -12,6 +12,12 @@ const isValidEmail = (email) =>
   /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
     email
   )
+const isValidUserName = (userName) => /^[a-zA-Z0-9\_]+$/.test(userName)
+const isValidFullName = (fullName) => /^[A-Za-z- ]+$/.test(fullName)
+
+const startWithCapital=(word)=>{
+   return word.charAt(0) === word.charAt(0).toUpperCase()
+}
 function CreateUser() {
   const {
     register,
@@ -23,6 +29,32 @@ function CreateUser() {
   const handleEmailValidation = (email) => {
     const isValid = isValidEmail(email)
     return isValid
+  }
+  //validate username
+  const handleUserNameValidation = (username) =>{
+    const isValid = isValidUserName(username)
+    return isValid
+  }
+  //xóa dấu trước khi validate
+  function removeAscent(str) {
+    if (str === null || str === undefined) return str
+    str = str.toLowerCase()
+    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a')
+    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, 'e')
+    str = str.replace(/ì|í|ị|ỉ|ĩ/g, 'i')
+    str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, 'o')
+    str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, 'u')
+    str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, 'y')
+    str = str.replace(/đ/g, 'd')
+    return str
+  }
+  //validate fullname
+  const handleFullNameValidate = (fullname) =>{
+    const strRemoveAscent = removeAscent(fullname)
+    const isValid = isValidFullName(strRemoveAscent)
+    const checkCapital = startWithCapital(fullname)
+    if (isValid && checkCapital) return true
+    else return false
   }
   const { addToast } = useToasts()
   const history = useHistory()
@@ -58,6 +90,7 @@ function CreateUser() {
                 {...register('fullname', {
                   required: true,
                   minLength: 6,
+                  validate: handleFullNameValidate,
                 })}
                 name="fullname"
                 label="Full name"
@@ -74,7 +107,11 @@ function CreateUser() {
             <Label className="mb-5 w-full relative z-0">
               <label>User Name</label>
               <Input
-                {...register('username', { required: true, minLength: 6 })}
+                {...register('username', {
+                  required: true,
+                  minLength: 6,
+                  validate: handleUserNameValidation,
+                })}
                 name="username"
                 label="Username"
                 required
@@ -82,7 +119,7 @@ function CreateUser() {
               />
               {errors.username && (
                 <HelperText style={{ color: 'red' }}>
-                  User Name should have more than 6 characters
+                  User Name should have more than 6 characters or validate
                 </HelperText>
               )}
             </Label>

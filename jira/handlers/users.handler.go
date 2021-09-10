@@ -352,7 +352,7 @@ func sendEmail(receiversMail string, password string, username string,fullname s
     var body bytes.Buffer
 
 	mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
-	body.Write([]byte(fmt.Sprintf("Subject: This is a test subject \n%s\n\n", mimeHeaders)))
+	body.Write([]byte(fmt.Sprintf("Subject: Hello \n%s\n\n", mimeHeaders)))
 
 	t.Execute(&body, struct {
 		FullName string
