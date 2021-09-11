@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^12.1.10",
     "@windmill/react-ui": "^0.6.0",
     "axios": "^0.21.1",
+    "draft-js": "^0.11.7",
     "query-string": "^7.0.1",
     "react": "^17.0.2",
     "react-cookie": "^4.1.1",

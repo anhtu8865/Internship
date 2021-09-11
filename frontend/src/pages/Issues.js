@@ -27,6 +27,16 @@ import {
   Input,
 } from '@windmill/react-ui'
 import { UpdateIssueForm } from '../components/Issue/UpdateIssueForm'
+import { Editor, EditorState } from 'draft-js'
+import 'draft-js/dist/Draft.css'
+
+function MyEditor() {
+  const [editorState, setEditorState] = React.useState(() =>
+    EditorState.createEmpty()
+  )
+
+  return <Editor editorState={editorState} onChange={setEditorState} />
+}
 
 const IssueExcerpt = ({ issue, openModal }) => {
   return (
@@ -235,7 +245,9 @@ export const Issues = () => {
       <div className="container mx-auto px-4 mb-16 sm:px-8">
         <div className="py-8">
           <div className="mb-5 my-2 flex justify-between sm:flex-row flex-col">
+            <MyEditor />
             <h2 className="text-2xl font-semibold leading-tight">Issues</h2>
+
             <div className="flex justify-between sm:flex-row flex-col">
               <Label className="m-2">
                 <span className="text-1xl font-semibold leading-tight">
@@ -246,7 +258,7 @@ export const Issues = () => {
                   value={project}
                   onChange={onProjectChanged}
                 >
-                  <option value=""></option>
+                  <option value="">All</option>
                   {projectsOptions}
                 </Select>
               </Label>
@@ -259,7 +271,7 @@ export const Issues = () => {
                   value={issueType}
                   onChange={onIssueTypeChanged}
                 >
-                  <option value=""></option>
+                  <option value="">All</option>
                   {issueTypesOptions}
                 </Select>
               </Label>
@@ -272,7 +284,7 @@ export const Issues = () => {
                   value={status}
                   onChange={onStatusChanged}
                 >
-                  <option value=""></option>
+                  <option value="">All</option>
                   {statusesOptions}
                 </Select>
               </Label>
@@ -281,7 +293,7 @@ export const Issues = () => {
                   Assignee:
                 </span>
                 <Select className="mt-1" value={user} onChange={onUserChanged}>
-                  <option value=""></option>
+                  <option value="">All</option>
                   {usersOptions}
                 </Select>
               </Label>
@@ -289,6 +301,13 @@ export const Issues = () => {
                 <span className="text-1xl font-semibold leading-tight">
                   From date:
                 </span>
+                <Badge
+                  className="ml-2 bg-gray-300 hover:bg-gray-400 cursor-pointer"
+                  type={'neutral'}
+                  onClick={() => setFromDate('')}
+                >
+                  Clear
+                </Badge>
                 <Input
                   type="date"
                   className="mt-1"
@@ -300,6 +319,13 @@ export const Issues = () => {
                 <span className="text-1xl font-semibold leading-tight">
                   To date:
                 </span>
+                <Badge
+                  className="ml-2 bg-gray-300 hover:bg-gray-400 cursor-pointer"
+                  type={'neutral'}
+                  onClick={() => setToDate('')}
+                >
+                  Clear
+                </Badge>
                 <Input
                   type="date"
                   className="mt-1"

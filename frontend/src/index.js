@@ -12,11 +12,11 @@ ReactDOM.render(
   <React.StrictMode>
     <SidebarProvider>
       <Suspense fallback={<ThemedSuspense />}>
-      <Windmill usePreferences>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </Windmill>
+        <Windmill usePreferences>
+          <Provider store={store}>
+            <App />
+          </Provider>
+        </Windmill>
       </Suspense>
     </SidebarProvider>
   </React.StrictMode>,

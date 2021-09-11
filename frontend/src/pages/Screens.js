@@ -73,7 +73,7 @@ const ScreenExcerpt = ({ screen, listCustomFields, openModal }) => {
         >
           <Link
             to={{
-              pathname: `/screenCustomFields/${screen.Id}`,
+              pathname: `/app/screenCustomFields/${screen.Id}`,
               state: { screen, listCustomFields },
             }}
           >
@@ -140,7 +140,6 @@ export const Screens = () => {
       })
       dispatch(setSuccessNull({ success: null }))
     }
-    
   }, [
     screenStatus,
     screenCustomFieldStatus,
