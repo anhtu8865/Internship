@@ -27,16 +27,53 @@ import {
   Input,
 } from '@windmill/react-ui'
 import { UpdateIssueForm } from '../components/Issue/UpdateIssueForm'
-import { Editor, EditorState } from 'draft-js'
-import 'draft-js/dist/Draft.css'
+// import ReactQuill from 'react-quill'
+// import 'react-quill/dist/quill.snow.css'
+// import 'react-quill/dist/quill.bubble.css'
 
-function MyEditor() {
-  const [editorState, setEditorState] = React.useState(() =>
-    EditorState.createEmpty()
-  )
-
-  return <Editor editorState={editorState} onChange={setEditorState} />
+/*
+ * Quill modules to attach to editor
+ * See https://quilljs.com/docs/modules/ for complete options
+ */
+const modules = {
+  toolbar: [
+    [{ header: '1' }, { header: '2' }, { font: [] }],
+    [{ size: [] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [
+      { list: 'ordered' },
+      { list: 'bullet' },
+      { indent: '-1' },
+      { indent: '+1' },
+    ],
+    ['link', 'image', 'video'],
+    ['clean'],
+  ],
+  clipboard: {
+    // toggle to add extra line breaks when pasting HTML:
+    matchVisual: false,
+  },
 }
+/*
+ * Quill editor formats
+ * See https://quilljs.com/docs/formats/
+ */
+const formats = [
+  'header',
+  'font',
+  'size',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'blockquote',
+  'list',
+  'bullet',
+  'indent',
+  'link',
+  'image',
+  'video',
+]
 
 const IssueExcerpt = ({ issue, openModal }) => {
   return (
@@ -95,6 +132,7 @@ const IssueExcerpt = ({ issue, openModal }) => {
 }
 
 export const Issues = () => {
+  // const [value, setValue] = useState('')
   const dispatch = useDispatch()
   const issues = useSelector(selectAllIssues)
   const issueStatus = useSelector((state) => state.issues.status)
@@ -245,7 +283,6 @@ export const Issues = () => {
       <div className="container mx-auto px-4 mb-16 sm:px-8">
         <div className="py-8">
           <div className="mb-5 my-2 flex justify-between sm:flex-row flex-col">
-            <MyEditor />
             <h2 className="text-2xl font-semibold leading-tight">Issues</h2>
 
             <div className="flex justify-between sm:flex-row flex-col">
@@ -359,6 +396,15 @@ export const Issues = () => {
               />
             </TableFooter>
           </TableContainer>
+          {/* <ReactQuill
+            theme="snow"
+            value={value}
+            onChange={setValue}
+            modules={modules}
+            formats={formats}
+            placeholder={'Write something...'}
+          />
+          <ReactQuill theme="bubble" value={value} readOnly={true} /> */}
           <Modal isOpen={isModalOpen} onClose={closeModal}>
             <ModalHeader>Delete ?</ModalHeader>
             <ModalBody>

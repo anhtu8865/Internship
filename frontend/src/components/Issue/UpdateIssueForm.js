@@ -21,8 +21,56 @@ import {
   Button,
   Badge,
 } from '@windmill/react-ui'
+// import ReactQuill from 'react-quill'
+// import 'react-quill/dist/quill.snow.css'
+// import 'react-quill/dist/quill.bubble.css'
+
+// /*
+//  * Quill modules to attach to editor
+//  * See https://quilljs.com/docs/modules/ for complete options
+//  */
+// const modules = {
+//   toolbar: [
+//     [{ header: '1' }, { header: '2' }, { font: [] }],
+//     [{ size: [] }],
+//     ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+//     [
+//       { list: 'ordered' },
+//       { list: 'bullet' },
+//       { indent: '-1' },
+//       { indent: '+1' },
+//     ],
+//     ['link', 'image', 'video'],
+//     ['clean'],
+//   ],
+//   clipboard: {
+//     // toggle to add extra line breaks when pasting HTML:
+//     matchVisual: false,
+//   },
+// }
+// /*
+//  * Quill editor formats
+//  * See https://quilljs.com/docs/formats/
+//  */
+// const formats = [
+//   'header',
+//   'font',
+//   'size',
+//   'bold',
+//   'italic',
+//   'underline',
+//   'strike',
+//   'blockquote',
+//   'list',
+//   'bullet',
+//   'indent',
+//   'link',
+//   'image',
+//   'video',
+// ]
 
 export const UpdateIssueForm = ({ issue }) => {
+  //const [value, setValue] = useState('')
   const dispatch = useDispatch()
   const { register, handleSubmit, reset } = useForm()
   const [name, setName] = useState(issue.Name)
@@ -93,7 +141,7 @@ export const UpdateIssueForm = ({ issue }) => {
             <Label key={item.Name} className="m-2">
               <span>{item.Name}</span>
               <Input
-                className="mt-1"
+                className="mt-1 w-32 md:w-48 lg:w-72"
                 {...register(item.Name)}
                 defaultValue={item.Value}
               />
@@ -105,7 +153,7 @@ export const UpdateIssueForm = ({ issue }) => {
               <span>{item.Name}</span>
               <Input
                 type="date"
-                className="mt-1"
+                className="mt-1 w-32 md:w-48 lg:w-72"
                 {...register(item.Name)}
                 defaultValue={item.Value}
               />
@@ -113,10 +161,26 @@ export const UpdateIssueForm = ({ issue }) => {
           )
         case 'Text area':
           return (
+            // <div key={item.Name} className="m-2">
+            //   <Label className="mb-1">
+            //     <span>{item.Name}</span>
+            //   </Label>
+            //   <ReactQuill
+            //     theme="snow"
+            //     // value={value}
+            //     // onChange={setValue}
+
+            //     {...register(item.Name)}
+            //     value={item.Value}
+            //     modules={modules}
+            //     formats={formats}
+            //     placeholder={'Write something...'}
+            //   />
+            // </div>
             <Label key={item.Name} className="m-2">
               <span>{item.Name}</span>
               <Textarea
-                className="mt-1"
+                className="mt-1 w-32 md:w-48 lg:w-72"
                 {...register(item.Name)}
                 defaultValue={item.Value}
               />
@@ -127,7 +191,7 @@ export const UpdateIssueForm = ({ issue }) => {
             <Label key={item.Name} className="m-2">
               <span>{item.Name}</span>
               <Select
-                className="mt-1"
+                className="mt-1 w-32 md:w-48 lg:w-72"
                 {...register(item.Name)}
                 defaultValue={item.Value}
               >
@@ -150,21 +214,46 @@ export const UpdateIssueForm = ({ issue }) => {
         Edit
       </Badge>
 
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
+      <Modal
+        className="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-4xl"
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      >
         <ModalHeader className="m-2">Edit a issue</ModalHeader>
         <ModalBody class="overflow-auto h-80">
+          {/* <div className="m-2">
+            <Label className="mb-1">
+              <span>Name</span>
+            </Label>
+            <ReactQuill
+              theme="snow"
+              value={name}
+              onChange={setName}
+              modules={modules}
+              formats={formats}
+              placeholder={'Write something...'}
+            />
+          </div> */}
           <Label className="m-2">
             <span>Name</span>
-            <Input className="mt-1" value={name} onChange={onNameChanged} />
+            <Input
+              className="mt-1 w-32 md:w-48 lg:w-72"
+              value={name}
+              onChange={onNameChanged}
+            />
           </Label>
           <Label className="m-2">
             <span>Key</span>
-            <Input className="mt-1" value={key} disabled={true} />
+            <Input
+              className="mt-1 w-32 md:w-48 lg:w-72"
+              value={key}
+              disabled={true}
+            />
           </Label>
           <Label className="m-2">
             <span>Project</span>
             <Input
-              className="mt-1"
+              className="mt-1 w-32 md:w-48 lg:w-72"
               placeholder="Jane Doe"
               value={projectName}
               disabled={true}
@@ -173,7 +262,7 @@ export const UpdateIssueForm = ({ issue }) => {
           <Label className="m-2">
             <span>Issue type</span>
             <Input
-              className="mt-1"
+              className="mt-1 w-32 md:w-48 lg:w-72"
               placeholder="Jane Doe"
               value={issueTypeName}
               disabled={true}
@@ -182,7 +271,11 @@ export const UpdateIssueForm = ({ issue }) => {
 
           <Label className="m-2">
             <span>{status}</span>
-            <Select className="mt-1" value="" onChange={onStatusChanged}>
+            <Select
+              className="mt-1 w-32 md:w-48 lg:w-72"
+              value=""
+              onChange={onStatusChanged}
+            >
               <option value=""></option>
               {transitionOptions}
             </Select>
