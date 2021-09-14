@@ -23,6 +23,53 @@ import {
   ModalFooter,
   Button,
 } from '@windmill/react-ui'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
+import 'react-quill/dist/quill.bubble.css'
+
+/*
+ * Quill modules to attach to editor
+ * See https://quilljs.com/docs/modules/ for complete options
+ */
+const modules = {
+  toolbar: [
+    [{ header: '1' }, { header: '2' }, { font: [] }],
+    [{ size: [] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [
+      { list: 'ordered' },
+      { list: 'bullet' },
+      { indent: '-1' },
+      { indent: '+1' },
+    ],
+    ['link', 'image', 'video'],
+    ['clean'],
+  ],
+  clipboard: {
+    // toggle to add extra line breaks when pasting HTML:
+    matchVisual: false,
+  },
+}
+/*
+ * Quill editor formats
+ * See https://quilljs.com/docs/formats/
+ */
+const formats = [
+  'header',
+  'font',
+  'size',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'blockquote',
+  'list',
+  'bullet',
+  'indent',
+  'link',
+  'image',
+  'video',
+]
 
 export const AddIssueForm = () => {
   const { addToast } = useToasts()
@@ -31,6 +78,7 @@ export const AddIssueForm = () => {
   const [key, setKey] = useState('')
   const [projectName, setProjectName] = useState('')
   const [issueTypeName, setIssueTypeName] = useState('')
+  const [description, setDescription] = useState('')
   const [addRequestStatus, setAddRequestStatus] = useState('idle')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const success = useSelector((state) => state.issues.success)
@@ -119,6 +167,7 @@ export const AddIssueForm = () => {
         setAddRequestStatus('pending')
         setName('')
         setKey('')
+        setDescription('')
         const found = projectIssueTypeScreens.find(
           (element) =>
             element.Project_Name === projectName &&
@@ -137,6 +186,7 @@ export const AddIssueForm = () => {
             Project: found.Project,
             Issue_Type: found.Issue_Type,
             Icon: found.Issue_Type_Icon,
+            Description: description,
             Fields: result,
           })
         )
@@ -198,41 +248,59 @@ export const AddIssueForm = () => {
       <div>
         <Button onClick={openModal}>Create</Button>
       </div>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
+      <Modal
+        className="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-6xl"
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      >
         <ModalHeader className="m-2">Add a issue</ModalHeader>
-        <ModalBody class="overflow-auto h-80">
-          <Label className="m-2">
-            <span>Name</span>
-            <Input className="mt-1" value={name} onChange={onNameChanged} />
-          </Label>
-          <Label className="m-2">
-            <span>Key</span>
-            <Input className="mt-1" value={key} onChange={onKeyChanged} />
-          </Label>
-
-          <Label className="m-2">
-            <span>Project</span>
-            <Select
-              className="mt-1"
-              value={projectName}
-              onChange={onProjectChanged}
-            >
-              <option value=""></option>
-              {projectsOptions}
-            </Select>
-          </Label>
-          <Label className="m-2">
-            <span>Issue type</span>
-            <Select
-              className="mt-1"
-              value={issueTypeName}
-              onChange={onIssueTypeChanged}
-            >
-              <option value=""></option>
-              {issueTypesOptions}
-            </Select>
-          </Label>
-          {inputFields}
+        <ModalBody class="overflow-auto h-80 flex">
+          <div className="flex-auto">
+            <Label className="m-2">
+              <span>Name</span>
+              <Input className="mt-1" value={name} onChange={onNameChanged} />
+            </Label>
+            <Label className="m-2">
+              <span>Key</span>
+              <Input className="mt-1" value={key} onChange={onKeyChanged} />
+            </Label>
+            <Label className="m-2">
+              <span>Project</span>
+              <Select
+                className="mt-1"
+                value={projectName}
+                onChange={onProjectChanged}
+              >
+                <option value=""></option>
+                {projectsOptions}
+              </Select>
+            </Label>
+            <Label className="m-2">
+              <span>Issue type</span>
+              <Select
+                className="mt-1"
+                value={issueTypeName}
+                onChange={onIssueTypeChanged}
+              >
+                <option value=""></option>
+                {issueTypesOptions}
+              </Select>
+            </Label>
+            {inputFields}
+          </div>
+          <div className="m-2 mr-4 flex-auto">
+            <Label className="mb-1">
+              <span>Description</span>
+            </Label>
+            <ReactQuill
+              theme="snow"
+              value={description}
+              onChange={setDescription}
+              modules={modules}
+              formats={formats}
+              placeholder={'Write something...'}
+            />
+          </div>
         </ModalBody>
         <ModalFooter>
           <div className="hidden sm:block">
