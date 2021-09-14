@@ -27,6 +27,7 @@ import {
   Input,
 } from '@windmill/react-ui'
 import { UpdateIssueForm } from '../components/Issue/UpdateIssueForm'
+import { ViewIssueForm } from '../components/Issue/ViewIssueForm'
 // import ReactQuill from 'react-quill'
 // import 'react-quill/dist/quill.snow.css'
 // import 'react-quill/dist/quill.bubble.css'
@@ -40,6 +41,8 @@ const modules = {
     [{ header: '1' }, { header: '2' }, { font: [] }],
     [{ size: [] }],
     ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [{ align: [] }],
+    [{ color: [] }, { background: [] }],
     [
       { list: 'ordered' },
       { list: 'bullet' },
@@ -67,6 +70,9 @@ const formats = [
   'underline',
   'strike',
   'blockquote',
+  'align',
+  'background',
+  'color',
   'list',
   'bullet',
   'indent',
@@ -105,6 +111,7 @@ const IssueExcerpt = ({ issue, openModal }) => {
         </span>
       </TableCell>
       <TableCell>
+        {/* <ViewIssueForm issue={issue} /> */}
         <UpdateIssueForm issue={issue} />
         <Badge
           className="ml-1 hover:bg-red-200 cursor-pointer"

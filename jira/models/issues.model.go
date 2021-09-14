@@ -296,9 +296,9 @@ func (pm *IssuesModel) Create(r io.ReadCloser, userId int64) ([]Issue, error) {
 		}
 	}
 	query = fmt.Sprintf(
-		`INSERT INTO NEW_JIRA_ISSUE (KEY,NAME,PROJECT,ISSUE_TYPE,ID,ICON)
-		VALUES ('%v', '%v', '%v', '%v', SEQ_NEW_JIRA_ISSUE.nextval, '%v')`,
-		issue.Key, issue.Name, issue.Project, issue.Issue_Type, issue.Icon)
+		`INSERT INTO NEW_JIRA_ISSUE (KEY,NAME,PROJECT,ISSUE_TYPE,ID,ICON,DESCRIPTION)
+		VALUES ('%v', '%v', '%v', '%v', SEQ_NEW_JIRA_ISSUE.nextval, '%v', '%v')`,
+		issue.Key, issue.Name, issue.Project, issue.Issue_Type, issue.Icon, issue.Description)
 	_, err = DbOracle.Db.Exec(query)
 	if err == nil {
 		_, err := FieldsModels.Create(issue.Fields)
