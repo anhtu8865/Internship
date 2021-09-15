@@ -86,6 +86,18 @@ import {
               </button>
             </Link> */}
           </div>
+          <div className="flex">
+            <Link to="/app/workflows-manager/transitions-manager/view-diagram">
+              <Button >
+                View Diagram
+              </Button>
+            </Link>
+            {/* <Link to="/invite-user">
+              <button className="bg-white border shadow-sm px-3 py-1.5 rounded-md hover:text-green-500 text-gray-700 ml-1">
+                Invite Users
+              </button>
+            </Link> */}
+          </div>
         </div>
           <div className="my-2 flex justify-between sm:flex-row flex-col">
             <div className="flex">
