@@ -25,6 +25,7 @@ import CreateStatus from '../pages/CreateStatus'
 import Profile from '../pages/Profile'
 import AddTransition from '../pages/AddTransition'
 import Projects from '../pages/Projects'
+import viewDiagram from '../pages/viewDiagram'
 
 // const Modals = lazy(() => import('../pages/Modals'))
 // const Tables = lazy(() => import('../pages/Tables'))
@@ -90,6 +91,11 @@ const routes = [
   {
     path: '/workflows-manager/transitions-manager/create-transitions',
     component: AddTransition,
+    globalRole: 'Trusted',
+  },
+  {
+    path: '/workflows-manager/transitions-manager/view-diagram',
+    component: viewDiagram,
     globalRole: 'Trusted',
   },
   {
