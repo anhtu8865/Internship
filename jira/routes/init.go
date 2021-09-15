@@ -52,7 +52,9 @@ func InitRoutes() *gin.Engine {
 	for _, it := range routes {
 		it.Init(router)
 	}
-
+    router.GET("/test", func(c *gin.Context) {
+		c.JSON(http.StatusOK,"123")
+	})
 	router.Use(static.Serve("/", static.LocalFile("../frontend/build", true)))
 	router.LoadHTMLGlob("../frontend/build/*.html")
 	router.GET("/", func(c *gin.Context) {
