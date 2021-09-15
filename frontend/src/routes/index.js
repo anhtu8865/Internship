@@ -12,6 +12,7 @@ import TransitionItemForProject from '../pages/TransitionManagerForProject'
 import { Issues } from '../pages/Issues'
 import { IssuesByProject } from '../pages/IssuesByProject'
 import { Screens } from '../pages/Screens'
+import { ScreenCustomFields } from '../pages/ScreenCustomFields'
 import Workflows from '../pages/Workflows'
 import { CustomFields } from '../pages/CustomFields'
 import { IssueTypes } from '../pages/IssueTypes'
@@ -110,6 +111,11 @@ const routes = [
   {
     path: '/Screens',
     component: Screens,
+    globalRole: 'Trusted',
+  },
+  {
+    path: '/screenCustomFields/:screenId',
+    component: ScreenCustomFields,
     globalRole: 'Trusted',
   },
   {

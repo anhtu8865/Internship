@@ -31,6 +31,7 @@ type Issue struct {
 	Project_Avatar  string
 	Status          string
 	Transitions     []Transition2
+	Description     string
 }
 
 type Transition2 struct {
@@ -126,7 +127,7 @@ func (pm *IssuesModel) Get(userId int64, globalRole int64) ([]Issue, error) {
 	if err == nil {
 		for rows.Next() {
 			issue := Issue{}
-			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon, &issue.Status)
+			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon, &issue.Status, &issue.Description)
 			issue.Fields, err = FieldsModels.GetAllFieldsByIssueKey(issue.Key)
 			if err != nil {
 
@@ -176,7 +177,7 @@ func (pm *IssuesModel) GetByProject(project string) ([]Issue, error) {
 	if err == nil {
 		for rows.Next() {
 			issue := Issue{}
-			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon, &issue.Status)
+			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon, &issue.Status, &issue.Description)
 			issue.Fields, err = FieldsModels.GetAllFieldsByIssueKey(issue.Key)
 			if err != nil {
 
@@ -226,7 +227,7 @@ func (pm *IssuesModel) GetById(id string) ([]Issue, error) {
 	var ListIssues []Issue
 	if err == nil {
 		for rows.Next() {
-			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon, &issue.Status)
+			rows.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon, &issue.Status, &issue.Description)
 			issue.Fields, err = FieldsModels.GetAllFieldsByIssueKey(issue.Key)
 			if err != nil {
 
@@ -295,9 +296,9 @@ func (pm *IssuesModel) Create(r io.ReadCloser, userId int64) ([]Issue, error) {
 		}
 	}
 	query = fmt.Sprintf(
-		`INSERT INTO NEW_JIRA_ISSUE (KEY,NAME,PROJECT,ISSUE_TYPE,ID,ICON)
-		VALUES ('%v', '%v', '%v', '%v', SEQ_NEW_JIRA_ISSUE.nextval, '%v')`,
-		issue.Key, issue.Name, issue.Project, issue.Issue_Type, issue.Icon)
+		`INSERT INTO NEW_JIRA_ISSUE (KEY,NAME,PROJECT,ISSUE_TYPE,ID,ICON,DESCRIPTION)
+		VALUES ('%v', '%v', '%v', '%v', SEQ_NEW_JIRA_ISSUE.nextval, '%v', '%v')`,
+		issue.Key, issue.Name, issue.Project, issue.Issue_Type, issue.Icon, issue.Description)
 	_, err = DbOracle.Db.Exec(query)
 	if err == nil {
 		_, err := FieldsModels.Create(issue.Fields)
@@ -310,7 +311,7 @@ func (pm *IssuesModel) Create(r io.ReadCloser, userId int64) ([]Issue, error) {
 			var ListIssues []Issue
 			for rowsLastRecord.Next() {
 				issue := Issue{}
-				rowsLastRecord.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon, &issue.Status)
+				rowsLastRecord.Scan(&issue.Key, &issue.Name, &issue.Project, &issue.Issue_Type, &issue.Id, &issue.Icon, &issue.Status, &issue.Description)
 				ListIssues = append(ListIssues, issue)
 			}
 			issues, err := IssuesModels.GetById(strconv.Itoa(ListIssues[0].Id))
@@ -351,7 +352,7 @@ func (pm *IssuesModel) Update(r io.ReadCloser, id string, userId int64) ([]Issue
 			return nil, nil
 		}
 	}
-	query = fmt.Sprintf(`UPDATE new_jira_issue SET name = '%v', status = '%v' WHERE id = '%v'`, issue.Name, issue.Status, id)
+	query = fmt.Sprintf(`UPDATE new_jira_issue SET name = '%v', status = '%v', description = '%v' WHERE id = '%v'`, issue.Name, issue.Status, issue.Description, id)
 	_, err = DbOracle.Db.Exec(query)
 	if err == nil {
 		query := fmt.Sprintf("delete from new_jira_field where issue = '%v'", issue.Key)
@@ -390,8 +391,10 @@ func (pm *IssuesModel) Delete(id string, userId int64) ([]Issue, error) {
 		listPermission_id = append(listPermission_id, permission_id)
 	}
 	if len(listPermission_id) == 0 {
+		fmt.Print(listPermission_id, "nè", userId, "nè", issues[0])
 		return nil, nil
 	}
+
 	for i, v := range listPermission_id {
 		if v == 6 {
 			break

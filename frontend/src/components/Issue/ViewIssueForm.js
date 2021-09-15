@@ -21,9 +21,55 @@ import {
   Button,
   Badge,
 } from '@windmill/react-ui'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
+import 'react-quill/dist/quill.bubble.css'
 
-export const ViewIssueForm = ({ issueId }) => {
-  const issue = useSelector((state) => selectIssueById(state, issueId))
+/*
+ * Quill modules to attach to editor
+ * See https://quilljs.com/docs/modules/ for complete options
+ */
+const modules = {
+  toolbar: [
+    [{ header: '1' }, { header: '2' }, { font: [] }],
+    [{ size: [] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [
+      { list: 'ordered' },
+      { list: 'bullet' },
+      { indent: '-1' },
+      { indent: '+1' },
+    ],
+    ['link', 'image', 'video'],
+    ['clean'],
+  ],
+  clipboard: {
+    // toggle to add extra line breaks when pasting HTML:
+    matchVisual: false,
+  },
+}
+/*
+ * Quill editor formats
+ * See https://quilljs.com/docs/formats/
+ */
+const formats = [
+  'header',
+  'font',
+  'size',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'blockquote',
+  'list',
+  'bullet',
+  'indent',
+  'link',
+  'image',
+  'video',
+]
+
+export const ViewIssueForm = ({ issue }) => {
   const dispatch = useDispatch()
   const { register, handleSubmit, reset } = useForm()
   const [name, setName] = useState(issue.Name)
@@ -34,13 +80,15 @@ export const ViewIssueForm = ({ issueId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [status, setStatus] = useState(issue.Status)
+  const [description, setDescription] = useState(issue.Description)
+
   const [editRequestStatus, setEditRequestStatus] = useState('idle')
   const userList = useSelector(selectUserList)
   useEffect(() => {
-    if (project) {
+    if (isModalOpen) {
       dispatch(fetchUserList({ project: project }))
     }
-  }, [dispatch])
+  }, [dispatch, isModalOpen])
   const onNameChanged = (e) => setName(e.target.value)
   const onStatusChanged = (e) => setStatus(e.target.value)
   const canSave =
@@ -49,7 +97,13 @@ export const ViewIssueForm = ({ issueId }) => {
   const onSaveIssueClicked = async (data) => {
     if (canSave) {
       try {
-        const newIssue = { ...issue, Key: key, Name: name, Status: status }
+        const newIssue = {
+          ...issue,
+          Key: key,
+          Name: name,
+          Status: status,
+          Description: description,
+        }
         newIssue.Fields = newIssue.Fields
           ? newIssue.Fields.map((item) => ({
               ...item,
@@ -87,112 +141,54 @@ export const ViewIssueForm = ({ issueId }) => {
   ))
   let inputFields
   if (issue.Fields && issue.Fields.length !== 0) {
-    inputFields = issue.Fields.map((item) => {
-      switch (item.Field_Type) {
-        case 'Text':
-          return (
-            <Label key={item.Name} className="m-2">
-              <span>{item.Name}</span>
-              <Input
-                className="mt-1"
-                {...register(item.Name)}
-                defaultValue={item.Value}
-                disabled={true}
-              />
-            </Label>
-          )
-        case 'Date':
-          return (
-            <Label key={item.Name} className="m-2">
-              <span>{item.Name}</span>
-              <Input
-                type="date"
-                className="mt-1"
-                {...register(item.Name)}
-                defaultValue={item.Value}
-                disabled={true}
-              />
-            </Label>
-          )
-        case 'Text area':
-          return (
-            <Label key={item.Name} className="m-2">
-              <span>{item.Name}</span>
-              <Textarea
-                className="mt-1"
-                {...register(item.Name)}
-                defaultValue={item.Value}
-                disabled={true}
-              />
-            </Label>
-          )
-        case 'People':
-          return (
-            <Label key={item.Name} className="m-2">
-              <span>{item.Name}</span>
-              <Select
-                className="mt-1"
-                {...register(item.Name)}
-                defaultValue={item.Value}
-                disabled={true}
-              >
-                <option value=""></option>
-                {userOptions}
-              </Select>
-            </Label>
-          )
-      }
-    })
+    inputFields = issue.Fields.map((item) => (
+      <Label key={item.Name} className="m-2">
+        <span>{`${item.Name}: ${item.Value}`}</span>
+      </Label>
+    ))
   }
 
   return (
     <>
       <Badge
-        className="hover:bg-green-200 cursor-pointer"
+        className="hover:bg-purple-200 cursor-pointer mr-1"
         type={'primary'}
         onClick={openModal}
       >
         View
       </Badge>
 
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <ModalHeader className="m-2">Edit a issue</ModalHeader>
-        <ModalBody class="overflow-auto h-80">
-          <Label className="m-2 disabled:opacity-50">
-            <span>Name</span>
-            <Input className="mt-1" value={name} onChange={onNameChanged} disabled={true} />
-          </Label>
-          <Label className="m-2">
-            <span>Key</span>
-            <Input className="mt-1" value={key} disabled={true} />
-          </Label>
-          <Label className="m-2">
-            <span>Project</span>
-            <Input
-              className="mt-1"
-              placeholder="Jane Doe"
-              value={projectName}
-              disabled={true}
-            />
-          </Label>
-          <Label className="m-2">
-            <span>Issue type</span>
-            <Input
-              className="mt-1"
-              placeholder="Jane Doe"
-              value={issueTypeName}
-              disabled={true}
-            />
-          </Label>
-
-          <Label className="m-2">
-            <span>{status}</span>
-            <Select className="mt-1" value="" onChange={onStatusChanged} disabled={true}>
-              <option value=""></option>
-              {transitionOptions}
-            </Select>
-          </Label>
-          {inputFields}
+      <Modal
+        className="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-3xl"
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      >
+        <ModalHeader className="m-2">View a issue</ModalHeader>
+        <ModalBody class="overflow-auto h-80 flex justify-between">
+          <div className="m-2 mr-4">
+            <Label className="m-2">
+              <span>{`Name: ${name}`}</span>
+            </Label>
+            <Label className="m-2">
+              <span>{`Key: ${key}`}</span>
+            </Label>
+            <Label className="m-2">
+              <span>{`Project: ${projectName}`}</span>
+            </Label>
+            <Label className="m-2">
+              <span>{`Issue type: ${issueTypeName}`}</span>
+            </Label>
+            <Label className="m-2">
+              <span>Description:</span>
+            </Label>
+            <ReactQuill theme="bubble" value={description} readOnly={true} />
+          </div>
+          <div className="mr-10">
+            <Label className="m-2">
+              <span>{`Status: ${status}`}</span>
+            </Label>
+            {inputFields}
+          </div>
         </ModalBody>
         <ModalFooter>
           <div className="hidden sm:block">
@@ -200,14 +196,14 @@ export const ViewIssueForm = ({ issueId }) => {
               Cancel
             </Button>
           </div>
-          {/* <div className="hidden sm:block">
+          <div className="hidden sm:block">
             <Button
               onClick={handleSubmit(onSaveIssueClicked)}
               disabled={!canSave}
             >
               Accept
             </Button>
-          </div> */}
+          </div>
         </ModalFooter>
       </Modal>
     </>

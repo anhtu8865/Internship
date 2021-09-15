@@ -4,8 +4,8 @@ server:
   max_size: 8 # Calculate by megabyte
   valid_token: "VALID_TOKEN"
 database:
-  host: "115.165.166.55"
+  host: "db.altisss.vn"
   port: 1521
   user: "jira"
-  password: "MyGIAgVwrzQRj8lhD54k"
+  password: "2Knd]fJgexfJgexM."
   sn: "COREDB"

@@ -21,6 +21,56 @@ import {
   Button,
   Badge,
 } from '@windmill/react-ui'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
+import 'react-quill/dist/quill.bubble.css'
+
+/*
+ * Quill modules to attach to editor
+ * See https://quilljs.com/docs/modules/ for complete options
+ */
+const modules = {
+  toolbar: [
+    [{ header: '1' }, { header: '2' }, { font: [] }, { size: [] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [
+      { color: [] },
+      { background: [] },
+      { align: [] },
+      { list: 'ordered' },
+      { list: 'bullet' },
+      { indent: '-1' },
+      { indent: '+1' },
+    ],
+    ['link'],
+    ['clean'],
+  ],
+  clipboard: {
+    // toggle to add extra line breaks when pasting HTML:
+    matchVisual: false,
+  },
+}
+/*
+ * Quill editor formats
+ * See https://quilljs.com/docs/formats/
+ */
+const formats = [
+  'header',
+  'font',
+  'size',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'blockquote',
+  'align',
+  'background',
+  'color',
+  'list',
+  'bullet',
+  'indent',
+  'link',
+]
 
 export const UpdateIssueForm = ({ issue }) => {
   const dispatch = useDispatch()
@@ -33,6 +83,8 @@ export const UpdateIssueForm = ({ issue }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [status, setStatus] = useState(issue.Status)
+  const [description, setDescription] = useState(issue.Description)
+
   const [editRequestStatus, setEditRequestStatus] = useState('idle')
   const userList = useSelector(selectUserList)
   useEffect(() => {
@@ -48,7 +100,13 @@ export const UpdateIssueForm = ({ issue }) => {
   const onSaveIssueClicked = async (data) => {
     if (canSave) {
       try {
-        const newIssue = { ...issue, Key: key, Name: name, Status: status }
+        const newIssue = {
+          ...issue,
+          Key: key,
+          Name: name,
+          Status: status,
+          Description: description,
+        }
         newIssue.Fields = newIssue.Fields
           ? newIssue.Fields.map((item) => ({
               ...item,
@@ -93,7 +151,7 @@ export const UpdateIssueForm = ({ issue }) => {
             <Label key={item.Name} className="m-2">
               <span>{item.Name}</span>
               <Input
-                className="mt-1"
+                className="mt-1 w-32 md:w-48 lg:w-72"
                 {...register(item.Name)}
                 defaultValue={item.Value}
               />
@@ -105,7 +163,7 @@ export const UpdateIssueForm = ({ issue }) => {
               <span>{item.Name}</span>
               <Input
                 type="date"
-                className="mt-1"
+                className="mt-1 w-32 md:w-48 lg:w-72"
                 {...register(item.Name)}
                 defaultValue={item.Value}
               />
@@ -116,7 +174,7 @@ export const UpdateIssueForm = ({ issue }) => {
             <Label key={item.Name} className="m-2">
               <span>{item.Name}</span>
               <Textarea
-                className="mt-1"
+                className="mt-1 w-32 md:w-48 lg:w-72"
                 {...register(item.Name)}
                 defaultValue={item.Value}
               />
@@ -127,7 +185,7 @@ export const UpdateIssueForm = ({ issue }) => {
             <Label key={item.Name} className="m-2">
               <span>{item.Name}</span>
               <Select
-                className="mt-1"
+                className="mt-1 w-32 md:w-48 lg:w-72"
                 {...register(item.Name)}
                 defaultValue={item.Value}
               >
@@ -150,44 +208,74 @@ export const UpdateIssueForm = ({ issue }) => {
         Edit
       </Badge>
 
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
+      <Modal
+        className="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-6xl"
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      >
         <ModalHeader className="m-2">Edit a issue</ModalHeader>
-        <ModalBody class="overflow-auto h-80">
-          <Label className="m-2">
-            <span>Name</span>
-            <Input className="mt-1" value={name} onChange={onNameChanged} />
-          </Label>
-          <Label className="m-2">
-            <span>Key</span>
-            <Input className="mt-1" value={key} disabled={true} />
-          </Label>
-          <Label className="m-2">
-            <span>Project</span>
-            <Input
-              className="mt-1"
-              placeholder="Jane Doe"
-              value={projectName}
-              disabled={true}
+        <ModalBody class="overflow-auto h-80 flex">
+          <div className="flex-auto">
+            <Label className="m-2">
+              <span>Name</span>
+              <Input
+                className="mt-1 w-32 md:w-48 lg:w-72"
+                value={name}
+                onChange={onNameChanged}
+              />
+            </Label>
+            <Label className="m-2">
+              <span>Key</span>
+              <Input
+                className="mt-1 w-32 md:w-48 lg:w-72"
+                value={key}
+                disabled={true}
+              />
+            </Label>
+            <Label className="m-2">
+              <span>Project</span>
+              <Input
+                className="mt-1 w-32 md:w-48 lg:w-72"
+                placeholder="Jane Doe"
+                value={projectName}
+                disabled={true}
+              />
+            </Label>
+            <Label className="m-2">
+              <span>Issue type</span>
+              <Input
+                className="mt-1 w-32 md:w-48 lg:w-72"
+                placeholder="Jane Doe"
+                value={issueTypeName}
+                disabled={true}
+              />
+            </Label>
+            <Label className="m-2">
+              <span>{status}</span>
+              <Select
+                className="mt-1 w-32 md:w-48 lg:w-72"
+                value=""
+                onChange={onStatusChanged}
+              >
+                <option value=""></option>
+                {transitionOptions}
+              </Select>
+            </Label>
+            {inputFields}
+          </div>
+          <div className="m-2 mr-4 flex-auto">
+            <Label className="mb-1">
+              <span>Description</span>
+            </Label>
+            <ReactQuill
+              theme="snow"
+              value={description}
+              onChange={setDescription}
+              modules={modules}
+              formats={formats}
+              placeholder={'Write something...'}
             />
-          </Label>
-          <Label className="m-2">
-            <span>Issue type</span>
-            <Input
-              className="mt-1"
-              placeholder="Jane Doe"
-              value={issueTypeName}
-              disabled={true}
-            />
-          </Label>
-
-          <Label className="m-2">
-            <span>{status}</span>
-            <Select className="mt-1" value="" onChange={onStatusChanged}>
-              <option value=""></option>
-              {transitionOptions}
-            </Select>
-          </Label>
-          {inputFields}
+          </div>
         </ModalBody>
         <ModalFooter>
           <div className="hidden sm:block">

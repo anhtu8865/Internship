@@ -27,6 +27,59 @@ import {
   Input,
 } from '@windmill/react-ui'
 import { UpdateIssueForm } from '../components/Issue/UpdateIssueForm'
+import { ViewIssueForm } from '../components/Issue/ViewIssueForm'
+// import ReactQuill from 'react-quill'
+// import 'react-quill/dist/quill.snow.css'
+// import 'react-quill/dist/quill.bubble.css'
+
+/*
+ * Quill modules to attach to editor
+ * See https://quilljs.com/docs/modules/ for complete options
+ */
+const modules = {
+  toolbar: [
+    [{ header: '1' }, { header: '2' }, { font: [] }],
+    [{ size: [] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [{ align: [] }],
+    [{ color: [] }, { background: [] }],
+    [
+      { list: 'ordered' },
+      { list: 'bullet' },
+      { indent: '-1' },
+      { indent: '+1' },
+    ],
+    ['link', 'image', 'video'],
+    ['clean'],
+  ],
+  clipboard: {
+    // toggle to add extra line breaks when pasting HTML:
+    matchVisual: false,
+  },
+}
+/*
+ * Quill editor formats
+ * See https://quilljs.com/docs/formats/
+ */
+const formats = [
+  'header',
+  'font',
+  'size',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'blockquote',
+  'align',
+  'background',
+  'color',
+  'list',
+  'bullet',
+  'indent',
+  'link',
+  'image',
+  'video',
+]
 
 const IssueExcerpt = ({ issue, openModal }) => {
   return (
@@ -58,6 +111,7 @@ const IssueExcerpt = ({ issue, openModal }) => {
         </span>
       </TableCell>
       <TableCell>
+        {/* <ViewIssueForm issue={issue} /> */}
         <UpdateIssueForm issue={issue} />
         <Badge
           className="ml-1 hover:bg-red-200 cursor-pointer"
@@ -85,6 +139,7 @@ const IssueExcerpt = ({ issue, openModal }) => {
 }
 
 export const Issues = () => {
+  // const [value, setValue] = useState('')
   const dispatch = useDispatch()
   const issues = useSelector(selectAllIssues)
   const issueStatus = useSelector((state) => state.issues.status)
@@ -236,6 +291,7 @@ export const Issues = () => {
         <div className="py-8">
           <div className="mb-5 my-2 flex justify-between sm:flex-row flex-col">
             <h2 className="text-2xl font-semibold leading-tight">Issues</h2>
+
             <div className="flex justify-between sm:flex-row flex-col">
               <Label className="m-2">
                 <span className="text-1xl font-semibold leading-tight">
@@ -246,7 +302,7 @@ export const Issues = () => {
                   value={project}
                   onChange={onProjectChanged}
                 >
-                  <option value=""></option>
+                  <option value="">All</option>
                   {projectsOptions}
                 </Select>
               </Label>
@@ -259,7 +315,7 @@ export const Issues = () => {
                   value={issueType}
                   onChange={onIssueTypeChanged}
                 >
-                  <option value=""></option>
+                  <option value="">All</option>
                   {issueTypesOptions}
                 </Select>
               </Label>
@@ -272,7 +328,7 @@ export const Issues = () => {
                   value={status}
                   onChange={onStatusChanged}
                 >
-                  <option value=""></option>
+                  <option value="">All</option>
                   {statusesOptions}
                 </Select>
               </Label>
@@ -281,7 +337,7 @@ export const Issues = () => {
                   Assignee:
                 </span>
                 <Select className="mt-1" value={user} onChange={onUserChanged}>
-                  <option value=""></option>
+                  <option value="">All</option>
                   {usersOptions}
                 </Select>
               </Label>
@@ -289,6 +345,13 @@ export const Issues = () => {
                 <span className="text-1xl font-semibold leading-tight">
                   From date:
                 </span>
+                <Badge
+                  className="ml-2 bg-gray-300 hover:bg-gray-400 cursor-pointer"
+                  type={'neutral'}
+                  onClick={() => setFromDate('')}
+                >
+                  Clear
+                </Badge>
                 <Input
                   type="date"
                   className="mt-1"
@@ -300,6 +363,13 @@ export const Issues = () => {
                 <span className="text-1xl font-semibold leading-tight">
                   To date:
                 </span>
+                <Badge
+                  className="ml-2 bg-gray-300 hover:bg-gray-400 cursor-pointer"
+                  type={'neutral'}
+                  onClick={() => setToDate('')}
+                >
+                  Clear
+                </Badge>
                 <Input
                   type="date"
                   className="mt-1"
@@ -333,6 +403,15 @@ export const Issues = () => {
               />
             </TableFooter>
           </TableContainer>
+          {/* <ReactQuill
+            theme="snow"
+            value={value}
+            onChange={setValue}
+            modules={modules}
+            formats={formats}
+            placeholder={'Write something...'}
+          />
+          <ReactQuill theme="bubble" value={value} readOnly={true} /> */}
           <Modal isOpen={isModalOpen} onClose={closeModal}>
             <ModalHeader>Delete ?</ModalHeader>
             <ModalBody>
