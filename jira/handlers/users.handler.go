@@ -1,13 +1,14 @@
 package handlers
 
 import (
-
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/godror/godror"
 
+	"bytes"
+	"io/ioutil"
 	"jira/common/helpers"
 	. "jira/common/middleware/auth"
 	"jira/models"
@@ -16,7 +17,6 @@ import (
 	"net/smtp"
 	"strconv"
 	"text/template"
-	"bytes"
 )
 
 var UserHandlers = UserHandler{}
@@ -208,7 +208,7 @@ func (u *UserHandler) CreateUser() gin.HandlerFunc {
 				//convert string to int wwith global role
 				global_role_int, _ := strconv.Atoi(global_role)
 				//send mail
-				_, err := sendEmail(email, password, username,fullname)
+				_, err := sendEmail(email, password, username, fullname)
 				if err != nil {
 					c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
 				} else {
@@ -334,7 +334,56 @@ func (u *UserHandler) GetUserbyTokenUser() gin.HandlerFunc {
 		}
 	}
 }
-func sendEmail(receiversMail string, password string, username string,fullname string) (bool, error) {
+func toBase64(b []byte) string {
+	return base64.StdEncoding.EncodeToString(b)
+}
+//save image to db
+
+func (u *UserHandler) StoreImage() gin.HandlerFunc {
+	return func(c *gin.Context) {
+	    file, _, err := c.Request.FormFile("file")
+		if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+			"error":   true,
+		})
+		return
+	}
+	defer file.Close()
+	bytes, err := ioutil.ReadAll(file)
+
+	mimeType := http.DetectContentType(bytes)
+	var base64Encoding string
+	switch mimeType {
+	case "image/jpeg":
+		base64Encoding += "data:image/jpeg;base64,"
+	case "image/png":
+		base64Encoding += "data:image/png;base64,"
+	}
+	if _, err := models.UserModels.Image(bytes); err != nil {
+			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
+	}
+    // Append the base64 encoded output
+	base64Encoding += toBase64(bytes)
+
+	// Print the full base64 representation of the image
+	c.JSON(http.StatusOK,base64Encoding)
+	// defer f.Close()
+	// 	// filename := header.Filename
+	// 	dat, err := ioutil.ReadFile(uploadedFile)
+	// 	if err != nil {
+	// 		fmt.Println(".....Error Opening File")
+	// 		fmt.Println(err)
+	// 		return
+	// 	}
+	// 	fmt.Println(dat)
+
+	}
+}
+
+
+//mail
+func sendEmail(receiversMail string, password string, username string, fullname string) (bool, error) {
 	// Sender data.
 	from := "phucotrithihamhoc@gmail.com"
 	passwordEmail := "baflhzzxihredlqp"
@@ -349,7 +398,7 @@ func sendEmail(receiversMail string, password string, username string,fullname s
 	// Authentication.
 	auth := smtp.PlainAuth("", from, passwordEmail, smtpHost)
 	t, _ := template.ParseFiles("templates/template.html")
-    var body bytes.Buffer
+	var body bytes.Buffer
 
 	mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 	body.Write([]byte(fmt.Sprintf("Subject: Hello \n%s\n\n", mimeHeaders)))
@@ -359,8 +408,8 @@ func sendEmail(receiversMail string, password string, username string,fullname s
 		UserName string
 		Password string
 	}{
-		FullName:    fullname,
-		UserName:    username,
+		FullName: fullname,
+		UserName: username,
 		Password: password,
 	})
 
@@ -371,51 +420,5 @@ func sendEmail(receiversMail string, password string, username string,fullname s
 		return false, err
 	}
 	return true, nil
-	// t := template.New("template.html")
-	// var err error
-	// t, err = t.ParseFiles("templates/template.html")
-	// if err != nil {
-	// 	fmt.Println("1")
-	// 	fmt.Println(err)
-	// }
-	// var tpl bytes.Buffer
-	// if err := t.Execute(&tpl, struct {
-	// 	username string
-	// }{
-	// 	username: username,
-	// }); err != nil {
-	// 	fmt.Println("2")
-
-	// 	fmt.Println(err)
-	// }
-	// result := tpl.String()
-
-	// m := gomail.NewMessage()
-
-	// // Set E-Mail sender
-	// m.SetHeader("From", "phucotrithihamhoc@gmail.com")
-
-	// // Set E-Mail receivers
-	// m.SetHeader("To", receiversMail)
-
-	// // Set E-Mail subject
-	// m.SetHeader("Subject", "Gomail test subject")
-
-	// // Set E-Mail body. You can set plain text or html with text/html
-	// m.SetBody("text/html", result)
-	// m.Attach("templates/template.html")
-	// // Settings for SMTP server
-	// d := gomail.NewDialer("smtp.gmail.com", 587, "phucotrithihamhoc@gmail.com", "baflhzzxihredlqp")
-
-	// // This is only needed when SSL/TLS certificate is not valid on server.
-	// // In production this should be set to false.
-	// d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-
-	// // Now send E-Mail
-	// if err := d.DialAndSend(m); err != nil {
-	// 	fmt.Println(err)
-	// 	return false, err
-	// }
-	// return true, nil
 
 }

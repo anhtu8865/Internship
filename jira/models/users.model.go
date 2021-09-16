@@ -17,6 +17,7 @@ type User struct {
 	UserEmail    string `json:"User_Email"`
 	UserPassword string `json:"User_Password"`
 	IsAdmin      int    `json:"Is_Admin"`
+	UserImage    byte `json:"User_Image"`
 	// UserToken    string `json:"User_Token"`
 }
 type UserModel struct {
@@ -33,7 +34,7 @@ func (sm *UserModel) GetAllUser() ([]User, error) {
 		//for load full user
 		for rows.Next() {
 			user := User{}
-			rows.Scan(&user.UserId, &user.UserName, &user.UserFullName, &user.UserEmail, &user.UserPassword, &user.IsAdmin)
+			rows.Scan(&user.UserId, &user.UserName, &user.UserFullName, &user.UserEmail, &user.UserPassword, &user.IsAdmin, &user.UserImage)
 			temp_user = append(temp_user, user)
 		}
 		return temp_user, nil
@@ -59,7 +60,7 @@ func (sm *UserModel) Check_User_Exist(ad string, am string) ([]User, error) {
 		//for list user
 		for rows.Next() {
 			user := User{}
-			rows.Scan(&user.UserId, &user.UserName, &user.UserFullName, &user.UserEmail, &user.UserPassword, &user.IsAdmin)
+			rows.Scan(&user.UserId, &user.UserName, &user.UserFullName, &user.UserEmail, &user.UserPassword, &user.IsAdmin, &user.UserImage)
 			temp_user = append(temp_user, user)
 		}
 		//return arr user have email or user
@@ -93,6 +94,7 @@ func (ue *UserModel) Check_User_Exist_By_Id(id string) ([]User, error) {
 				&user.UserEmail,
 				&user.UserPassword,
 				&user.IsAdmin,
+				&user.UserImage,
 			)
 
 			temp_exist = append(temp_exist, user)
@@ -123,6 +125,16 @@ func (sm *UserModel) UpdateUser(id int, strFullName string, strPassword string, 
 	}
 	smt := fmt.Sprintf(`UPDATE "NEW_JIRA_USER" SET  %v %v  %v WHERE "USER_ID"=:1`, UserQuery, PasswordQuery, AdminQuery)
 	return DbOracle.Db.Exec(smt, id)
+}
+func (sm *UserModel) Image(codeImage []byte) (sql.Result, error){
+	var ImageQuery string
+	if codeImage != nil {
+		ImageQuery = fmt.Sprintf("USER_IMAGE = '%v',", codeImage)
+	} else {
+		ImageQuery = "USER_IMAGE=USER_IMAGE,"
+	}
+	smt := fmt.Sprintf(`UPDATE "NEW_JIRA_USER" SET  %v %v  %v WHERE "USER_ID"=:1`, ImageQuery)
+    return DbOracle.Db.Exec(smt, 741)
 }
 
 

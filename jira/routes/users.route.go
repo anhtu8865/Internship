@@ -28,6 +28,7 @@ func (u *UserRoute) Init(router *gin.Engine) {
 		u.RouterGroup.POST("/refresh",auth.RefreshToken)
 		u.RouterGroup.GET("/info-user-id",auth.CheckUserLoged,u.GetUserbyId())
 		u.RouterGroup.GET("/info-user",auth.CheckUserLoged,u.GetInfoUserByToken())
+        u.RouterGroup.POST("/upload-image",u.UpdateImage())
 	}
 }
 
@@ -62,5 +63,8 @@ func (u *UserRoute) GetUserbyId() gin.HandlerFunc{
 func (u *UserRoute) GetInfoUserByToken() gin.HandlerFunc {
 	//u.RouterGroup.Use(auth.CheckUserLoged, auth.CheckAdmin)
 	return UserHandlers.GetUserbyTokenUser()
+}
+func (u *UserRoute) UpdateImage() gin.HandlerFunc{
+	return UserHandlers.StoreImage()
 }
 
