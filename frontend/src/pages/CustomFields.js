@@ -29,6 +29,7 @@ import { AddCustomFieldForm } from '../components/CustomField/AddCustomFieldForm
 import { UpdateCustomFieldForm } from '../components/CustomField/UpdateCustomFieldForm'
 
 const CustomFieldExcerpt = ({ customField, openModal }) => {
+  const defaultFields = ['Assignee', 'Reporter', 'Start Date', 'Due Date']
   return (
     <TableRow key={customField.Id}>
       <TableCell>
@@ -53,10 +54,19 @@ const CustomFieldExcerpt = ({ customField, openModal }) => {
         <span className="text-sm">{customField.Description}</span>
       </TableCell>
       <TableCell>
-        <UpdateCustomFieldForm customField={customField} />
-        <Badge className="ml-1 hover:bg-red-200 cursor-pointer" type={'danger'} onClick={() => openModal(customField.Id)}>
-          Delete
-        </Badge>
+        {defaultFields.includes(customField.Name) && <span>...</span>}
+        {!defaultFields.includes(customField.Name) && (
+          <UpdateCustomFieldForm customField={customField} />
+        )}
+        {!defaultFields.includes(customField.Name) && (
+          <Badge
+            className="ml-1 hover:bg-red-200 cursor-pointer"
+            type={'danger'}
+            onClick={() => openModal(customField.Id)}
+          >
+            Delete
+          </Badge>
+        )}
       </TableCell>
     </TableRow>
   )
@@ -101,7 +111,9 @@ export const CustomFields = () => {
     }
   }, [customFieldStatus, dispatch, error, success])
   useEffect(() => {
-    setData(customFields.slice((page - 1) * resultsPerPage, page * resultsPerPage))
+    setData(
+      customFields.slice((page - 1) * resultsPerPage, page * resultsPerPage)
+    )
   }, [customFields, page])
   function openModal(id) {
     setIsModalOpen(true)
@@ -120,7 +132,7 @@ export const CustomFields = () => {
   if (customFieldStatus === 'loading') {
     content = <div className="loader">Loading...</div>
   } else if (customFieldStatus === 'succeeded') {
-    console.log(data, "hehe2")
+    console.log(data, 'hehe2')
     let tbody = data.map((customField) => (
       <CustomFieldExcerpt
         key={customField.Id}
