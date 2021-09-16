@@ -28,6 +28,8 @@ import {
 } from '@windmill/react-ui'
 import { UpdateIssueForm } from '../components/Issue/UpdateIssueForm'
 import { ViewIssueForm } from '../components/Issue/ViewIssueForm'
+import React_Select from 'react-select'
+
 // import ReactQuill from 'react-quill'
 // import 'react-quill/dist/quill.snow.css'
 // import 'react-quill/dist/quill.bubble.css'
@@ -148,42 +150,56 @@ export const Issues = () => {
   const error = useSelector((state) => state.issues.error)
   const projects = useSelector(selectAllProjects)
   const projectStatus = useSelector((state) => state.projects.loading)
-  const projectsOptions = projects.map((project) => (
-    <option key={project.ProjectKey} value={project.ProjectKey}>
-      {project.ProjectName}
-    </option>
-  ))
+
+  function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index
+  }
+
+  // usage example:
+  let namesOptions = issues.map((issue) => issue.Name)
+  namesOptions = namesOptions.filter(onlyUnique)
+
+  namesOptions = namesOptions.map((item) => ({
+    value: item,
+    label: item,
+  }))
+
+  const [name, setName] = useState('')
+  const onNameChanged = (e) => setName(e?.value)
+
+  const projectsOptions = projects.map((project) => ({
+    value: project.ProjectKey,
+    label: project.ProjectName,
+  }))
   const [project, setProject] = useState('')
-  const onProjectChanged = (e) => setProject(e.target.value)
+  const onProjectChanged = (e) => setProject(e?.value)
+
   const issueTypes = useSelector(selectAllIssueTypes)
   const issueTypeStatus = useSelector((state) => state.issueTypes.status)
-  const issueTypesOptions = issueTypes.map((issueType) => (
-    <option key={issueType.Id} value={issueType.Name}>
-      {issueType.Name}
-    </option>
-  ))
+  const issueTypesOptions = issueTypes.map((issueType) => ({
+    value: issueType.Name,
+    label: issueType.Name,
+  }))
   const [issueType, setIssueType] = useState('')
-  const onIssueTypeChanged = (e) => setIssueType(e.target.value)
+  const onIssueTypeChanged = (e) => setIssueType(e?.value)
 
   const statuses = useSelector((state) => state.statuss.statuss)
   const statusesLoading = useSelector((state) => state.statuss.loading)
-  const statusesOptions = statuses.map((status) => (
-    <option key={status.StatusId} value={status.StatusName}>
-      {status.StatusName}
-    </option>
-  ))
+  const statusesOptions = statuses.map((status) => ({
+    value: status.StatusName,
+    label: status.StatusName,
+  }))
   const [status, setStatus] = useState('')
-  const onStatusChanged = (e) => setStatus(e.target.value)
+  const onStatusChanged = (e) => setStatus(e?.value)
 
   const users = useSelector((state) => state.users.users)
   const usersLoading = useSelector((state) => state.users.loading)
-  const usersOptions = users.map((user) => (
-    <option key={user.User_Id} value={user.User_Full_Name}>
-      {user.User_Full_Name}
-    </option>
-  ))
+  const usersOptions = users.map((user) => ({
+    value: user.User_Full_Name,
+    label: user.User_Full_Name,
+  }))
   const [user, setUser] = useState('')
-  const onUserChanged = (e) => setUser(e.target.value)
+  const onUserChanged = (e) => setUser(e?.value)
   const [fromDate, setFromDate] = useState('')
   const onFromDateChanged = (e) => setFromDate(e.target.value)
   const [toDate, setToDate] = useState('')
@@ -218,6 +234,8 @@ export const Issues = () => {
       dispatch(fetchProjects())
     }
     let filteredIssues = issues
+    if (name)
+      filteredIssues = filteredIssues.filter((item) => item.Name === name)
     if (project)
       filteredIssues = filteredIssues.filter((item) => item.Project === project)
     if (issueType)
@@ -253,7 +271,7 @@ export const Issues = () => {
     setData(
       filteredIssues.slice((page - 1) * resultsPerPage, page * resultsPerPage)
     )
-  }, [issues, page, project, issueType, status, user, fromDate, toDate])
+  }, [issues, page, name, project, issueType, status, user, fromDate, toDate])
   function openModal(id) {
     setIsModalOpen(true)
     setId(id)
@@ -289,59 +307,76 @@ export const Issues = () => {
     content = (
       <div className="container mx-auto px-4 mb-16 sm:px-8">
         <div className="py-8">
-          <div className="mb-5 my-2 flex justify-between sm:flex-row flex-col">
+          <div className="mb-5 my-2">
             <h2 className="text-2xl font-semibold leading-tight">Issues</h2>
 
             <div className="flex justify-between sm:flex-row flex-col">
-              <Label className="m-2">
+              <Label className="m-2 w-full">
+                <span className="text-1xl font-semibold leading-tight">
+                  Name:
+                </span>
+                <React_Select
+                  className="mt-1"
+                  options={namesOptions}
+                  onChange={onNameChanged}
+                  isSearchable={true}
+                  isClearable={true}
+                  placeholder="All"
+                />
+              </Label>
+              <Label className="m-2 w-full">
                 <span className="text-1xl font-semibold leading-tight">
                   Project:
                 </span>
-                <Select
+                <React_Select
                   className="mt-1"
-                  value={project}
+                  options={projectsOptions}
                   onChange={onProjectChanged}
-                >
-                  <option value="">All</option>
-                  {projectsOptions}
-                </Select>
+                  isSearchable={true}
+                  isClearable={true}
+                  placeholder="All"
+                />
               </Label>
-              <Label className="m-2">
+              <Label className="m-2 w-full">
                 <span className="text-1xl font-semibold leading-tight">
                   Issue type:
                 </span>
-                <Select
+                <React_Select
                   className="mt-1"
-                  value={issueType}
+                  options={issueTypesOptions}
                   onChange={onIssueTypeChanged}
-                >
-                  <option value="">All</option>
-                  {issueTypesOptions}
-                </Select>
+                  isSearchable={true}
+                  isClearable={true}
+                  placeholder="All"
+                />
               </Label>
-              <Label className="m-2">
+              <Label className="m-2 w-full">
                 <span className="text-1xl font-semibold leading-tight">
                   Status:
                 </span>
-                <Select
+                <React_Select
                   className="mt-1"
-                  value={status}
+                  options={statusesOptions}
                   onChange={onStatusChanged}
-                >
-                  <option value="">All</option>
-                  {statusesOptions}
-                </Select>
+                  isSearchable={true}
+                  isClearable={true}
+                  placeholder="All"
+                />
               </Label>
-              <Label className="m-2">
+              <Label className="m-2 w-full">
                 <span className="text-1xl font-semibold leading-tight">
                   Assignee:
                 </span>
-                <Select className="mt-1" value={user} onChange={onUserChanged}>
-                  <option value="">All</option>
-                  {usersOptions}
-                </Select>
+                <React_Select
+                  className="mt-1"
+                  options={usersOptions}
+                  onChange={onUserChanged}
+                  isSearchable={true}
+                  isClearable={true}
+                  placeholder="All"
+                />
               </Label>
-              <Label className="m-2">
+              <Label className="m-2 w-full">
                 <span className="text-1xl font-semibold leading-tight">
                   From date:
                 </span>
@@ -359,7 +394,7 @@ export const Issues = () => {
                   onChange={onFromDateChanged}
                 />
               </Label>
-              <Label className="m-2">
+              <Label className="m-2 w-full">
                 <span className="text-1xl font-semibold leading-tight">
                   To date:
                 </span>

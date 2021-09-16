@@ -109,7 +109,7 @@ export const Screens = () => {
   const [page, setPage] = useState(1)
   const [data, setData] = useState([])
   // pagination setup
-  const resultsPerPage = 2
+  const resultsPerPage = 4
   const totalResults = screens.length
 
   // pagination change control
