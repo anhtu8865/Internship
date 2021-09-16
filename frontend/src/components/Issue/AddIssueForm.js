@@ -10,7 +10,7 @@ import {
   setErrorNull,
   setSuccessNull,
 } from '../../slices/issues'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { useToasts } from 'react-toast-notifications'
 import {
   Input,
@@ -26,6 +26,7 @@ import {
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import 'react-quill/dist/quill.bubble.css'
+import React_Select from 'react-select'
 
 /*
  * Quill modules to attach to editor
@@ -76,7 +77,7 @@ const formats = [
 
 export const AddIssueForm = () => {
   const { addToast } = useToasts()
-  const { register, handleSubmit, reset } = useForm()
+  const { register, handleSubmit, reset, control } = useForm()
   const [name, setName] = useState('')
   const [key, setKey] = useState('')
   const [projectName, setProjectName] = useState('')
@@ -104,11 +105,12 @@ export const AddIssueForm = () => {
       {item}
     </option>
   ))
-  const userOptions = userList.map((item) => (
-    <option key={item.User_Id} value={item.User_Full_Name}>
-      {item.User_Full_Name}
-    </option>
-  ))
+
+  const userOptions = userList.map((item) => ({
+    value: item.User_Full_Name,
+    label: item.User_Full_Name,
+  }))
+
   const issueTypesOptions = filteredIssueTypes.map((item) => (
     <option key={item.Issue_Type_Name} value={item.Issue_Type_Name}>
       {item.Issue_Type_Name}
@@ -178,7 +180,10 @@ export const AddIssueForm = () => {
         )
         const result = customFields.map((item) => ({
           ...item,
-          Value: data[item.Name],
+          Value:
+            typeof data[item.Name] === 'object'
+              ? data[item.Name]?.value
+              : data[item.Name],
           Issue: key,
         }))
         reset()
@@ -236,10 +241,19 @@ export const AddIssueForm = () => {
           return (
             <Label key={item.Custom_Field} className="m-2">
               <span>{item.Name}</span>
-              <Select className="mt-1" {...register(item.Name)}>
-                <option value=""></option>
-                {userOptions}
-              </Select>
+              <Controller
+                control={control}
+                name={item.Name}
+                render={({ field: { onChange, value, ref } }) => (
+                  <React_Select
+                    options={userOptions}
+                    onChange={onChange}
+                    value={value}
+                    isSearchable={true}
+                    isClearable={true}
+                  />
+                )}
+              />
             </Label>
           )
       }

@@ -7,7 +7,7 @@ import {
   selectUserList,
   fetchUserList,
 } from '../../slices/issues'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import {
   Input,
@@ -24,6 +24,7 @@ import {
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import 'react-quill/dist/quill.bubble.css'
+import React_Select from 'react-select'
 
 /*
  * Quill modules to attach to editor
@@ -74,7 +75,7 @@ const formats = [
 
 export const UpdateIssueForm = ({ issue }) => {
   const dispatch = useDispatch()
-  const { register, handleSubmit, reset } = useForm()
+  const { register, handleSubmit, reset, control } = useForm()
   const [name, setName] = useState(issue.Name)
   const [key, setKey] = useState(issue.Key)
   const [project, setProject] = useState(issue.Project)
@@ -98,6 +99,7 @@ export const UpdateIssueForm = ({ issue }) => {
     [name, key, status].every(Boolean) && editRequestStatus === 'idle'
   const history = useHistory()
   const onSaveIssueClicked = async (data) => {
+    console.log(data)
     if (canSave) {
       try {
         const newIssue = {
@@ -110,7 +112,10 @@ export const UpdateIssueForm = ({ issue }) => {
         newIssue.Fields = newIssue.Fields
           ? newIssue.Fields.map((item) => ({
               ...item,
-              Value: data[item.Name],
+              Value:
+                typeof data[item.Name] === 'object'
+                  ? data[item.Name]?.value
+                  : data[item.Name],
             }))
           : []
         setEditRequestStatus('pending')
@@ -132,11 +137,12 @@ export const UpdateIssueForm = ({ issue }) => {
   function closeModal() {
     setIsModalOpen(false)
   }
-  const userOptions = userList.map((item) => (
-    <option key={item.User_Id} value={item.User_Full_Name}>
-      {item.User_Full_Name}
-    </option>
-  ))
+
+  const userOptions = userList.map((item) => ({
+    value: item.User_Full_Name,
+    label: item.User_Full_Name,
+  }))
+
   const transitionOptions = issue.Transitions?.map((item) => (
     <option key={item.Id_Transition} value={item.Name_Status2}>
       {`${item.Name_Transition} -> ${item.Name_Status2}`}
@@ -184,14 +190,27 @@ export const UpdateIssueForm = ({ issue }) => {
           return (
             <Label key={item.Name} className="m-2">
               <span>{item.Name}</span>
-              <Select
-                className="mt-1 w-32 md:w-48 lg:w-72"
-                {...register(item.Name)}
-                defaultValue={item.Value}
-              >
-                <option value=""></option>
-                {userOptions}
-              </Select>
+              <Controller
+                control={control}
+                name={item.Name}
+                defaultValue={
+                  item.Value
+                    ? {
+                        value: item.Value,
+                        label: item.Value,
+                      }
+                    : ''
+                }
+                render={({ field: { onChange, value, ref } }) => (
+                  <React_Select
+                    options={userOptions}
+                    onChange={onChange}
+                    value={value}
+                    isSearchable={true}
+                    isClearable={true}
+                  />
+                )}
+              />
             </Label>
           )
       }
