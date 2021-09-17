@@ -60,6 +60,7 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 						c.JSON(http.StatusNotAcceptable, helpers.MessageResponse{Msg: "Password invalid, can't decode"})
 						log.Fatalf("Some error occured during base64 decode. Error %s", err.Error())
 					}
+					fmt.Println(originalStringBytes)
 					//compare password
 					if password == string(originalStringBytes) {
 						ts, err := CreateToken(int64(Exists_user[0].UserId), int64(Exists_user[0].IsAdmin))
