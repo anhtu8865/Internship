@@ -27,7 +27,7 @@ import {
   Input,
 } from '@windmill/react-ui'
 import { UpdateIssueForm } from '../components/Issue/UpdateIssueForm'
-import { ViewIssueForm } from '../components/Issue/ViewIssueForm'
+
 import React_Select from 'react-select'
 
 // import ReactQuill from 'react-quill'
@@ -113,7 +113,19 @@ const IssueExcerpt = ({ issue, openModal }) => {
         </span>
       </TableCell>
       <TableCell>
-        {/* <ViewIssueForm issue={issue} /> */}
+        <Badge
+          className="mr-1 hover:bg-gray-200 cursor-pointer"
+          type={'neutral'}
+        >
+          <Link
+            to={{
+              pathname: `/app/viewIssue/${issue.Key}`,
+            }}
+          >
+            View
+          </Link>
+        </Badge>
+        {/* <ViewIssue issue={issue} /> */}
         <UpdateIssueForm issue={issue} />
         <Badge
           className="ml-1 hover:bg-red-200 cursor-pointer"
@@ -124,19 +136,6 @@ const IssueExcerpt = ({ issue, openModal }) => {
         </Badge>
       </TableCell>
     </TableRow>
-    //  <td className="px-5 py-5 text-center border-b border-gray-200 bg-white text-sm">
-    //   <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-    //     <span
-    //       aria-hidden
-    //       className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-    //     />
-    //     <Link
-    //       to={`/editIssue/${issue.Id}`}
-    //       className="relative cursor-pointer"
-    //     >
-    //       Edit
-    //     </Link>
-    //   </span>
   )
 }
 
@@ -438,15 +437,6 @@ export const Issues = () => {
               />
             </TableFooter>
           </TableContainer>
-          {/* <ReactQuill
-            theme="snow"
-            value={value}
-            onChange={setValue}
-            modules={modules}
-            formats={formats}
-            placeholder={'Write something...'}
-          />
-          <ReactQuill theme="bubble" value={value} readOnly={true} /> */}
           <Modal isOpen={isModalOpen} onClose={closeModal}>
             <ModalHeader>Delete ?</ModalHeader>
             <ModalBody>

@@ -10,6 +10,7 @@ import CreateRole from '../pages/CreateRole'
 import ProjectUserRole from '../pages/ProjectUserRole'
 import TransitionItemForProject from '../pages/TransitionManagerForProject'
 import { Issues } from '../pages/Issues'
+import { ViewIssue } from '../pages/ViewIssue'
 import { IssuesByProject } from '../pages/IssuesByProject'
 import { Screens } from '../pages/Screens'
 import { ScreenCustomFields } from '../pages/ScreenCustomFields'
@@ -106,6 +107,11 @@ const routes = [
   {
     path: '/IssuesByProject/:project',
     component: IssuesByProject,
+    globalRole: 'Member',
+  },
+  {
+    path: '/viewIssue/:key',
+    component: ViewIssue,
     globalRole: 'Member',
   },
   {
