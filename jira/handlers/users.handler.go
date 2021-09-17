@@ -1,13 +1,13 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/base64"
+
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/godror/godror"
-
-	"bytes"
 	"io/ioutil"
 	"jira/common/helpers"
 	. "jira/common/middleware/auth"
@@ -337,50 +337,57 @@ func (u *UserHandler) GetUserbyTokenUser() gin.HandlerFunc {
 func toBase64(b []byte) string {
 	return base64.StdEncoding.EncodeToString(b)
 }
+
 //save image to db
 
 func (u *UserHandler) StoreImage() gin.HandlerFunc {
 	return func(c *gin.Context) {
-	    file, _, err := c.Request.FormFile("file")
+		file, _, err := c.Request.FormFile("file")
 		if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-			"error":   true,
-		})
-		return
-	}
-	defer file.Close()
-	bytes, err := ioutil.ReadAll(file)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": err.Error(),
+				"error":   true,
+			})
+			return
+		}
+		defer file.Close()
+		files, err := ioutil.ReadAll(file)
+       
 
-	mimeType := http.DetectContentType(bytes)
-	var base64Encoding string
-	switch mimeType {
-	case "image/jpeg":
-		base64Encoding += "data:image/jpeg;base64,"
-	case "image/png":
-		base64Encoding += "data:image/png;base64,"
-	}
-	if _, err := models.UserModels.Image(bytes); err != nil {
-			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
-	}
-    // Append the base64 encoded output
-	base64Encoding += toBase64(bytes)
+	
+		mimeType := http.DetectContentType(files)
+		var base64Encoding string
+		switch mimeType {
+		case "image/jpeg":
+			base64Encoding += "data:image/jpeg;base64,"
+		case "image/png":
+			base64Encoding += "data:image/png;base64,"
+		case "image/jpg":
+			base64Encoding += "data:image/jpg;base64,"
+		}
+		// if _, err := models.UserModels.Image(files); err != nil {
+		// 	fmt.Println(err)
+		// 	c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
+		// } else {
+			base64Encoding += toBase64(files)
+            fmt.Println(base64Encoding)
+			// Print the full base64 representation of the image
+			c.JSON(http.StatusOK, base64Encoding)
+		// }
+		// Append the base64 encoded output
 
-	// Print the full base64 representation of the image
-	c.JSON(http.StatusOK,base64Encoding)
-	// defer f.Close()
-	// 	// filename := header.Filename
-	// 	dat, err := ioutil.ReadFile(uploadedFile)
-	// 	if err != nil {
-	// 		fmt.Println(".....Error Opening File")
-	// 		fmt.Println(err)
-	// 		return
-	// 	}
-	// 	fmt.Println(dat)
+		// defer f.Close()
+		// 	// filename := header.Filename
+		// 	dat, err := ioutil.ReadFile(uploadedFile)
+		// 	if err != nil {
+		// 		fmt.Println(".....Error Opening File")
+		// 		fmt.Println(err)
+		// 		return
+		// 	}
+		// 	fmt.Println(dat)
 
 	}
 }
-
 
 //mail
 func sendEmail(receiversMail string, password string, username string, fullname string) (bool, error) {

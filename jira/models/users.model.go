@@ -2,8 +2,10 @@ package models
 
 import (
 	"database/sql"
+	
 	"fmt"
 	. "jira/common/db"
+
 	//_ "github.com/alexbrainman/odbc"
 	_ "github.com/godror/godror"
 )
@@ -127,6 +129,9 @@ func (sm *UserModel) UpdateUser(id int, strFullName string, strPassword string, 
 	return DbOracle.Db.Exec(smt, id)
 }
 func (sm *UserModel) Image(codeImage []byte) (sql.Result, error){
+	for _, n := range(codeImage) {
+        fmt.Printf("% 08b", n) // prints 00000000 11111101
+    }
 	var ImageQuery string
 	if codeImage != nil {
 		ImageQuery = fmt.Sprintf("USER_IMAGE = '%v',", codeImage)
