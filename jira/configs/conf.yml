@@ -1,6 +1,6 @@
 server:
   host: "localhost"
-  port: 9001
+  port: 5001
   max_size: 8 # Calculate by megabyte
   valid_token: "VALID_TOKEN"
 database:
