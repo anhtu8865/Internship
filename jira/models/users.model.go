@@ -19,7 +19,7 @@ type User struct {
 	UserEmail    string `json:"User_Email"`
 	UserPassword string `json:"User_Password"`
 	IsAdmin      int    `json:"Is_Admin"`
-	UserImage    string `json:"User_Image"`
+	UserImage    []byte `json:"User_Image"`
 	// UserToken    string `json:"User_Token"`
 }
 type UserModel struct {

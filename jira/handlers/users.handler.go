@@ -36,7 +36,8 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 
 		username = fmt.Sprintf("%v", myMap["username"])
 		password = fmt.Sprintf("%v", myMap["password"])
-
+        fmt.Println(username)
+		fmt.Println(password)
 		//check null
 		if username == "" || password == "" {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "The parameters are not enough"})
