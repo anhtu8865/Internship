@@ -19,7 +19,7 @@ type User struct {
 	UserEmail    string `json:"User_Email"`
 	UserPassword string `json:"User_Password"`
 	IsAdmin      int    `json:"Is_Admin"`
-	UserImage    byte `json:"User_Image"`
+	UserImage    string `json:"User_Image"`
 	// UserToken    string `json:"User_Token"`
 }
 type UserModel struct {
@@ -58,6 +58,7 @@ func (sm *UserModel) Check_User_Exist(ad string, am string) ([]User, error) {
 	//query user by username or email
 	query := fmt.Sprintf("SELECT * FROM \"NEW_JIRA_USER\" WHERE \"USER_NAME\" = '%v' OR \"USER_EMAIL\" = '%v'", ad, am)
 	rows, err := DbOracle.Db.Query(query)
+	
 	if err == nil {
 		//for list user
 		for rows.Next() {
@@ -65,6 +66,7 @@ func (sm *UserModel) Check_User_Exist(ad string, am string) ([]User, error) {
 			rows.Scan(&user.UserId, &user.UserName, &user.UserFullName, &user.UserEmail, &user.UserPassword, &user.IsAdmin, &user.UserImage)
 			temp_user = append(temp_user, user)
 		}
+        fmt.Println(temp_user)
 		//return arr user have email or user
 		return temp_user, nil
 

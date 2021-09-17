@@ -42,7 +42,7 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "The parameters are not enough"})
 		} else {
 			Exists_user, err := models.UserModels.Check_User_Exist(username, username)
-			fmt.Println(Exists_user)
+		    fmt.Println(Exists_user[0])
 			if err != nil {
 
 				c.JSON(http.StatusBadRequest, helpers.MessageResponse{Msg: "Error running query"})
@@ -55,12 +55,11 @@ func (u *UserHandler) Singin() gin.HandlerFunc {
 				//User admin
 				if Exists_user[0].IsAdmin == 0 {
 					originalStringBytes, err := base64.StdEncoding.DecodeString(Exists_user[0].UserPassword)
-
+                    
 					if err != nil {
 						c.JSON(http.StatusNotAcceptable, helpers.MessageResponse{Msg: "Password invalid, can't decode"})
 						log.Fatalf("Some error occured during base64 decode. Error %s", err.Error())
 					}
-					fmt.Println(originalStringBytes)
 					//compare password
 					if password == string(originalStringBytes) {
 						ts, err := CreateToken(int64(Exists_user[0].UserId), int64(Exists_user[0].IsAdmin))
