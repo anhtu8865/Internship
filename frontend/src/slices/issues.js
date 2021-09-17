@@ -12,21 +12,18 @@ const initialState = {
   success: null,
 }
 
-export const fetchIssues = createAsyncThunk(
-  'issues/fetchIssues',
-  async () => {
-    const response = await issueApi
-      .getAll()
-      .then(function (response) {
-        console.log(response)
-        return response
-      })
-      .catch(function (error) {
-        console.log(error)
-      })
-    return response
-  }
-)
+export const fetchIssues = createAsyncThunk('issues/fetchIssues', async () => {
+  const response = await issueApi
+    .getAll()
+    .then(function (response) {
+      console.log(response)
+      return response
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+  return response
+})
 
 export const fetchProjectIssueTypeScreens = createAsyncThunk(
   'issues/fetchProjectIssueTypeScreens',
@@ -60,7 +57,6 @@ export const fetchCustomFields = createAsyncThunk(
     return response
   }
 )
-
 
 export const fetchUserList = createAsyncThunk(
   'issues/fetchUserList',
@@ -162,7 +158,9 @@ const issuesSlice = createSlice({
     },
     [fetchProjectIssueTypeScreens.fulfilled]: (state, action) => {
       state.statusAddIssue = 'succeeded'
-      state.projectIssueTypeScreens = state.projectIssueTypeScreens.concat(action.payload.Data)
+      state.projectIssueTypeScreens = state.projectIssueTypeScreens.concat(
+        action.payload.Data
+      )
     },
     [fetchProjectIssueTypeScreens.rejected]: (state, action) => {
       state.statusAddIssue = 'failed'
@@ -175,7 +173,6 @@ const issuesSlice = createSlice({
     [addNewIssue.fulfilled]: (state, action) => {
       state.issues.push(action.payload.Data)
       state.success = action.payload.Msg
-
     },
     [updateIssue.rejected]: (state, action) => {
       state.error = action.payload.Msg
@@ -189,7 +186,6 @@ const issuesSlice = createSlice({
         issue.Id === newIssue.Id ? newIssue : issue
       )
       state.success = action.payload.Msg
-
     },
     [deleteIssue.rejected]: (state, action) => {
       state.error = action.payload.Msg
@@ -201,7 +197,6 @@ const issuesSlice = createSlice({
         (issue) => issue.Id !== returnedIssue.Id
       )
       state.success = action.payload.Msg
-
     },
     [fetchCustomFields.rejected]: (state, action) => {
       console.log(action.payload.Msg)
@@ -231,9 +226,11 @@ export const selectAllIssues = (state) => state.issues.issues
 
 export const selectUserList = (state) => state.issues.userList
 
-export const selectAllProjectIssueTypeScreens = (state) => state.issues.projectIssueTypeScreens
+export const selectAllProjectIssueTypeScreens = (state) =>
+  state.issues.projectIssueTypeScreens
 
 export const selectIssueById = (state, issueId) =>
-  state.issues.issues.find(
-    (issue) => issue.Id == issueId
-  )
+  state.issues.issues.find((issue) => issue.Id == issueId)
+
+export const selectIssueByKey = (state, key) =>
+  state.issues.issues.find((issue) => issue.Key == key)
