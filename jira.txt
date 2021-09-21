@@ -1,0 +1,20 @@
+THÔNG TIN SERVER JIRA
+Domain: https://jiraproject.altisss.vn/
+    Thông tin server:
+        IP: 124.158.14.36
+        projects/yyrDbgxDlVt8u7pQUi50
+    Thông tin DB:
+        HOST = 115.165.166.55 PORT = 1521
+        SERVICE_NAME = COREDB
+        jira/MyGIAgVwrzQRj8lhD54k
+server:
+  host: "localhost"
+  port: 9001
+  max_size: 8 # Calculate by megabyte
+  valid_token: "VALID_TOKEN"
+database:
+  host: "db.altisss.vn"
+  port: 1521
+  user: "jira"
+  password: "2Knd]fJgexfJgexM."
+  sn: "COREDB"
