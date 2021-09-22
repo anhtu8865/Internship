@@ -39,7 +39,7 @@ Mở terminal. Nhập
 Xem kết quả tại localhost:3000. User đăng nhập mặc định:
 
 ```
-User: truong
+User: Admin
 Password: 123456
 ```
 
