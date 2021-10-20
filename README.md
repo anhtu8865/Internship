@@ -42,9 +42,3 @@ Xem kết quả tại localhost:3000. User đăng nhập mặc định:
 User: Admin
 Password: 123456
 ```
-
-Hiện tại có thể test Login, Logout, Tạo User, Xóa, Sửa Xem danh sách User
-
-Thêm, Xóa Sửa, Xem danh sách Project
-
-![](assets\20210707_122402_image.png)
